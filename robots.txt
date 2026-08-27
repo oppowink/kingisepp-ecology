@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+
+Disallow: /account.html
+Disallow: /education.html
+Disallow: /submit.html
+Disallow: /my-requests.html
+Disallow: /moderator.html
+
+Sitemap: https://oppowink.github.io/kingisepp-ecology/sitemap.xml

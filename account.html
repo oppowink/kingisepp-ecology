@@ -1,0 +1,187 @@
+<!doctype html>
+<!-- account.html - Вход и личный кабинет участника проекта -->
+<html lang="ru">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+
+<!-- запрет индексации (личный кабинет) -->
+<meta content="noindex,nofollow" name="robots"/>
+
+<!-- SEO -->
+<meta content="Личный кабинет участника ЭкоБиоМониторинга: обучение, подача наблюдений, статусы заявок и обратная связь" name="description"/>
+<meta content="ЭкоБиоМониторинг личный кабинет, участник экологического мониторинга, обучение, подать наблюдение, мои заявки" name="keywords"/>
+
+<!-- Open Graph -->
+<meta content="ru_RU" property="og:locale"/>
+<meta content="website" property="og:type"/>
+<meta content="ЭкоБиоМониторинг" property="og:site_name"/>
+<meta content="Личный кабинет - ЭкоБиоМониторинг" property="og:title"/>
+<meta content="Обучение, подача наблюдений и работа участника проекта ЭкоБиоМониторинг" property="og:description"/>
+<meta content="img/leaf1.png" property="og:image"/>
+<meta content="Фирменный лист проекта ЭкоБиоМониторинг" property="og:image:alt"/>
+<meta content="summary" name="twitter:card"/>
+<meta content="Личный кабинет - ЭкоБиоМониторинг" name="twitter:title"/>
+<meta content="Обучение, подача наблюдений и работа участника проекта ЭкоБиоМониторинг" name="twitter:description"/>
+<meta content="img/leaf1.png" name="twitter:image"/>
+
+<title>Личный кабинет участника - ЭкоБиоМониторинг</title>
+
+<!-- фавиконка -->
+<link href="img/favicon.ico" rel="icon"/>
+
+<!-- стили -->
+<link href="css/variables.css" rel="stylesheet"/>
+<link href="css/components.css" rel="stylesheet"/>
+<link href="css/auth.css" rel="stylesheet"/>
+
+<!-- тема — подключаем до body чтобы не мигало -->
+<script src="js/theme.js"></script>
+</head>
+<body>
+<!-- свечение за курсором -->
+<div aria-hidden="true" class="kursor" data-component="kursor"></div>
+
+<!-- затемнение под панель настроек -->
+<div aria-hidden="true" class="nastroiki-fon" id="nastroikiFon"></div>
+
+<!-- шапка -->
+<header class="shapka" data-component="shapka">
+<a aria-label="ЭкоБиоМониторинг, на главную" class="shapka-logo" href="index.html">
+<span class="shapka-logo__nazvanie">
+<span class="shapka-logo__bukva">Э</span><span class="shapka-logo__bukva">к</span>
+<img alt="" aria-hidden="true" class="shapka-logo__list shapka-logo__list--1" src="img/leaf1.png"/>
+<span class="shapka-logo__bukva">Б</span><span class="shapka-logo__bukva">и</span>
+<img alt="" aria-hidden="true" class="shapka-logo__list shapka-logo__list--2" src="img/leaf2.png"/>
+<span class="shapka-logo__bukva">М</span><span class="shapka-logo__bukva">о</span><span class="shapka-logo__bukva">н</span>
+<span class="shapka-logo__bukva">и</span><span class="shapka-logo__bukva">т</span><span class="shapka-logo__bukva">о</span>
+<span class="shapka-logo__bukva">р</span><span class="shapka-logo__bukva">и</span><span class="shapka-logo__bukva">н</span><span class="shapka-logo__bukva">г</span>
+</span>
+</a>
+<!-- кнопки шапки -->
+<div class="shapka-deystviya">
+<a class="shapka-ssylka" href="account.html">
+<img alt="" aria-hidden="true" class="shapka-ssylka__ikona" src="img/icons/user.png"/>
+<span>Личный кабинет</span>
+</a>
+<button aria-controls="nastroikiPanel" aria-expanded="false" aria-label="Открыть настройки" class="nastroiki-knopka" id="nastroikiKnopka" type="button">
+<img alt="" aria-hidden="true" class="nastroiki-knopka__ikona" src="img/icons/gear.png"/>
+<span class="nastroiki-knopka__tekst">Настройки</span>
+</button>
+</div>
+</header>
+
+<!-- панель настроек -->
+<aside aria-hidden="true" aria-label="Настройки" class="nastroiki-panel" id="nastroikiPanel">
+<button aria-label="Закрыть настройки" class="nastroiki-zakryt" id="nastroikiZakryt" type="button">
+<img alt="" aria-hidden="true" src="img/icons/close.png"/>
+<span class="sr-only">Закрыть</span>
+</button>
+<!-- переключатель темы -->
+<div class="tema-vybor-blok">
+<p class="tema-podpis">Тема</p>
+<div class="tema-vybor">
+<button class="tema-knopka" id="temaSvetlaya" type="button">
+<img alt="" aria-hidden="true" src="img/icons/sun.png"/><span>Светлая</span>
+</button>
+<button class="tema-knopka" id="temaTemnaya" type="button">
+<img alt="" aria-hidden="true" src="img/icons/moon.png"/><span>Тёмная</span>
+</button>
+</div>
+</div>
+<!-- ссылка на личный кабинет -->
+<div class="nastroiki-akkaunt">
+<a class="nastroiki-ssylka nastroiki-ssylka--akcent" href="account.html">
+<img alt="" aria-hidden="true" src="img/icons/user.png"/><span>Личный кабинет</span>
+</a>
+</div>
+<!-- навигация -->
+<nav aria-label="Навигация" class="nastroiki-navigaciya">
+<a class="nastroiki-ssylka" href="index.html">Главная</a>
+<a class="nastroiki-ssylka" href="map.html">Карта и умный поиск</a>
+<a class="nastroiki-ssylka" href="feedback.html">Обратная связь</a>
+</nav>
+</aside>
+
+<!-- основной контент -->
+<main class="lichnyy-kabinet vnutrennyaya-stranica">
+
+<!-- блок входа -->
+<section aria-labelledby="vhodZagolovok" class="vhod-blok" id="vhodBlok">
+<h1 id="vhodZagolovok">Личный кабинет</h1>
+
+<!-- Скрытая кнопка входа разработчика -->
+<div id="devLoginBlock" hidden style="margin-top: 12px;">
+  <button class="knopka-osnovnaya" id="devLoginBtn" type="button" style="background: #d97706; border-color: #d97706;">
+    Вход разработчика
+  </button>
+  <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 4px;">
+    Только для тестирования модерации
+  </p>
+</div>
+
+<!-- форма входа по email (OTP) -->
+<form class="vhod-email" id="vhodEmailForma" novalidate="">
+<div class="pole-gruppa">
+<label class="pole-podpis" for="vhodImya">Имя</label>
+<input autocomplete="name" class="pole-vvod" id="vhodImya" maxlength="80" name="name" type="text"/>
+</div>
+<div class="pole-gruppa">
+<label class="pole-podpis" for="vhodEmail">E-mail</label>
+<input autocomplete="email" class="pole-vvod" id="vhodEmail" name="email" required="" type="email"/>
+</div>
+<button class="knopka-osnovnaya" id="vhodEmailKod" type="submit">Получить код</button>
+</form>
+
+<!-- форма подтверждения кода -->
+<form class="vhod-kod" hidden="" id="vhodKodForma" novalidate="">
+<div class="pole-gruppa">
+<label class="pole-podpis" for="vhodKod">Код из письма</label>
+<input autocomplete="one-time-code" class="pole-vvod" id="vhodKod" inputmode="numeric" maxlength="6" name="token" pattern="[0-9]{6}" required=""/>
+</div>
+<button class="knopka-osnovnaya" id="vhodKodPodtverdit" type="submit">Продолжить</button>
+<button class="knopka-tekst" id="vhodKodNazad" type="button">Другой e-mail</button>
+</form>
+
+<!-- вход через Яндекс -->
+<button class="knopka-vtorichnaya vhod-yandex" id="vhodYandex" type="button">Войти через Яндекс ID</button>
+
+<!-- сообщение об ошибке -->
+<p class="soobshchenie" hidden="" id="vhodSoobshchenie"></p>
+</section>
+
+<!-- блок личного кабинета (скрыт до входа) -->
+<section aria-labelledby="kabinetImya" class="kabinet-blok" hidden="" id="kabinetBlok">
+<!-- информация о пользователе -->
+<div class="kabinet-polzovatel">
+<h1 id="kabinetImya"></h1>
+<p id="kabinetEmail"></p>
+<button class="knopka-tekst" id="vyhodKnopka" type="button">Выйти</button>
+</div>
+<!-- навигация в кабинете -->
+<nav aria-label="Разделы личного кабинета" class="kabinet-navigaciya">
+<a href="education.html">Обучение</a>
+<a href="submit.html" id="ssylkaPodacha">Подать наблюдение</a>
+<a href="my-requests.html">Мои заявки <span class="kabinet-navigaciya__schetchik" id="kolichestvoZayavok"></span></a>
+<a href="feedback.html">Обратная связь</a>
+<a hidden="" href="moderator.html" id="ssylkaModerator">Модерация</a>
+</nav>
+</section>
+</main>
+
+<!-- подвал -->
+<footer aria-label="Подвал сайта" class="podval" data-component="podval">
+<div class="podval-vnutri">
+<span class="podval-nazvanie">ЭкоБиоМониторинг</span>
+<span>Кингисепп</span>
+<span>2025-2026</span>
+</div>
+</footer>
+
+<!-- скрипты -->
+<script src="js/auth.js"></script>
+<script defer src="js/header.js"></script>
+<script defer src="js/cursor.js"></script>
+<script defer src="js/account.js"></script>
+</body>
+</html>

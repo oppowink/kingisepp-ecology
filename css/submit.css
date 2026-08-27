@@ -1,0 +1,121 @@
+/* submit.css — форма подачи наблюдения и загрузка фотографий */
+
+/* обёртка страницы */
+.podacha-nablyudeniya {
+  width: min(780px, calc(100% - 46px));
+}
+.podacha-nablyudeniya > h1 {
+  margin-bottom: 39px;
+}
+
+/* блок, если обучение не пройдено */
+.dostup-soobshchenie p {
+  margin: 0 0 11px;
+}
+.dostup-soobshchenie a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+/* форма — сетка */
+.forma-nablyudeniya {
+  display: grid;
+  gap: 23px;
+}
+
+/* ряд из двух полей (координаты + дата) */
+.forma-nablyudeniya__ryad {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 17px;
+}
+
+/* зона загрузки фотографий (drag & drop) */
+.zagruzka-foto {
+  min-height: 132px;
+  display: grid;
+  place-items: center;
+  gap: 7px;
+  padding: 24px;
+  border: 1px solid var(--line);
+  border-radius: 0;
+  background: var(--surface-soft);
+  color: var(--text-muted);
+  text-align: center;
+  cursor: pointer;
+  transition: border-color var(--transition-fast), background-color var(--transition-fast);
+}
+.zagruzka-foto img {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+  transform: translateY(3px);
+}
+.zagruzka-foto:hover,
+.zagruzka-foto.peretaskivanie {
+  border-color: var(--accent);
+  background: var(--surface);
+}
+.zagruzka-foto__schetchik {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: .8rem;
+}
+
+/* блок предварительного анализа */
+.predvaritelnyy-analiz {
+  margin-top: 11px;
+  padding: 21px 0 2px;
+}
+.predvaritelnyy-analiz h2 {
+  margin-bottom: 13px;
+}
+.predvaritelnyy-analiz p {
+  margin: 13px 0 0;
+  color: var(--text-muted);
+  font-size: .83rem;
+}
+
+/* кнопка отправки — слева */
+.forma-nablyudeniya > .knopka-osnovnaya {
+  justify-self: start;
+}
+
+/* Чеклист */
+.checklist {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 4px;
+}
+.checklist-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.92rem;
+  color: var(--text);
+  cursor: pointer;
+}
+.checklist-input {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+.checklist-error {
+  margin: 6px 0 0;
+  color: var(--danger);
+  font-size: 0.82rem;
+}
+
+
+
+
+
+/* мобильная адаптивность */
+@media (max-width: 640px) {
+  .forma-nablyudeniya__ryad {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,186 @@
+<!doctype html>
+<!-- map.html - Интерактивная карта подтверждённых наблюдений и умный поиск -->
+<html lang="ru">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+
+<!-- SEO для страницы карты -->
+<meta content="Интерактивная карта подтверждённых экологических наблюдений и умный поиск по методике и данным проекта ЭкоБиоМониторинг" name="description"/>
+<meta content="карта экологического мониторинга, экологическая карта Кингисеппа, умный поиск, биоиндикация, флуктуирующая асимметрия, ЭкоБиоМониторинг" name="keywords"/>
+
+<!-- Open Graph для карты -->
+<meta content="ru_RU" property="og:locale"/>
+<meta content="website" property="og:type"/>
+<meta content="ЭкоБиоМониторинг" property="og:site_name"/>
+<meta content="Карта и умный поиск - ЭкоБиоМониторинг" property="og:title"/>
+<meta content="Карта подтверждённых наблюдений и поиск по методике и данным экологического проекта" property="og:description"/>
+<meta content="img/leaf1.png" property="og:image"/>
+<meta content="Фирменный лист проекта ЭкоБиоМониторинг" property="og:image:alt"/>
+<meta content="summary" name="twitter:card"/>
+<meta content="Карта и умный поиск - ЭкоБиоМониторинг" name="twitter:title"/>
+<meta content="Карта подтверждённых наблюдений и поиск по методике и данным экологического проекта" name="twitter:description"/>
+<meta content="img/leaf1.png" name="twitter:image"/>
+
+<!-- Open Graph расширенный (для соцсетей) -->
+<meta property="og:title" content="Карта экологического мониторинга — ЭкоБиоМониторинг" />
+<meta property="og:description" content="Интерактивная карта с точками мониторинга и результатами исследований." />
+<meta property="og:image" content="https://oppowink.github.io/kingisepp-ecology/img/brand/og-image.jpg" />
+<meta property="og:url" content="https://oppowink.github.io/kingisepp-ecology/map.html" />
+<meta property="og:type" content="website" />
+<meta property="og:locale" content="ru_RU" />
+<meta name="twitter:card" content="summary_large_image" />
+
+<title>Карта и умный поиск - ЭкоБиоМониторинг</title>
+
+<!-- фавиконка -->
+<link href="img/favicon.ico" rel="icon"/>
+
+<!-- стили -->
+<link href="css/variables.css" rel="stylesheet"/>
+<link href="css/components.css" rel="stylesheet"/>
+<link href="css/map.css" rel="stylesheet"/>
+
+<!-- Яндекс.Карты — preconnect для ускорения загрузки -->
+<link href="https://api-maps.yandex.ru" rel="preconnect"/>
+<script src="https://api-maps.yandex.ru/2.1/?apikey=188ac128-4a13-4cd1-b53a-cdf0eb730641&amp;lang=ru_RU"></script>
+
+<!-- тема — подключаем до body чтобы не мигало -->
+<script src="js/theme.js"></script>
+</head>
+<body>
+<!-- свечение за курсором -->
+<div aria-hidden="true" class="kursor" data-component="kursor"></div>
+
+<!-- затемнение под панель настроек -->
+<div aria-hidden="true" class="nastroiki-fon" id="nastroikiFon"></div>
+
+<!-- шапка -->
+<header class="shapka" data-component="shapka">
+<a aria-label="ЭкоБиоМониторинг, на главную" class="shapka-logo" href="index.html">
+<span class="shapka-logo__nazvanie">
+<span class="shapka-logo__bukva">Э</span><span class="shapka-logo__bukva">к</span>
+<img alt="" aria-hidden="true" class="shapka-logo__list shapka-logo__list--1" src="img/leaf1.png"/>
+<span class="shapka-logo__bukva">Б</span><span class="shapka-logo__bukva">и</span>
+<img alt="" aria-hidden="true" class="shapka-logo__list shapka-logo__list--2" src="img/leaf2.png"/>
+<span class="shapka-logo__bukva">М</span><span class="shapka-logo__bukva">о</span><span class="shapka-logo__bukva">н</span>
+<span class="shapka-logo__bukva">и</span><span class="shapka-logo__bukva">т</span><span class="shapka-logo__bukva">о</span>
+<span class="shapka-logo__bukva">р</span><span class="shapka-logo__bukva">и</span><span class="shapka-logo__bukva">н</span><span class="shapka-logo__bukva">г</span>
+</span>
+</a>
+<!-- кнопки шапки: личный кабинет + настройки -->
+<div class="shapka-deystviya">
+<a class="shapka-ssylka" href="account.html">
+<img alt="" aria-hidden="true" class="shapka-ssylka__ikona" src="img/icons/user.png"/>
+<span>Личный кабинет</span>
+</a>
+<button aria-controls="nastroikiPanel" aria-expanded="false" aria-label="Открыть настройки" class="nastroiki-knopka" id="nastroikiKnopka" type="button">
+<img alt="" aria-hidden="true" class="nastroiki-knopka__ikona" src="img/icons/gear.png"/>
+<span class="nastroiki-knopka__tekst">Настройки</span>
+</button>
+</div>
+</header>
+
+<!-- панель настроек -->
+<aside aria-hidden="true" aria-label="Настройки" class="nastroiki-panel" id="nastroikiPanel">
+<button aria-label="Закрыть настройки" class="nastroiki-zakryt" id="nastroikiZakryt" type="button">
+<img alt="" aria-hidden="true" src="img/icons/close.png"/>
+<span class="sr-only">Закрыть</span>
+</button>
+<!-- переключатель темы -->
+<div class="tema-vybor-blok">
+<p class="tema-podpis">Тема</p>
+<div class="tema-vybor">
+<button class="tema-knopka" id="temaSvetlaya" type="button">
+<img alt="" aria-hidden="true" src="img/icons/sun.png"/><span>Светлая</span>
+</button>
+<button class="tema-knopka" id="temaTemnaya" type="button">
+<img alt="" aria-hidden="true" src="img/icons/moon.png"/><span>Тёмная</span>
+</button>
+</div>
+</div>
+<!-- ссылка на личный кабинет -->
+<div class="nastroiki-akkaunt">
+<a class="nastroiki-ssylka nastroiki-ssylka--akcent" href="account.html">
+<img alt="" aria-hidden="true" src="img/icons/user.png"/><span>Личный кабинет</span>
+</a>
+</div>
+<!-- навигация в панели -->
+<nav aria-label="Навигация" class="nastroiki-navigaciya">
+<a class="nastroiki-ssylka" href="index.html">Главная</a>
+<a class="nastroiki-ssylka" href="map.html">Карта и умный поиск</a>
+<a class="nastroiki-ssylka" href="feedback.html">Обратная связь</a>
+</nav>
+</aside>
+
+<!-- основной контент -->
+<main class="karta-stranica">
+<!-- заголовок страницы -->
+<h1>Карта экологического мониторинга</h1>
+
+<!-- контейнер карты -->
+<div class="karta-obertka">
+<div aria-label="Карта экологического мониторинга" id="karta"></div>
+</div>
+
+<!-- панель информации о точке (скрыта, пока не выберут точку) -->
+<section aria-live="polite" class="tochka-informaciya" hidden="" id="tochkaInformaciya">
+<div class="tochka-informaciya__tekst">
+<p id="tochkaData"></p>
+<h2 id="tochkaUroven"></h2>
+<p id="tochkaAdres"></p>
+<p id="tochkaPoyasnenie"></p>
+</div>
+<!-- фотографии точки -->
+<div class="tochka-fotografii" id="tochkaFotografii"></div>
+<!-- скачивание результатов -->
+<div class="tochka-skachivanie" hidden="" id="tochkaSkachivanie">
+<span>Скачать результаты</span>
+<a download="" href="#" id="tochkaExcel">Excel</a>
+<a download="" href="#" id="tochkaPdf">PDF</a>
+</div>
+</section>
+
+<!-- умный поиск -->
+<section aria-labelledby="umniyPoiskZagolovok" class="umniy-poisk" id="umniyPoisk">
+<div class="umniy-poisk__shapka">
+<img alt="" aria-hidden="true" height="42" src="img/icons/stars.png" width="42"/>
+<h2 id="umniyPoiskZagolovok">Умный поиск</h2>
+</div>
+<!-- поле ввода и кнопка -->
+<div class="umniy-poisk__stroka">
+<input aria-label="Вопрос для умного поиска" autocomplete="off" class="pole-vvod" id="poiskVopros" placeholder="Например: как принять участие в мониторинге?" type="text"/>
+<button class="knopka-osnovnaya" id="poiskKnopka" type="button">Спросить</button>
+</div>
+<!-- примеры вопросов для быстрого старта -->
+<div aria-label="Примеры вопросов" class="umniy-poisk__primery">
+<button data-vopros="Как принять участие в мониторинге?" type="button">Как принять участие в мониторинге?</button>
+<button data-vopros="Что такое флуктуирующая асимметрия?" type="button">Что такое флуктуирующая асимметрия?</button>
+<button data-vopros="Как выбрать берёзу для наблюдения?" type="button">Как выбрать берёзу для наблюдения?</button>
+<button data-vopros="Что происходит после отправки наблюдения?" type="button">Что происходит после отправки наблюдения?</button>
+</div>
+<!-- блок с ответом (скрыт по умолчанию) -->
+<div class="umniy-poisk__otvet" hidden="" id="poiskOtvet">
+<div id="poiskOtvetTekst"></div>
+<p id="poiskOtvetIstochnik"></p>
+</div>
+</section>
+</main>
+
+<!-- подвал -->
+<footer aria-label="Подвал сайта" class="podval" data-component="podval">
+<div class="podval-vnutri">
+<span class="podval-nazvanie">ЭкоБиоМониторинг</span>
+<span>Кингисепп</span>
+<span>2025-2026</span>
+</div>
+</footer>
+
+<!-- скрипты (defer — выполняются после загрузки DOM) -->
+<script defer src="js/header.js"></script>
+<script defer src="js/cursor.js"></script>
+<script defer src="js/map.js"></script>
+<script defer src="js/work-summary.js"></script>
+<script defer src="js/map-search.js"></script>
+</body>
+</html>

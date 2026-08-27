@@ -1,0 +1,134 @@
+/* auth.css — вход и личный кабинет */
+
+/* общий контейнер для страницы кабинета */
+.lichnyy-kabinet {
+  display: grid;
+  align-content: start;
+}
+
+/* блок входа — ограничен по ширине */
+.vhod-blok {
+  width: min(500px, 100%);
+  padding-top: 7vh;
+}
+.vhod-blok h1 {
+  margin-bottom: 31px;
+}
+
+/* формы email и кода — сетка с отступами между полями */
+.vhod-email,
+.vhod-kod {
+  display: grid;
+  gap: 18px;
+  width: 100%;
+}
+.vhod-email .knopka-osnovnaya,
+.vhod-kod .knopka-osnovnaya {
+  width: fit-content;
+  margin-top: 2px;
+}
+
+/* кнопка яндекс — отдельный отступ сверху */
+.vhod-yandex {
+  margin-top: 24px;
+}
+
+/* сообщение об ошибке или успехе */
+.vhod-blok .soobshchenie {
+  margin-top: 16px;
+}
+
+/* режим предпросмотра — кнопки участник/модератор */
+.vhod-predprosmotr {
+  margin-top: 28px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px 18px;
+}
+.vhod-predprosmotr .knopka-tekst {
+  font-size: .79rem;
+}
+
+/* блок кабинета — отцентрирован, ограничен по ширине */
+.kabinet-blok {
+  width: min(720px, 100%);
+  margin-inline: auto;
+}
+
+/* информация о пользователе */
+.kabinet-polzovatel {
+  margin-bottom: 40px;
+  text-align: center;
+}
+.kabinet-polzovatel p {
+  margin: 9px 0 16px;
+  color: var(--text-muted);
+}
+
+/* навигация внутри кабинета — сетка 2 колонки */
+.kabinet-navigaciya {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  width: min(620px, 100%);
+  margin-inline: auto;
+}
+.kabinet-navigaciya a {
+  min-height: 68px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px 18px;
+  border: 1px solid var(--line);
+  border-radius: 0;
+  background: var(--surface);
+  color: var(--text);
+  font-family: var(--font-heading);
+  font-size: .96rem;
+  font-weight: 500;
+  line-height: 1.25;
+  text-align: center;
+  text-decoration: none;
+  transition: border-color var(--transition-fast), color var(--transition-fast), background-color var(--transition-fast), transform var(--transition-fast);
+}
+.kabinet-navigaciya a:hover,
+.kabinet-navigaciya a:focus-visible {
+  color: var(--accent);
+  border-color: var(--accent);
+  background: var(--surface-soft);
+  transform: translateY(-1px);
+  outline: none;
+}
+
+/* ссылка на модерацию — на всю ширину, если показана */
+#ssylkaModerator:not([hidden]) {
+  grid-column: 1 / -1;
+  width: calc(50% - 6px);
+  justify-self: center;
+}
+
+/* счётчик заявок рядом со ссылкой */
+.kabinet-navigaciya__schetchik {
+  margin-left: 6px;
+  color: var(--text-muted);
+  font-family: var(--font-body);
+  font-size: .78rem;
+  font-weight: 400;
+}
+
+/* мобильный — вертикальная навигация */
+@media (max-width: 680px) {
+  .vhod-blok {
+    padding-top: 29px;
+  }
+  .kabinet-navigaciya {
+    grid-template-columns: 1fr;
+  }
+  #ssylkaModerator:not([hidden]) {
+    grid-column: auto;
+    width: 100%;
+  }
+  .kabinet-navigaciya a {
+    min-height: 60px;
+  }
+}

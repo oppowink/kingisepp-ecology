@@ -1,0 +1,134 @@
+/* feedback.css — форма обратной связи */
+
+.obratnaya-svyaz {
+  width: min(680px, calc(100% - 46px));
+}
+
+/* заголовок с иконкой */
+.obratnaya-svyaz__zagolovok {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 38px;
+}
+.obratnaya-svyaz__zagolovok h1 {
+  margin: 0;
+}
+
+/* иконка в заголовке */
+.obratnaya-svyaz__ikona {
+  width: 42px;
+  height: 42px;
+  object-fit: contain;
+}
+
+/* сама форма — сетка с отступами */
+.forma-obratnoy-svyazi {
+  display: grid;
+  gap: 22px;
+}
+.forma-obratnoy-svyazi > .knopka-osnovnaya {
+  justify-self: start;
+}
+
+/* выпадающий список темы */
+.vybor-temy {
+  position: relative;
+}
+
+/* кнопка-переключатель списка */
+.vybor-temy__knopka {
+  width: 100%;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 10px 11px;
+  border: 1px solid var(--line);
+  border-radius: 0;
+  background: var(--input);
+  color: var(--text);
+  text-align: left;
+  cursor: pointer;
+  transition: border-color var(--transition-fast), background-color var(--transition-fast), transform var(--transition-fast);
+}
+.vybor-temy__knopka:hover {
+  border-color: var(--accent);
+  transform: translateY(-1px);
+}
+.vybor-temy.otkryt .vybor-temy__knopka {
+  border-color: var(--accent);
+  transform: none;
+}
+
+/* стрелка у кнопки */
+.vybor-temy__strelka {
+  width: 8px;
+  height: 8px;
+  flex: 0 0 8px;
+  border-right: 1px solid currentColor;
+  border-bottom: 1px solid currentColor;
+  color: var(--text-muted);
+  transform: translateY(-2px) rotate(45deg);
+  transition: transform var(--transition-fast);
+}
+.vybor-temy.otkryt .vybor-temy__strelka {
+  transform: translateY(2px) rotate(225deg);
+}
+
+/* выпадающий список */
+.vybor-temy__spisok {
+  position: absolute;
+  top: calc(100% + 5px);
+  left: 0;
+  right: 0;
+  z-index: 20;
+  padding: 5px 0;
+  border: 1px solid var(--line);
+  border-radius: 0;
+  background: var(--surface-soft);
+  box-shadow: var(--shadow-panel);
+}
+
+/* пункт списка */
+.vybor-temy__punkt {
+  width: 100%;
+  min-height: 41px;
+  display: flex;
+  align-items: center;
+  padding: 8px 11px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--text-muted);
+  text-align: left;
+  cursor: pointer;
+  transition: background-color var(--transition-fast), color var(--transition-fast);
+}
+.vybor-temy__punkt:hover,
+.vybor-temy__punkt:focus-visible {
+  background: var(--surface);
+  color: var(--text);
+  padding-left: 14px;
+}
+
+/* кнопка отправки при наведении */
+.forma-obratnoy-svyazi > .knopka-osnovnaya:hover {
+  transform: translateY(-2px);
+}
+
+/* активный пункт */
+.vybor-temy__punkt.aktivny {
+  background: var(--surface);
+  color: var(--accent);
+}
+html.dark .vybor-temy__punkt.aktivny {
+  color: var(--acid);
+}
+
+/* текстовое поле при наведении — чуть увеличивается */
+.pole-tekst:hover {
+  transform: scale(1.008);
+  transition: transform 0.15s ease;
+}

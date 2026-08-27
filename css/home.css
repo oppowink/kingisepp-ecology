@@ -1,0 +1,446 @@
+/* home.css — композиция и адаптивность главной страницы */
+
+.glavnaya { min-height: 100vh; }
+
+/* вводный блок с заголовком и описанием */
+.glavnaya-vvodnaya {
+  min-height: calc(100vh - var(--header-height));
+  display: grid;
+  place-items: center;
+  padding: 76px 24px 104px;
+}
+.glavnaya-vvodnaya__tekst { width: min(900px, 100%); text-align: center; }
+.glavnaya-vvodnaya h1 {
+  margin: 0;
+  font-family: var(--font-heading);
+  font-size: clamp(1.9rem, 4vw, 3.55rem);
+  font-weight: 400;
+  line-height: 1.14;
+  letter-spacing: -.025em;
+}
+.glavnaya-vvodnaya p {
+  max-width: 780px;
+  margin: 20px auto 0;
+  color: var(--text-muted);
+  font-size: clamp(1rem, 1.5vw, 1.16rem);
+  font-weight: 300;
+}
+
+/* каждая сцена — контейнер с липким блоком внутри */
+.glavnaya-scena { position: relative; height: 122vh; }
+.glavnaya-scena--poslednyaya { height: 114vh; }
+
+/* липкая обёртка — прилепляется к верху при скролле */
+.glavnaya-scena__lipkaya {
+  position: sticky;
+  top: var(--header-height);
+  height: calc(100vh - var(--header-height));
+  display: grid;
+  grid-template-columns: minmax(350px, 690px) minmax(270px, 1fr);
+  align-items: center;
+  gap: clamp(36px, 6vw, 104px);
+  width: min(1300px, calc(100% - 70px));
+  margin: 0 auto;
+  overflow: hidden;
+}
+
+/* блок с текстом внутри сцены */
+.glavnaya-blok {
+  grid-column: 1;
+  width: min(100%, 680px);
+  min-height: 370px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 50px 52px 51px;
+  background: var(--surface);
+  box-shadow: var(--shadow-object);
+  will-change: transform, opacity;
+}
+.glavnaya-blok h2 {
+  margin: 0;
+  font-family: var(--font-heading);
+  font-size: clamp(1.55rem, 2.8vw, 2.48rem);
+  font-weight: 400;
+  line-height: 1.18;
+}
+.glavnaya-blok p {
+  max-width: 570px;
+  margin: 17px 0 0;
+  color: var(--text-muted);
+  font-size: clamp(1rem, 1.18vw, 1.1rem);
+  font-weight: 300;
+}
+
+/* иллюстрация справа — картинка или ссылка-переход */
+.glavnaya-illyustraciya {
+  grid-column: 2;
+  justify-self: center;
+  width: min(350px, 31vw);
+  min-height: 310px;
+  display: grid;
+  place-items: center;
+  will-change: transform, opacity;
+}
+
+/* ссылка-переход с листом */
+.glavnaya-perehod {
+  width: 100%;
+  min-height: 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  color: var(--text-muted);
+  text-decoration: none;
+  text-align: center;
+}
+.glavnaya-perehod__nazvanie {
+  font-family: var(--font-heading);
+  font-size: clamp(.94rem, 1.28vw, 1.08rem);
+  position: relative;
+  z-index: 2;
+  color: var(--text);
+  font-weight: 500;
+  transition: color var(--transition-fast), transform var(--transition-fast), text-shadow var(--transition-base);
+}
+.glavnaya-perehod__list {
+  width: min(295px, 100%);
+  height: auto;
+  display: block;
+  object-fit: contain;
+  transform-origin: center;
+  transition: transform 260ms ease, filter 260ms ease;
+}
+
+/* повороты листьев у каждой ссылки */
+.glavnaya-perehod--karta .glavnaya-perehod__list { transform: rotate(-10deg); }
+.glavnaya-perehod--uchastie .glavnaya-perehod__list { transform: rotate(9deg); }
+.glavnaya-perehod--obuchenie .glavnaya-perehod__list { transform: rotate(-5deg); }
+.glavnaya-perehod--svyaz .glavnaya-perehod__list { transform: rotate(8deg); }
+
+/* hover-эффекты для ссылок */
+.glavnaya-perehod:hover .glavnaya-perehod__nazvanie,
+.glavnaya-perehod:focus-visible .glavnaya-perehod__nazvanie {
+  color: var(--accent);
+  transform: translateY(-2px);
+  text-shadow: 0 0 12px rgba(55, 122, 67, .32);
+}
+html.dark .glavnaya-perehod:hover .glavnaya-perehod__nazvanie,
+html.dark .glavnaya-perehod:focus-visible .glavnaya-perehod__nazvanie {
+  color: var(--acid);
+  text-shadow: 0 0 14px rgba(113, 226, 28, .34);
+}
+.glavnaya-perehod:hover .glavnaya-perehod__list,
+.glavnaya-perehod:focus-visible .glavnaya-perehod__list {
+  filter: drop-shadow(0 0 7px rgba(55, 122, 67, .24)) drop-shadow(0 0 16px rgba(55, 122, 67, .16));
+}
+html.dark .glavnaya-perehod:hover .glavnaya-perehod__list,
+html.dark .glavnaya-perehod:focus-visible .glavnaya-perehod__list {
+  filter: drop-shadow(0 0 8px rgba(113, 226, 28, .25)) drop-shadow(0 0 18px rgba(113, 226, 28, .16));
+}
+
+/* дополнительные повороты и масштабирование при наведении */
+.glavnaya-perehod--karta:hover .glavnaya-perehod__list { transform: rotate(-14deg) scale(1.045); }
+.glavnaya-perehod--uchastie:hover .glavnaya-perehod__list { transform: rotate(13deg) scale(1.045); }
+.glavnaya-perehod--obuchenie:hover .glavnaya-perehod__list { transform: rotate(-9deg) scale(1.045); }
+.glavnaya-perehod--svyaz:hover .glavnaya-perehod__list { transform: rotate(12deg) scale(1.045); }
+
+/* специальная иллюстрация для блока актуальности — элементы позиционируются абсолютно */
+.glavnaya-illyustraciya--aktualnost {
+  position: relative;
+  width: min(590px, 43vw);
+  height: min(390px, 42vh);
+  min-height: 320px;
+  display: block;
+  overflow: visible;
+}
+.aktualnost-element {
+  position: absolute;
+  display: block;
+  height: auto;
+  opacity: 0;
+  pointer-events: none;
+  will-change: opacity, transform;
+}
+
+/* позиционирование элементов внутри сцены актуальности */
+.aktualnost-doroga {
+  z-index: 1;
+  left: -7%;
+  bottom: 19%;
+  width: 666%;
+  top: 64%;
+  transform: translateY(-34px);
+}
+.aktualnost-avtomobil {
+  z-index: 3;
+  left: 33%;
+  bottom: 27%;
+  width: 40%;
+  top: 44%;
+  transform: translate3d(-58px, -26px, 0) scaleX(-1);
+}
+.aktualnost-vyhlop {
+  z-index: 2;
+  left: 27%;
+  bottom: 54%;
+  top: 38%;
+  width: 31.5%;
+  transform: translateY(-16px) scaleX(-1) scale(.92);
+}
+.aktualnost-berezy {
+  z-index: 2;
+  left: -17%;
+  top: -1%;
+  bottom: 23%;
+  width: 57%;
+  transform: translateY(-30px);
+}
+
+/* анимации для элементов актуальности — запускаются при добавлении класса aktualnost-aktivna */
+.glavnaya-illyustraciya--aktualnost.aktualnost-aktivna .aktualnost-doroga {
+  animation: aktualnost-padenie .46s cubic-bezier(.22,1,.36,1) .06s both;
+}
+.glavnaya-illyustraciya--aktualnost.aktualnost-aktivna .aktualnost-avtomobil {
+  animation: aktualnost-mashina 1.15s cubic-bezier(.2,.78,.22,1) .38s both;
+}
+.glavnaya-illyustraciya--aktualnost.aktualnost-aktivna .aktualnost-vyhlop {
+  animation: aktualnost-poyavlenie .42s ease-out 1.36s both;
+}
+.glavnaya-illyustraciya--aktualnost.aktualnost-aktivna .aktualnost-berezy {
+  animation: aktualnost-padenie .48s cubic-bezier(.22,1,.36,1) 1.72s both;
+}
+.glavnaya-illyustraciya--aktualnost.aktualnost-aktivna .aktualnost-strelka {
+  animation: aktualnost-padenie .40s cubic-bezier(.22,1,.36,1) 2.18s both;
+}
+.glavnaya-illyustraciya--aktualnost.aktualnost-aktivna .aktualnost-fa {
+  animation: aktualnost-padenie .44s cubic-bezier(.22,1,.36,1) 2.54s both;
+}
+
+/* ключевые кадры анимаций */
+@keyframes aktualnost-padenie {
+  0% { opacity: 0; transform: translateY(-30px); }
+  38% { opacity: .68; }
+  100% { opacity: 1; transform: translateY(0); }
+}
+@keyframes aktualnost-poyavlenie {
+  0% { opacity: 0; transform: translateY(-16px) scaleX(-1) scale(.92); }
+  100% { opacity: 1; transform: translateY(0) scaleX(-1) scale(1); }
+}
+@keyframes aktualnost-mashina {
+  0% { opacity: 0; transform: translate3d(-58px,-26px,0) scaleX(-1); }
+  25% { opacity: 1; transform: translate3d(-12px,0,0) scaleX(-1); }
+  100% { opacity: 1; transform: translate3d(clamp(82px, 8.4vw, 126px),0,0) scaleX(-1); }
+}
+
+/* последняя сцена — центрируется, блок занимает всю ширину */
+.glavnaya-scena--poslednyaya .glavnaya-scena__lipkaya {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 22px;
+  text-align: center;
+}
+.glavnaya-scena--poslednyaya .glavnaya-blok {
+  width: min(760px, 100%);
+  min-height: 285px;
+  justify-content: center;
+  align-items: center;
+  padding-inline: clamp(34px, 6vw, 68px);
+}
+.glavnaya-scena--poslednyaya .glavnaya-blok p { max-width: 610px; }
+.glavnaya-scena--poslednyaya .glavnaya-illyustraciya {
+  width: min(270px, 32vw);
+  min-height: 230px;
+}
+.glavnaya-scena--poslednyaya .glavnaya-perehod { min-height: 220px; }
+.glavnaya-scena--poslednyaya .glavnaya-perehod__list { width: min(215px, 100%); }
+
+/* термины — выделенные слова с подсказками */
+.termin {
+  display: inline;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--accent);
+  font: inherit;
+  font-weight: 650;
+  line-height: inherit;
+  text-align: inherit;
+  text-decoration: none;
+  cursor: help;
+  transition: color var(--transition-fast), opacity var(--transition-fast);
+}
+.termin:hover,
+.termin:focus-visible,
+.termin--aktivny { color: var(--success); outline: none; }
+html.dark .termin { color: var(--acid); }
+html.dark .termin:hover,
+html.dark .termin:focus-visible,
+html.dark .termin--aktivny { color: var(--accent-soft); }
+
+/* всплывающая подсказка для термина */
+.termin-tooltip {
+  position: fixed;
+  z-index: 1080;
+  width: min(370px, calc(100vw - 24px));
+  padding: 14px 16px 15px;
+  border: 0;
+  border-radius: 0;
+  background: var(--surface);
+  box-shadow: var(--shadow-panel);
+  color: var(--text);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateY(5px);
+  transition: opacity 150ms ease, transform 180ms ease, visibility 150ms ease;
+}
+html.dark .termin-tooltip { background: var(--surface-soft); }
+.termin-tooltip.vidim { opacity: 1; visibility: visible; pointer-events: auto; transform: translateY(0); }
+.termin-tooltip__tekst { display: block; color: var(--text-muted); font-size: .86rem; font-weight: 400; line-height: 1.5; }
+
+/* анимационная точка, указывающая на первый термин при первом посещении */
+.termin-demo-tochka {
+  position: fixed;
+  z-index: 1090;
+  left: 0;
+  top: 0;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--accent);
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  transition: left 560ms cubic-bezier(.22,1,.36,1), top 560ms cubic-bezier(.22,1,.36,1), opacity 150ms ease;
+}
+.termin-demo-tochka.vidim { opacity: 1; }
+
+/* подпись к демонстрационной точке */
+.termin-demo-podpis {
+  position: fixed;
+  z-index: 1085;
+  left: 50%;
+  bottom: clamp(20px, 4vh, 38px);
+  max-width: min(470px, calc(100vw - 36px));
+  margin: 0;
+  padding: 11px 15px 12px;
+  background: var(--surface);
+  box-shadow: var(--shadow-panel);
+  color: var(--text-muted);
+  font-size: .79rem;
+  font-weight: 400;
+  line-height: 1.4;
+  text-align: center;
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, 6px);
+  transition: opacity 180ms ease, transform 220ms ease;
+}
+html.dark .termin-demo-podpis { background: var(--surface-soft); }
+.termin-demo-podpis strong { color: var(--accent); font-weight: 650; }
+html.dark .termin-demo-podpis strong { color: var(--acid); }
+.termin-demo-podpis.vidim { opacity: 1; transform: translate(-50%, 0); }
+
+/* призыв в блоке участия */
+.glavnaya-blok .glavnaya-prizyv {
+  width: fit-content;
+  max-width: 100%;
+  margin: 19px 0 3px;
+  padding: 0;
+  color: var(--accent);
+  font-family: var(--font-heading);
+  font-size: clamp(1.08rem, 1.45vw, 1.25rem);
+  font-weight: 500;
+  line-height: 1.35;
+  letter-spacing: -.01em;
+}
+html.dark .glavnaya-blok .glavnaya-prizyv { color: var(--acid); }
+
+/* планшетная адаптивность (981–760) */
+@media (max-width: 980px) and (min-width: 761px) {
+  .glavnaya-scena__lipkaya { grid-template-columns: minmax(330px, 1fr) minmax(230px, .72fr); width: calc(100% - 46px); gap: 34px; }
+  .glavnaya-blok { padding: 42px 40px 44px; }
+  .glavnaya-illyustraciya--aktualnost { width: min(500px, 45vw); }
+  .glavnaya-perehod__list { width: min(255px, 100%); }
+}
+
+/* мобильная адаптивность (до 760px) */
+@media (max-width: 760px) {
+  .glavnaya-vvodnaya { min-height: auto; padding: 72px 19px 92px; }
+  .glavnaya-scena,
+  .glavnaya-scena--poslednyaya { height: auto; padding: 0 19px 92px; }
+  .glavnaya-scena__lipkaya,
+  .glavnaya-scena--poslednyaya .glavnaya-scena__lipkaya {
+    position: relative;
+    top: auto;
+    height: auto;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 29px;
+    overflow: visible;
+    text-align: left;
+  }
+  .glavnaya-blok,
+  .glavnaya-scena--poslednyaya .glavnaya-blok {
+    width: 100%;
+    min-height: 250px;
+    align-items: stretch;
+    justify-content: flex-end;
+    padding: 32px 28px 34px;
+    text-align: left;
+    transform: none !important;
+    opacity: 1 !important;
+  }
+  .glavnaya-illyustraciya,
+  .glavnaya-scena--poslednyaya .glavnaya-illyustraciya {
+    width: min(280px, 76vw);
+    min-height: 190px;
+    align-self: center;
+    transform: none !important;
+    opacity: 1 !important;
+  }
+  .glavnaya-perehod,
+  .glavnaya-scena--poslednyaya .glavnaya-perehod { min-height: 200px; gap: 11px; }
+  .glavnaya-perehod__list,
+  .glavnaya-scena--poslednyaya .glavnaya-perehod__list { width: min(235px, 100%); }
+  .glavnaya-illyustraciya--aktualnost { width: 100%; height: 270px; min-height: 270px; align-self: stretch; }
+  .aktualnost-doroga { width: 45%; bottom: 17%; }
+  .aktualnost-avtomobil { width: 20%; bottom: 27%; }
+  .aktualnost-vyhlop { width: 11.5%; bottom: 34%; }
+  .aktualnost-berezy { width: 27%; bottom: 22%; }
+  .aktualnost-strelka { width: 12.5%; top: 49%; }
+  .aktualnost-fa { width: 18.5%; right: 2.5%; }
+  .termin { cursor: pointer; }
+  .termin-tooltip { width: min(370px, calc(100vw - 24px)); padding: 13px 14px 14px; }
+  .termin-tooltip__tekst { font-size: .88rem; }
+  .termin-demo-podpis { bottom: 16px; font-size: .78rem; }
+}
+
+/* отключаем анимации при предпочтении reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .glavnaya-blok,
+  .glavnaya-illyustraciya { transform: none !important; opacity: 1 !important; }
+  .aktualnost-element { opacity: 1 !important; transform: none !important; animation: none !important; }
+  .aktualnost-avtomobil { transform: scaleX(-1) !important; }
+  .aktualnost-vyhlop { transform: scaleX(-1) !important; }
+  .termin,
+  .termin-tooltip,
+  .termin-demo-tochka,
+  .termin-demo-podpis { transition: none; }
+}
+
+/* на мобильных скрываем элементы актуальности (они всё равно не влезают) */
+@media (max-width: 760px) {
+  .aktualnost-element {
+    display: none !important;
+  }
+}

@@ -1,0 +1,81 @@
+/* variables.css — цвета, типографика и базовые переменные интерфейса */
+
+:root {
+  color-scheme: light;
+
+  /* фоны и поверхности */
+  --bg: #f4f7ed;
+  --surface: #e8f1de;
+  --surface-soft: #edf5e6;
+  --input: #f7faf2;
+
+  /* текст */
+  --text: #263326;
+  --text-muted: #607060;
+  --text-soft: #637363;
+
+  /* акценты */
+  --accent: #377a43;
+  --accent-soft: #81c995;
+  --acid: #66d900;
+
+  /* линии и сетка */
+  --line: rgba(70, 108, 70, .24);
+  --line-strong: rgba(70, 108, 70, .46);
+  --grid: rgba(82, 110, 82, .065);
+
+  /* оверлей и виньетка */
+  --overlay: rgba(18, 30, 18, .42);
+  --vignette: rgba(29, 54, 29, .07);
+
+  /* статусы */
+  --success: #2f7d3b;
+  --warning: #956512;
+  --danger: #aa4141;
+
+  /* тени */
+  --shadow-panel: 0 16px 44px rgba(36, 58, 36, .08);
+  --shadow-object: 0 24px 64px rgba(26, 46, 26, .10);
+
+  /* шрифты */
+  --font-heading: 'Comfortaa', 'Trebuchet MS', 'Segoe UI', sans-serif;
+  --font-body: 'Inter', 'Segoe UI', Arial, sans-serif;
+
+  /* размеры и анимации */
+  --header-height: 72px;
+  --control-radius: 0px;
+  --transition-fast: 160ms ease;
+  --transition-base: 260ms ease;
+}
+
+/* тёмная тема — переопределяем переменные */
+html.dark {
+  color-scheme: dark;
+
+  --bg: #111411;
+  --surface: #1a211a;
+  --surface-soft: #202820;
+  --input: #171d17;
+
+  --text: #e5efe5;
+  --text-muted: #a4b4a4;
+  --text-soft: #7f917f;
+
+  --accent: #69b66d;
+  --accent-soft: #8cc58e;
+  --acid: #71e21c;
+
+  --line: rgba(113, 226, 28, .14);
+  --line-strong: rgba(113, 226, 28, .30);
+  --grid: rgba(113, 226, 28, .045);
+
+  --overlay: rgba(0, 0, 0, .62);
+  --vignette: rgba(0, 0, 0, .46);
+
+  --success: #87d38e;
+  --warning: #e1b35d;
+  --danger: #e78686;
+
+  --shadow-panel: 0 18px 48px rgba(0, 0, 0, .22);
+  --shadow-object: 0 26px 72px rgba(0, 0, 0, .28);
+}

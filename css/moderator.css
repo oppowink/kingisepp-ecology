@@ -1,0 +1,123 @@
+/* moderator.css — интерфейс модерации заявок */
+
+/* обёртка страницы модерации */
+.moderaciya {
+  width: min(920px, calc(100% - 46px));
+}
+.moderaciya > h1 {
+  margin-bottom: 39px;
+}
+
+/* список заявок — сетка с отступами */
+.moderaciya-spisok {
+  display: grid;
+  gap: 42px;
+}
+
+/* карточка заявки */
+.moderaciya-zayavka h2 {
+  margin-bottom: 9px;
+  font-size: 1.1rem;
+}
+
+/* информация об авторе */
+.moderaciya-meta {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: .84rem;
+}
+
+/* данные заявки (место, дата, фото) */
+.moderaciya-dannye {
+  margin: 14px 0 0;
+  color: var(--text-muted);
+}
+
+/* блок с результатом предварительного AI-анализа */
+.moderaciya-ai {
+  margin-top: 14px;
+}
+
+/* поле для указания причины отклонения */
+.moderaciya-prichina {
+  margin-top: 17px;
+}
+
+/* кнопки Одобрить / Отклонить */
+.moderaciya-deystviya {
+  display: flex;
+  gap: 11px;
+  margin-top: 13px;
+}
+
+/* moderator.css — дополнение для чеклиста и селекта */
+.moderaciya-checklist {
+  background: var(--surface-soft);
+  border: 1px solid var(--line);
+  padding: 10px;
+  margin: 12px 0;
+}
+.moderaciya-checklist label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  color: var(--text);
+  margin: 4px 0;
+  cursor: pointer;
+}
+.moderaciya-checklist input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--accent);
+  flex-shrink: 0;
+  cursor: pointer;
+}
+.pole-vybor {
+  min-height: 44px;
+  padding: 8px 10px;
+  border: 1px solid var(--line);
+  background: var(--input);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  width: 100%;
+  outline: none;
+  transition: border-color var(--transition-fast);
+}
+.pole-vybor:focus {
+  border-color: var(--accent);
+}
+
+/* Чеклист модератора */
+.moderaciya-checklist {
+  background: var(--surface-soft);
+  border: 1px solid var(--line);
+  padding: 10px;
+  margin: 12px 0;
+}
+.moderaciya-checklist label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  color: var(--text);
+  margin: 4px 0;
+  cursor: pointer;
+}
+.moderaciya-checklist input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--accent);
+  flex-shrink: 0;
+  cursor: pointer;
+}
+/* Заголовок чеклиста — шрифт Comfortaa, не жирный */
+.mod-checklist-title {
+  display: block;
+  margin-bottom: 6px;
+  font-family: var(--font-heading);
+  font-weight: 400;
+  font-size: 0.95rem;
+  color: var(--text);
+}

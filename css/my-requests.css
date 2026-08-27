@@ -1,0 +1,89 @@
+/* my-requests.css — список заявок участника */
+
+/* обёртка страницы */
+.moi-zayavki {
+  width: min(820px, calc(100% - 46px));
+}
+
+/* шапка: заголовок + ссылка «Подать наблюдение» */
+.moi-zayavki__shapka {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 23px;
+  margin-bottom: 39px;
+}
+.moi-zayavki__shapka a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+/* список заявок — сетка с отступами */
+.spisok-zayavok {
+  display: grid;
+  gap: 31px;
+  margin-top: 22px;
+}
+
+/* одна карточка заявки */
+.zayavka {
+  padding: 0 0 3px;
+}
+
+/* верхняя часть: название + статус */
+.zayavka__verh {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 24px;
+}
+.zayavka h2 {
+  font-size: 1.08rem;
+}
+
+/* статус заявки */
+.zayavka__status {
+  flex: 0 0 auto;
+  font-size: .82rem;
+}
+.zayavka__status[data-status='pending'] {
+  color: var(--warning);
+}
+.zayavka__status[data-status='approved'] {
+  color: var(--success);
+}
+.zayavka__status[data-status='rejected'] {
+  color: var(--danger);
+}
+
+/* метаданные (место, дата) и причина отклонения */
+.zayavka__meta,
+.zayavka__prichina {
+  margin: 8px 0 0;
+  color: var(--text-muted);
+  font-size: .84rem;
+}
+
+/* ссылка на сертификат */
+.zayavka__sertifikat {
+  display: inline-block;
+  margin-top: 10px;
+  color: var(--accent);
+  text-decoration: none;
+}
+
+/* если заявок нет */
+.zayavki-pusty {
+  margin: 0;
+  color: var(--text-muted);
+}
+
+/* мобильная адаптивность */
+@media (max-width: 600px) {
+  .moi-zayavki__shapka,
+  .zayavka__verh {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 9px;
+  }
+}

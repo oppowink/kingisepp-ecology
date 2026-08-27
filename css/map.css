@@ -1,0 +1,158 @@
+/* map.css — карта и панель умного поиска */
+
+/* обёртка страницы карты */
+.karta-stranica {
+  width: min(1120px, calc(100% - 46px));
+  margin: 0 auto;
+  padding: 58px 0 84px;
+}
+.karta-stranica > h1 {
+  margin-bottom: 33px;
+}
+
+/* контейнер карты с ограничением высоты */
+.karta-obertka {
+  height: min(62vh, 650px);
+  min-height: 410px;
+  overflow: hidden;
+  background: var(--surface);
+}
+#karta {
+  width: 100%;
+  height: 100%;
+}
+
+/* панель информации о точке — плавное появление */
+.tochka-informaciya {
+  padding: 30px 0 7px;
+  transition: opacity var(--transition-fast);
+}
+.tochka-informaciya.smena-tochki {
+  opacity: 0;
+}
+
+/* текстовая часть панели */
+.tochka-informaciya__tekst {
+  max-width: 700px;
+}
+.tochka-informaciya__tekst p {
+  margin: 5px 0 0;
+  color: var(--text-muted);
+}
+.tochka-informaciya__tekst h2 {
+  margin-top: 9px;
+}
+
+/* фотографии точки — горизонтальный скролл */
+.tochka-fotografii {
+  display: flex;
+  gap: 11px;
+  overflow-x: auto;
+  margin-top: 20px;
+  padding-bottom: 6px;
+}
+.tochka-fotografii img {
+  width: 210px;
+  height: 145px;
+  flex: 0 0 auto;
+  object-fit: cover;
+}
+
+/* ссылки для скачивания результатов */
+.tochka-skachivanie {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px 16px;
+  margin-top: 21px;
+  font-size: .85rem;
+}
+.tochka-skachivanie a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+/* блок умного поиска */
+.umniy-poisk {
+  width: min(840px, 100%);
+  margin-top: 84px;
+}
+.umniy-poisk__shapka {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 23px;
+}
+.umniy-poisk__shapka img {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+  transform-origin: center;
+  transition: transform var(--transition-base);
+}
+.umniy-poisk__shapka:hover img {
+  transform: rotate(-5deg) scale(1.04);
+}
+
+/* строка ввода и кнопка */
+.umniy-poisk__stroka {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 10px;
+}
+
+/* примеры вопросов */
+.umniy-poisk__primery {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 18px;
+  margin-top: 14px;
+}
+.umniy-poisk__primery button {
+  padding: 3px 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--text-muted);
+  text-align: left;
+  font-size: .8rem;
+  cursor: pointer;
+  transition: color var(--transition-fast);
+}
+.umniy-poisk__primery button:hover {
+  color: var(--text);
+}
+
+/* блок с ответом */
+.umniy-poisk__otvet {
+  margin-top: 26px;
+  max-width: 770px;
+}
+.umniy-poisk__otvet > div {
+  white-space: normal;
+}
+.umniy-poisk__otvet > p {
+  margin: 10px 0 0;
+  color: var(--text-soft);
+  font-size: .75rem;
+}
+
+/* мобильная адаптивность */
+@media (max-width: 680px) {
+  .karta-stranica {
+    width: calc(100% - 34px);
+    padding-top: 44px;
+  }
+  .karta-obertka {
+    min-height: 350px;
+    height: 54vh;
+  }
+  .umniy-poisk {
+    margin-top: 64px;
+  }
+  .umniy-poisk__stroka {
+    grid-template-columns: 1fr;
+  }
+  .umniy-poisk__stroka .knopka-osnovnaya {
+    justify-self: start;
+  }
+}

@@ -1,0 +1,159 @@
+/* education.css — страница обучения по методике */
+
+.obuchenie {
+  width: min(1040px, calc(100% - 46px));
+}
+
+/* счётчик слайдов */
+.obuchenie-schetchik {
+  margin-bottom: 17px;
+  color: var(--text-muted);
+  font-size: .78rem;
+}
+
+/* контейнер слайдов — минимальная высота */
+.obuchenie-ekran {
+  min-height: 470px;
+}
+
+/* один слайд — текст слева, картинка справа */
+.obuchenie-slajd {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(300px, 43%);
+  align-items: center;
+  gap: clamp(27px, 5vw, 64px);
+}
+
+/* текстовая часть слайда */
+.obuchenie-tekst {
+  max-width: 540px;
+}
+.obuchenie-tekst h2 {
+  margin-bottom: 19px;
+}
+.obuchenie-tekst p {
+  margin: 0;
+  color: var(--text-muted);
+  font-weight: 300;
+}
+
+/* заглушка для фото */
+.obuchenie-foto-zagluska {
+  min-height: 330px;
+  margin: 0;
+  display: grid;
+  place-items: center;
+  padding: 22px;
+  background: var(--surface-soft);
+  color: var(--text-soft);
+  text-align: center;
+}
+.obuchenie-foto-zagluska figcaption {
+  font-size: .75rem;
+}
+
+/* ряд из двух или трёх фото */
+.obuchenie-foto-ryad {
+  min-width: 0;
+  min-height: 330px;
+  display: flex;
+  gap: 7px;
+}
+.obuchenie-foto-ryad .obuchenie-foto-zagluska {
+  flex: 1 1 0;
+  min-width: 0;
+  min-height: 330px;
+  padding: 12px;
+}
+.obuchenie-foto-ryad--tri .obuchenie-foto-zagluska figcaption {
+  overflow-wrap: anywhere;
+}
+
+/* итоговый блок — 2 колонки с краткой сводкой */
+.obuchenie-itog {
+  min-height: 330px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+.obuchenie-itog span {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 7px;
+  min-height: 154px;
+  padding: 20px;
+  background: var(--surface-soft);
+  color: var(--text-muted);
+  font-size: .86rem;
+}
+.obuchenie-itog strong {
+  color: var(--text);
+  font-family: var(--font-heading);
+  font-size: 1.06rem;
+  font-weight: 400;
+}
+
+/* кнопки управления слайдами */
+.obuchenie-upravlenie {
+  display: flex;
+  gap: 11px;
+  margin-top: 29px;
+}
+
+/* блок завершения обучения */
+.obuchenie-zaversheno {
+  margin-top: 47px;
+}
+.obuchenie-zaversheno > p {
+  margin: 0 0 15px;
+}
+
+/* ссылки после завершения */
+.obuchenie-posle {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 11px 21px;
+}
+.obuchenie-posle a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+/* мобильная адаптивность */
+@media (max-width: 760px) {
+  .obuchenie {
+    width: min(100% - 34px, 720px);
+    padding-top: 43px;
+  }
+  .obuchenie-ekran {
+    min-height: auto;
+  }
+  .obuchenie-slajd {
+    grid-template-columns: 1fr;
+    gap: 25px;
+  }
+  .obuchenie-foto-zagluska {
+    min-height: 220px;
+    order: 2;
+  }
+  .obuchenie-foto-ryad {
+    order: 2;
+    min-height: 220px;
+    overflow-x: auto;
+  }
+  .obuchenie-foto-ryad .obuchenie-foto-zagluska {
+    flex: 0 0 min(62vw, 230px);
+    min-height: 220px;
+  }
+  .obuchenie-itog {
+    min-height: auto;
+    order: 2;
+  }
+  .obuchenie-itog span {
+    min-height: 120px;
+  }
+  .obuchenie-upravlenie {
+    margin-top: 25px;
+  }
+}
