@@ -2,12 +2,12 @@
 (function () {
   'use strict';
 
-  document.addEventListener('DOMContentLoaded', async function () {
+  document.addEventListener('DOMContentLoaded', function () {
     var form = document.getElementById('formaObratnoySvyazi');
     var message = document.getElementById('svyazSoobshchenie');
     if (!form) return;
 
-    // элементы кастомного селекта темы
+    // === КАСТОМНЫЙ СЕЛЕКТ (тема) ===
     var topicRoot = document.getElementById('vyborTemy');
     var topicButton = document.getElementById('vyborTemyKnopka');
     var topicList = document.getElementById('vyborTemySpisok');
@@ -15,71 +15,116 @@
     var topicInput = document.getElementById('svyazTip');
     var topicOptions = topicList ? Array.from(topicList.querySelectorAll('[data-value]')) : [];
 
-    function closeTopicMenu() { /* скрыть выпадашку */ }
-    function openTopicMenu() { /* показать выпадашку */ }
+    function closeMenu() {
+      if (!topicRoot || !topicButton || !topicList) return;
+      topicRoot.classList.remove('otkryt');
+      topicList.setAttribute('hidden', '');
+      topicButton.setAttribute('aria-expanded', 'false');
+    }
 
-    // инициализация кастомного селекта
+    function openMenu() {
+      if (!topicRoot || !topicButton || !topicList) return;
+      topicRoot.classList.add('otkryt');
+      topicList.removeAttribute('hidden');
+      topicButton.setAttribute('aria-expanded', 'true');
+      var active = topicOptions.find(function (opt) { return opt.classList.contains('aktivny'); });
+      if (active) active.focus();
+    }
+
     if (topicButton && topicList && topicInput && topicText) {
-      topicButton.addEventListener('click', function () {
-        if (topicList.hidden) openTopicMenu();
-        else closeTopicMenu();
+      // Клик по кнопке — переключение меню
+      topicButton.addEventListener('click', function (e) {
+        e.stopPropagation();
+        if (topicList.hasAttribute('hidden')) {
+          openMenu();
+        } else {
+          closeMenu();
+        }
       });
 
+      // Выбор пункта
       topicOptions.forEach(function (option) {
         option.addEventListener('click', function () {
           topicInput.value = option.dataset.value;
           topicText.textContent = option.textContent;
           topicOptions.forEach(function (item) {
-            var selected = item === option;
-            item.classList.toggle('aktivny', selected);
-            item.setAttribute('aria-selected', selected ? 'true' : 'false');
+            var isActive = item === option;
+            item.classList.toggle('aktivny', isActive);
+            item.setAttribute('aria-selected', isActive ? 'true' : 'false');
           });
-          closeTopicMenu();
+          closeMenu();
           topicButton.focus();
         });
       });
 
-      // управление с клавиатуры (стрелки, Escape)
-      topicList.addEventListener('keydown', function (event) {
+      // Клавиатура: Escape и стрелки
+      topicList.addEventListener('keydown', function (e) {
         var focused = document.activeElement;
         var index = topicOptions.indexOf(focused);
-        if (event.key === 'Escape') {
-          event.preventDefault();
-          closeTopicMenu();
+        if (e.key === 'Escape') {
+          e.preventDefault();
+          closeMenu();
           topicButton.focus();
-        } else if (event.key === 'ArrowDown') {
-          event.preventDefault();
-          topicOptions[(index + 1 + topicOptions.length) % topicOptions.length].focus();
-        } else if (event.key === 'ArrowUp') {
-          event.preventDefault();
-          topicOptions[(index - 1 + topicOptions.length) % topicOptions.length].focus();
+        } else if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          var next = (index + 1) % topicOptions.length;
+          topicOptions[next].focus();
+        } else if (e.key === 'ArrowUp') {
+          e.preventDefault();
+          var prev = (index - 1 + topicOptions.length) % topicOptions.length;
+          topicOptions[prev].focus();
         }
       });
 
-      document.addEventListener('click', function (event) {
-        if (topicRoot && !topicRoot.contains(event.target)) closeTopicMenu();
+      // Клик вне меню — закрываем
+      document.addEventListener('click', function (e) {
+        if (topicRoot && !topicRoot.contains(e.target)) {
+          closeMenu();
+        }
       });
     }
 
-    // подставляем данные пользователя, если он авторизован
-    var user = EcoAuth.getUser() || await EcoAuth.refreshUser();
-    if (user) {
-      document.getElementById('svyazImya').value = user.name || '';
-      document.getElementById('svyazEmail').value = user.email || '';
+    // === АВТОЗАПОЛНЕНИЕ ПОЛЬЗОВАТЕЛЕМ (если авторизован) ===
+    // Используем EcoAuth (асинхронно, но если его нет — просто пропускаем)
+    if (typeof EcoAuth !== 'undefined') {
+      var user = EcoAuth.getUser() || null;
+      if (user) {
+        document.getElementById('svyazImya').value = user.name || '';
+        document.getElementById('svyazEmail').value = user.email || '';
+      }
     }
 
-    // отправка формы — сохраняем через EcoAuth
-    form.addEventListener('submit', function (event) {
-      event.preventDefault();
+    // === ОТПРАВКА ФОРМЫ ===
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
       var text = document.getElementById('svyazTekst').value.trim();
-      if (!text) return;
+      if (!text) {
+        if (message) {
+          message.textContent = 'Напишите сообщение';
+          message.dataset.state = 'error';
+          message.hidden = false;
+        }
+        return;
+      }
 
-      EcoAuth.saveFeedback({
-        name: document.getElementById('svyazImya').value.trim(),
-        email: document.getElementById('svyazEmail').value.trim(),
-        type: document.getElementById('svyazTip').value,
-        text: text
-      });
+      // Сохраняем через EcoAuth, если есть
+      if (typeof EcoAuth !== 'undefined' && EcoAuth.saveFeedback) {
+        EcoAuth.saveFeedback({
+          name: document.getElementById('svyazImya').value.trim(),
+          email: document.getElementById('svyazEmail').value.trim(),
+          type: document.getElementById('svyazTip').value,
+          text: text
+        });
+      } else {
+        // Заглушка для теста
+        console.log('Обратная связь:', {
+          name: document.getElementById('svyazImya').value.trim(),
+          email: document.getElementById('svyazEmail').value.trim(),
+          type: document.getElementById('svyazTip').value,
+          text: text
+        });
+      }
+
       document.getElementById('svyazTekst').value = '';
       if (message) {
         message.textContent = 'Сообщение отправлено';
