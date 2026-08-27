@@ -1,4 +1,4 @@
-// feedback.js — логика формы обратной связи
+// feedback.js — форма обратной связи (упрощённая, без вызовов API)
 (function () {
   'use strict';
 
@@ -7,7 +7,7 @@
     var message = document.getElementById('svyazSoobshchenie');
     if (!form) return;
 
-    // === КАСТОМНЫЙ СЕЛЕКТ (тема) ===
+    // === КАСТОМНЫЙ СЕЛЕКТ ===
     var topicRoot = document.getElementById('vyborTemy');
     var topicButton = document.getElementById('vyborTemyKnopka');
     var topicList = document.getElementById('vyborTemySpisok');
@@ -80,20 +80,6 @@
       });
     }
 
-    // === ПОЛУЧАЕМ ПОЛЬЗОВАТЕЛЯ БЕЗ ЗАПРОСА К СЕРВЕРУ ===
-    var user = null;
-    if (typeof EcoAuth !== 'undefined' && EcoAuth.getUser) {
-      try {
-        user = EcoAuth.getUser(); // читаем только из sessionStorage
-      } catch (_) {
-        user = null;
-      }
-    }
-    if (user) {
-      document.getElementById('svyazImya').value = user.name || '';
-      document.getElementById('svyazEmail').value = user.email || '';
-    }
-
     // === ОТПРАВКА ФОРМЫ ===
     form.addEventListener('submit', function (e) {
       e.preventDefault();
@@ -107,25 +93,17 @@
         return;
       }
 
-      if (typeof EcoAuth !== 'undefined' && EcoAuth.saveFeedback) {
-        EcoAuth.saveFeedback({
-          name: document.getElementById('svyazImya').value.trim(),
-          email: document.getElementById('svyazEmail').value.trim(),
-          type: document.getElementById('svyazTip').value,
-          text: text
-        });
-      } else {
-        console.log('Обратная связь:', {
-          name: document.getElementById('svyazImya').value.trim(),
-          email: document.getElementById('svyazEmail').value.trim(),
-          type: document.getElementById('svyazTip').value,
-          text: text
-        });
-      }
+      // Без EcoAuth — просто выводим в консоль
+      console.log('Обратная связь:', {
+        name: document.getElementById('svyazImya').value.trim(),
+        email: document.getElementById('svyazEmail').value.trim(),
+        type: document.getElementById('svyazTip').value,
+        text: text
+      });
 
       document.getElementById('svyazTekst').value = '';
       if (message) {
-        message.textContent = 'Сообщение отправлено';
+        message.textContent = 'Сообщение отправлено (демо)';
         message.dataset.state = 'success';
         message.hidden = false;
       }
