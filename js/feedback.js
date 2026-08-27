@@ -32,7 +32,6 @@
     }
 
     if (topicButton && topicList && topicInput && topicText) {
-      // Клик по кнопке — переключение меню
       topicButton.addEventListener('click', function (e) {
         e.stopPropagation();
         if (topicList.hasAttribute('hidden')) {
@@ -42,7 +41,6 @@
         }
       });
 
-      // Выбор пункта
       topicOptions.forEach(function (option) {
         option.addEventListener('click', function () {
           topicInput.value = option.dataset.value;
@@ -57,7 +55,6 @@
         });
       });
 
-      // Клавиатура: Escape и стрелки
       topicList.addEventListener('keydown', function (e) {
         var focused = document.activeElement;
         var index = topicOptions.indexOf(focused);
@@ -76,7 +73,6 @@
         }
       });
 
-      // Клик вне меню — закрываем
       document.addEventListener('click', function (e) {
         if (topicRoot && !topicRoot.contains(e.target)) {
           closeMenu();
@@ -84,14 +80,18 @@
       });
     }
 
-    // === АВТОЗАПОЛНЕНИЕ ПОЛЬЗОВАТЕЛЕМ (если авторизован) ===
-    // Используем EcoAuth (асинхронно, но если его нет — просто пропускаем)
-    if (typeof EcoAuth !== 'undefined') {
-      var user = EcoAuth.getUser() || null;
-      if (user) {
-        document.getElementById('svyazImya').value = user.name || '';
-        document.getElementById('svyazEmail').value = user.email || '';
+    // === ПОЛУЧАЕМ ПОЛЬЗОВАТЕЛЯ БЕЗ ЗАПРОСА К СЕРВЕРУ ===
+    var user = null;
+    if (typeof EcoAuth !== 'undefined' && EcoAuth.getUser) {
+      try {
+        user = EcoAuth.getUser(); // читаем только из sessionStorage
+      } catch (_) {
+        user = null;
       }
+    }
+    if (user) {
+      document.getElementById('svyazImya').value = user.name || '';
+      document.getElementById('svyazEmail').value = user.email || '';
     }
 
     // === ОТПРАВКА ФОРМЫ ===
@@ -107,7 +107,6 @@
         return;
       }
 
-      // Сохраняем через EcoAuth, если есть
       if (typeof EcoAuth !== 'undefined' && EcoAuth.saveFeedback) {
         EcoAuth.saveFeedback({
           name: document.getElementById('svyazImya').value.trim(),
@@ -116,7 +115,6 @@
           text: text
         });
       } else {
-        // Заглушка для теста
         console.log('Обратная связь:', {
           name: document.getElementById('svyazImya').value.trim(),
           email: document.getElementById('svyazEmail').value.trim(),
