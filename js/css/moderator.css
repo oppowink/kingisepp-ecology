@@ -1,0 +1,202 @@
+/* moderator.css — прототип панели модератора */
+
+.moderaciya {
+  width: min(860px, calc(100% - 46px));
+}
+
+.moderaciya-shapka {
+  margin-bottom: 18px;
+}
+
+.moderaciya-opisanie {
+  margin: 8px 0 0;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.moderaciya-svodka {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 18px;
+  margin-bottom: 16px;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.moderaciya-svodka strong {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.moderaciya-filtry {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 22px;
+}
+
+.moderaciya-filtr {
+  min-height: 40px;
+  padding: 8px 14px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--text-muted);
+  font: inherit;
+  font-size: 0.88rem;
+  cursor: pointer;
+  transition: border-color var(--transition-fast), color var(--transition-fast), background var(--transition-fast);
+}
+
+.moderaciya-filtr:hover,
+.moderaciya-filtr:focus-visible {
+  border-color: var(--accent);
+  color: var(--text);
+}
+
+.moderaciya-filtr.is-active {
+  border-color: var(--accent);
+  color: var(--text);
+  background: var(--surface-soft);
+}
+
+.moderaciya-spisok {
+  display: grid;
+  gap: 22px;
+}
+
+.moderaciya-zayavka {
+  padding: 18px 18px 16px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface);
+}
+
+.moderaciya-zayavka__verh {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 6px;
+}
+
+.moderaciya-zayavka h2 {
+  margin: 0;
+  font-size: 1.06rem;
+}
+
+.moderaciya-badge {
+  flex: 0 0 auto;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.moderaciya-badge[data-status="pending"] { color: var(--warning); }
+.moderaciya-badge[data-status="approved"] { color: var(--success); }
+.moderaciya-badge[data-status="rejected"] { color: var(--danger); }
+
+.moderaciya-meta,
+.moderaciya-dannye,
+.moderaciya-foto-meta,
+.moderaciya-itog {
+  margin: 4px 0 0;
+  color: var(--text-muted);
+  font-size: 0.86rem;
+}
+
+.moderaciya-muted {
+  opacity: 0.85;
+}
+
+.moderaciya-checklist {
+  margin: 14px 0 8px;
+  padding: 12px 14px;
+  background: var(--surface-soft);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+}
+
+.mod-checklist-title {
+  display: block;
+  margin-bottom: 8px;
+  font-family: var(--font-heading);
+  font-weight: 400;
+  font-size: 0.95rem;
+  color: var(--text);
+}
+
+.moderaciya-check-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin: 6px 0;
+  font-size: 0.86rem;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.moderaciya-check-item input {
+  width: 16px;
+  height: 16px;
+  margin-top: 2px;
+  accent-color: var(--accent);
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+.moderaciya-check-item input:disabled {
+  cursor: default;
+  opacity: 0.7;
+}
+
+.moderaciya-prichina {
+  margin-top: 12px;
+}
+
+.moderaciya-deystviya {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.pole-vybor {
+  width: 100%;
+  min-height: 44px;
+  padding: 8px 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+}
+
+.pole-oshibka {
+  margin: 6px 0 0;
+  color: var(--danger);
+  font-size: 0.84rem;
+}
+
+.zayavki-pusty {
+  margin: 8px 0 0;
+  color: var(--text-muted);
+}
+
+.dostup-soobshchenie {
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface-soft);
+}
+
+.dostup-soobshchenie a {
+  color: var(--accent);
+}
+
+@media (max-width: 600px) {
+  .moderaciya-zayavka__verh {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+}

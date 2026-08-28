@@ -1,0 +1,214 @@
+<!doctype html>
+<!-- submit.html - Форма подачи одного наблюдения и загрузки фотографий -->
+<html lang="ru">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+
+<!-- SEO (запрет индексации) -->
+<meta content="Отправка наблюдения участником экологического мониторинга." name="description"/>
+<meta content="noindex,nofollow" name="robots"/>
+
+<title>Подать наблюдение | ЭкоБиоМониторинг</title>
+
+<!-- фавиконка -->
+<link href="img/favicon.ico" rel="icon"/>
+
+<!-- стили -->
+<link href="css/variables.css" rel="stylesheet"/>
+<link href="css/components.css" rel="stylesheet"/>
+<link href="css/submit.css" rel="stylesheet"/>
+
+<!-- тема — подключаем до body чтобы не мигало -->
+<script src="js/theme.js"></script>
+</head>
+<body>
+<!-- свечение за курсором -->
+<div aria-hidden="true" class="kursor" data-component="kursor"></div>
+
+<!-- затемнение под панель настроек -->
+<div aria-hidden="true" class="nastroiki-fon" id="nastroikiFon"></div>
+
+<!-- шапка -->
+<header class="shapka" data-component="shapka">
+<a aria-label="ЭкоБиоМониторинг, на главную" class="shapka-logo" href="index.html">
+<span class="shapka-logo__nazvanie">
+<span class="shapka-logo__bukva">Э</span><span class="shapka-logo__bukva">к</span>
+<img alt="" aria-hidden="true" class="shapka-logo__list shapka-logo__list--1" src="img/leaf1.png"/>
+<span class="shapka-logo__bukva">Б</span><span class="shapka-logo__bukva">и</span>
+<img alt="" aria-hidden="true" class="shapka-logo__list shapka-logo__list--2" src="img/leaf2.png"/>
+<span class="shapka-logo__bukva">М</span><span class="shapka-logo__bukva">о</span><span class="shapka-logo__bukva">н</span>
+<span class="shapka-logo__bukva">и</span><span class="shapka-logo__bukva">т</span><span class="shapka-logo__bukva">о</span>
+<span class="shapka-logo__bukva">р</span><span class="shapka-logo__bukva">и</span><span class="shapka-logo__bukva">н</span><span class="shapka-logo__bukva">г</span>
+</span>
+</a>
+<!-- кнопки шапки -->
+<div class="shapka-deystviya">
+<a class="shapka-ssylka" href="account.html">
+<img alt="" aria-hidden="true" class="shapka-ssylka__ikona" src="img/icons/user.png"/>
+<span>Личный кабинет</span>
+</a>
+<button aria-controls="nastroikiPanel" aria-expanded="false" aria-label="Открыть настройки" class="nastroiki-knopka" id="nastroikiKnopka" type="button">
+<img alt="" aria-hidden="true" class="nastroiki-knopka__ikona" src="img/icons/gear.png"/>
+<span class="nastroiki-knopka__tekst">Настройки</span>
+</button>
+</div>
+</header>
+
+<!-- панель настроек -->
+<aside aria-hidden="true" aria-label="Настройки" class="nastroiki-panel" id="nastroikiPanel">
+<button aria-label="Закрыть настройки" class="nastroiki-zakryt" id="nastroikiZakryt" type="button">
+<img alt="" aria-hidden="true" src="img/icons/close.png"/>
+<span class="sr-only">Закрыть</span>
+</button>
+<!-- переключатель темы -->
+<div class="tema-vybor-blok">
+<p class="tema-podpis">Тема</p>
+<div class="tema-vybor">
+<button class="tema-knopka" id="temaSvetlaya" type="button">
+<img alt="" aria-hidden="true" src="img/icons/sun.png"/><span>Светлая</span>
+</button>
+<button class="tema-knopka" id="temaTemnaya" type="button">
+<img alt="" aria-hidden="true" src="img/icons/moon.png"/><span>Тёмная</span>
+</button>
+</div>
+</div>
+<!-- ссылка на личный кабинет -->
+<div class="nastroiki-akkaunt">
+<a class="nastroiki-ssylka nastroiki-ssylka--akcent" href="account.html">
+<img alt="" aria-hidden="true" src="img/icons/user.png"/><span>Личный кабинет</span>
+</a>
+</div>
+<!-- навигация -->
+<nav aria-label="Навигация" class="nastroiki-navigaciya">
+<a class="nastroiki-ssylka" href="index.html">Главная</a>
+<a class="nastroiki-ssylka" href="map.html">Карта и умный поиск</a>
+<a class="nastroiki-ssylka" href="feedback.html">Обратная связь</a>
+</nav>
+</aside>
+
+<!-- основной контент -->
+<main class="podacha-nablyudeniya vnutrennyaya-stranica">
+<!-- поднавигация кабинета -->
+<nav aria-label="Разделы кабинета" class="kabinet-podnav">
+<a class="kabinet-podnav__nazad" href="account.html">← Личный кабинет</a>
+<span class="kabinet-podnav__sep" aria-hidden="true"></span>
+<a href="education.html">Обучение</a>
+<a href="submit.html" aria-current="page">Подать наблюдение</a>
+<a href="my-requests.html">Мои заявки</a>
+<a href="moderator.html" id="podnavModerator" hidden>Модерация</a>
+</nav>
+<!-- заголовок -->
+<h1>Подать наблюдение</h1>
+
+<!-- блок, если обучение не пройдено -->
+<section class="dostup-soobshchenie" hidden="" id="podachaBlokirovka">
+<p>Сначала нужно завершить обучение</p>
+<a href="education.html">Перейти к обучению</a>
+</section>
+
+<!-- форма подачи наблюдения -->
+<form class="forma-nablyudeniya" hidden="" id="formaNablyudeniya" novalidate="">
+<!-- поле "Название наблюдения" -->
+<div class="pole-gruppa">
+<label class="pole-podpis" for="nazvanieNablyudeniya">Название наблюдения</label>
+<input autocomplete="off" class="pole-vvod" id="nazvanieNablyudeniya" name="title" required=""/>
+</div>
+
+<!-- поле "Место наблюдения" -->
+<div class="pole-gruppa">
+<label class="pole-podpis" for="mestoNablyudeniya">Место наблюдения</label>
+<input autocomplete="street-address" class="pole-vvod" id="mestoNablyudeniya" name="location" required=""/>
+</div>
+
+<!-- блок с координатами и датой -->
+<div class="forma-nablyudeniya__ryad">
+<div class="pole-gruppa">
+<label class="pole-podpis" for="koordinatyNablyudeniya">Координаты</label>
+<input class="pole-vvod" id="koordinatyNablyudeniya" name="coordinates" placeholder="59.378, 28.612" required=""/>
+</div>
+<div class="pole-gruppa">
+<label class="pole-podpis" for="dataSbora">Дата сбора</label>
+<input class="pole-vvod" id="dataSbora" name="collectionDate" required="" type="date"/>
+</div>
+</div>
+
+<!-- загрузка фотографий (drag & drop) -->
+<div class="pole-gruppa">
+<span class="pole-podpis">Фотографии</span>
+<label class="zagruzka-foto" for="faylyNablyudeniya" id="zagruzkaFoto">
+<img alt="" aria-hidden="true" src="img/icons/upload.png"/>
+<span>Перетащите фотографии сюда или выберите файлы</span>
+<input accept="image/*" hidden="" id="faylyNablyudeniya" multiple="" name="photos" type="file"/>
+</label>
+<p class="zagruzka-foto__schetchik" id="schetchikFoto">0 / 30 фотографий</p>
+<p class="pole-oshibka" hidden="" id="oshibkaFoto"></p>
+</div>
+
+<!-- комментарий -->
+<div class="pole-gruppa">
+<label class="pole-podpis" for="kommentariyNablyudeniya">Комментарий</label>
+<textarea class="pole-tekst" id="kommentariyNablyudeniya" name="comment"></textarea>
+</div>
+
+<!-- результат предварительного анализа (заполняется JS) -->
+<section class="predvaritelnyy-analiz" hidden="" id="predvaritelnyyAnaliz">
+<h2>Результат предварительного анализа</h2>
+<div id="predvaritelnyyAnalizRezultat"></div>
+<p>Результат предварительный, окончательное решение принимает модератор</p>
+</section>
+
+<!-- общее сообщение об ошибке -->
+<p class="soobshchenie" hidden="" id="oshibkaPodachi"></p>
+
+<!-- ЧЕКЛИСТ САМОПРОВЕРКИ ДЛЯ ВОЛОНТЁРА -->
+<div class="pole-gruppa" id="checklistBlock">
+  <span class="pole-podpis">Проверьте себя перед отправкой</span>
+  <div class="checklist">
+    <label class="checklist-item">
+      <input type="checkbox" class="checklist-input" data-check="1">
+      Лист собран с живой ветки на высоте 1,5–2 м
+    </label>
+    <label class="checklist-item">
+      <input type="checkbox" class="checklist-input" data-check="2">
+      Лист без видимых повреждений, пятен и следов насекомых
+    </label>
+    <label class="checklist-item">
+      <input type="checkbox" class="checklist-input" data-check="3">
+      Фотография сделана на белом фоне, строго сверху
+    </label>
+    <label class="checklist-item">
+      <input type="checkbox" class="checklist-input" data-check="4">
+      На фото видна центральная жилка по всей длине листа
+    </label>
+    <label class="checklist-item">
+      <input type="checkbox" class="checklist-input" data-check="5">
+      Указаны координаты и дата сбора
+    </label>
+  </div>
+  <p class="checklist-error" id="checklistError" hidden>Отметьте все пункты перед отправкой</p>
+</div>
+
+
+
+<!-- кнопка отправки -->
+<button class="knopka-osnovnaya" type="submit">Отправить на проверку</button>
+</form>
+</main>
+
+<!-- подвал -->
+<footer aria-label="Подвал сайта" class="podval" data-component="podval">
+<div class="podval-vnutri">
+<span class="podval-nazvanie">ЭкоБиоМониторинг</span>
+<span>Кингисепп</span>
+<span>2025-2026</span>
+</div>
+</footer>
+
+<!-- скрипты -->
+<script src="js/auth.js"></script>
+<script defer src="js/header.js"></script>
+<script defer src="js/cursor.js"></script>
+<script defer src="js/submit.js"></script>
+</body>
+</html>

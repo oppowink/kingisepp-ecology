@@ -1,0 +1,131 @@
+<!doctype html>
+<!-- my-requests.html - Список заявок участника и их статусы -->
+<html lang="ru">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+
+<!-- SEO (запрет индексации) -->
+<meta content="История наблюдений участника и статусы проверки." name="description"/>
+<meta content="noindex,nofollow" name="robots"/>
+
+<title>Мои заявки | ЭкоБиоМониторинг</title>
+
+<!-- фавиконка -->
+<link href="img/favicon.ico" rel="icon"/>
+
+<!-- стили -->
+<link href="css/variables.css" rel="stylesheet"/>
+<link href="css/components.css" rel="stylesheet"/>
+<link href="css/my-requests.css" rel="stylesheet"/>
+
+<!-- тема — подключаем до body чтобы не мигало -->
+<script src="js/theme.js"></script>
+</head>
+<body>
+<!-- свечение за курсором -->
+<div aria-hidden="true" class="kursor" data-component="kursor"></div>
+
+<!-- затемнение под панель настроек -->
+<div aria-hidden="true" class="nastroiki-fon" id="nastroikiFon"></div>
+
+<!-- шапка -->
+<header class="shapka" data-component="shapka">
+<a aria-label="ЭкоБиоМониторинг, на главную" class="shapka-logo" href="index.html">
+<span class="shapka-logo__nazvanie">
+<span class="shapka-logo__bukva">Э</span><span class="shapka-logo__bukva">к</span>
+<img alt="" aria-hidden="true" class="shapka-logo__list shapka-logo__list--1" src="img/leaf1.png"/>
+<span class="shapka-logo__bukva">Б</span><span class="shapka-logo__bukva">и</span>
+<img alt="" aria-hidden="true" class="shapka-logo__list shapka-logo__list--2" src="img/leaf2.png"/>
+<span class="shapka-logo__bukva">М</span><span class="shapka-logo__bukva">о</span><span class="shapka-logo__bukva">н</span>
+<span class="shapka-logo__bukva">и</span><span class="shapka-logo__bukva">т</span><span class="shapka-logo__bukva">о</span>
+<span class="shapka-logo__bukva">р</span><span class="shapka-logo__bukva">и</span><span class="shapka-logo__bukva">н</span><span class="shapka-logo__bukva">г</span>
+</span>
+</a>
+<!-- кнопки шапки -->
+<div class="shapka-deystviya">
+<a class="shapka-ssylka" href="account.html">
+<img alt="" aria-hidden="true" class="shapka-ssylka__ikona" src="img/icons/user.png"/>
+<span>Личный кабинет</span>
+</a>
+<button aria-controls="nastroikiPanel" aria-expanded="false" aria-label="Открыть настройки" class="nastroiki-knopka" id="nastroikiKnopka" type="button">
+<img alt="" aria-hidden="true" class="nastroiki-knopka__ikona" src="img/icons/gear.png"/>
+<span class="nastroiki-knopka__tekst">Настройки</span>
+</button>
+</div>
+</header>
+
+<!-- панель настроек -->
+<aside aria-hidden="true" aria-label="Настройки" class="nastroiki-panel" id="nastroikiPanel">
+<button aria-label="Закрыть настройки" class="nastroiki-zakryt" id="nastroikiZakryt" type="button">
+<img alt="" aria-hidden="true" src="img/icons/close.png"/>
+<span class="sr-only">Закрыть</span>
+</button>
+<!-- переключатель темы -->
+<div class="tema-vybor-blok">
+<p class="tema-podpis">Тема</p>
+<div class="tema-vybor">
+<button class="tema-knopka" id="temaSvetlaya" type="button">
+<img alt="" aria-hidden="true" src="img/icons/sun.png"/><span>Светлая</span>
+</button>
+<button class="tema-knopka" id="temaTemnaya" type="button">
+<img alt="" aria-hidden="true" src="img/icons/moon.png"/><span>Тёмная</span>
+</button>
+</div>
+</div>
+<!-- ссылка на личный кабинет -->
+<div class="nastroiki-akkaunt">
+<a class="nastroiki-ssylka nastroiki-ssylka--akcent" href="account.html">
+<img alt="" aria-hidden="true" src="img/icons/user.png"/><span>Личный кабинет</span>
+</a>
+</div>
+<!-- навигация -->
+<nav aria-label="Навигация" class="nastroiki-navigaciya">
+<a class="nastroiki-ssylka" href="index.html">Главная</a>
+<a class="nastroiki-ssylka" href="map.html">Карта и умный поиск</a>
+<a class="nastroiki-ssylka" href="feedback.html">Обратная связь</a>
+</nav>
+</aside>
+
+<!-- основной контент -->
+<main class="moi-zayavki vnutrennyaya-stranica">
+<!-- поднавигация кабинета -->
+<nav aria-label="Разделы кабинета" class="kabinet-podnav">
+<a class="kabinet-podnav__nazad" href="account.html">← Личный кабинет</a>
+<span class="kabinet-podnav__sep" aria-hidden="true"></span>
+<a href="education.html">Обучение</a>
+<a href="submit.html">Подать наблюдение</a>
+<a href="my-requests.html" aria-current="page">Мои заявки</a>
+<a href="moderator.html" id="podnavModerator" hidden>Модерация</a>
+</nav>
+<!-- шапка с заголовком и ссылкой "Подать наблюдение" -->
+<div class="moi-zayavki__shapka">
+<h1>Мои заявки</h1>
+<div class="moi-zayavki__deystviya">
+<a class="knopka-tekst" href="account.html">В кабинет</a>
+<a href="submit.html">Подать наблюдение</a>
+</div>
+</div>
+<!-- сообщение о последней заявке -->
+<p class="soobshchenie" hidden="" id="poslednyayaZayavka"></p>
+<p class="moi-zayavki__podskazka" id="zayavkiPodskazka" hidden></p>
+<!-- список заявок (заполняется через JS) -->
+<section aria-live="polite" class="spisok-zayavok" id="spisokZayavok"></section>
+</main>
+
+<!-- подвал -->
+<footer aria-label="Подвал сайта" class="podval" data-component="podval">
+<div class="podval-vnutri">
+<span class="podval-nazvanie">ЭкоБиоМониторинг</span>
+<span>Кингисепп</span>
+<span>2025-2026</span>
+</div>
+</footer>
+
+<!-- скрипты -->
+<script src="js/auth.js"></script>
+<script defer src="js/header.js"></script>
+<script defer src="js/cursor.js"></script>
+<script defer src="js/requests.js"></script>
+</body>
+</html>
