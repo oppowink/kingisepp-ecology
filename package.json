@@ -1,0 +1,9 @@
+{
+  "name": "ecobiomonitoring",
+  "private": true,
+  "version": "0.1.0",
+  "description": "ЭкоБиоМониторинг — frontend + Vercel API",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.49.1"
+  }
+}
