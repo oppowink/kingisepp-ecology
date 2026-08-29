@@ -119,7 +119,11 @@
       })
     });
     var data = await response.json().catch(function () { return {}; });
-    if (!response.ok) throw new Error(data.error || 'EMAIL_START_FAILED');
+    if (!response.ok) {
+      var err = new Error(data.error || 'EMAIL_START_FAILED');
+      err.detail = data.message || '';
+      throw err;
+    }
     return data;
   }
 
@@ -137,7 +141,11 @@
       })
     });
     var data = await response.json().catch(function () { return {}; });
-    if (!response.ok) throw new Error(data.error || 'EMAIL_VERIFY_FAILED');
+    if (!response.ok) {
+      var err2 = new Error(data.error || 'EMAIL_VERIFY_FAILED');
+      err2.detail = data.message || '';
+      throw err2;
+    }
     setCachedUser(data.user || null);
     return data.user || null;
   }
