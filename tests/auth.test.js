@@ -215,7 +215,7 @@ test('education complete scores volunteer test and stores progress', async funct
           }
         };
       }
-      if (table === 'users') {
+      if (table === 'profiles') {
         return {
           update(value) {
             saved.user = value;
@@ -245,7 +245,7 @@ test('education complete scores volunteer test and stores progress', async funct
         q4: 'top_light',
         q5: 'tree_coords',
         q6: 'moderation',
-        q7: 'after_approval'
+        q7: 'after_checks'
       }
     }
   }, res);

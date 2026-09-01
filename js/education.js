@@ -67,15 +67,16 @@
       id: 'q7',
       text: 'Когда точка становится публичной на карте?',
       options: [
-        { value: 'after_approval', label: 'После подтверждения модератором' },
+        { value: 'after_checks', label: 'После проверки модератором и нейросетью' },
         { value: 'after_upload', label: 'Сразу после загрузки фото' },
         { value: 'never', label: 'Точки не показываются на карте' }
       ],
-      correct: 'after_approval'
+      correct: 'after_checks'
     }
   ];
 
   var PASS_SCORE = 6;
+  var SLIDE_DELAY_MS = 5000;
 
   function escapeHtml(value) {
     return String(value || '').replace(/[&<>'"]/g, function (char) {
@@ -105,12 +106,45 @@
     if (!slides.length || !counter || !back || !next || !toTest || !questionsBox || !form) return;
 
     var current = 0;
+    var delayTimer = null;
 
     function showMessage(text, state) {
       if (!result) return;
       result.textContent = text || '';
       result.dataset.state = state || '';
       result.hidden = !text;
+    }
+
+    function clearSlideDelay() {
+      if (delayTimer) {
+        window.clearInterval(delayTimer);
+        delayTimer = null;
+      }
+    }
+
+    function startSlideDelay() {
+      clearSlideDelay();
+      var action = current === slides.length - 1 ? toTest : next;
+      if (!action || action.hidden) return;
+
+      var defaultText = current === slides.length - 1 ? 'Перейти к тесту' : 'Дальше';
+      var lockedText = current === slides.length - 1 ? 'К тесту через ' : 'Дальше через ';
+      var availableAt = Date.now() + SLIDE_DELAY_MS;
+
+      function tick() {
+        var secondsLeft = Math.ceil((availableAt - Date.now()) / 1000);
+        if (secondsLeft > 0) {
+          action.disabled = true;
+          action.textContent = lockedText + secondsLeft + ' сек.';
+          return;
+        }
+        clearSlideDelay();
+        action.disabled = false;
+        action.textContent = defaultText;
+      }
+
+      tick();
+      delayTimer = window.setInterval(tick, 250);
     }
 
     function renderSlide(index) {
@@ -122,6 +156,11 @@
       back.disabled = current === 0;
       next.hidden = current === slides.length - 1;
       toTest.hidden = current !== slides.length - 1;
+      next.disabled = false;
+      toTest.disabled = false;
+      next.textContent = 'Дальше';
+      toTest.textContent = 'Перейти к тесту';
+      startSlideDelay();
     }
 
     function renderQuestions() {
@@ -172,9 +211,12 @@
       renderSlide(current - 1);
     });
     next.addEventListener('click', function () {
+      if (next.disabled) return;
       renderSlide(current + 1);
     });
     toTest.addEventListener('click', function () {
+      if (toTest.disabled) return;
+      clearSlideDelay();
       if (screen) screen.hidden = true;
       if (controls) controls.hidden = true;
       counter.hidden = true;

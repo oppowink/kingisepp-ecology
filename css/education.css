@@ -36,7 +36,7 @@
 
 .obuchenie-slajd {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(300px, 43%);
+  grid-template-columns: minmax(0, 780px);
   align-items: center;
   gap: clamp(27px, 5vw, 64px);
 }
@@ -53,35 +53,6 @@
   margin: 0;
   color: var(--text-muted);
   font-weight: 300;
-}
-
-.obuchenie-foto-zagluska {
-  min-height: 330px;
-  margin: 0;
-  display: grid;
-  align-content: center;
-  justify-items: center;
-  gap: 12px;
-  padding: 22px;
-  border: 1px dashed var(--line-strong);
-  background: color-mix(in srgb, var(--surface-soft) 86%, #9ca3af);
-  color: var(--text-soft);
-  text-align: center;
-}
-.obuchenie-foto-zagluska span {
-  min-width: 128px;
-  min-height: 48px;
-  display: grid;
-  place-items: center;
-  border: 1px solid var(--line);
-  background: var(--surface);
-  color: var(--text-muted);
-  font-family: var(--font-heading);
-  font-size: .95rem;
-}
-.obuchenie-foto-zagluska figcaption {
-  max-width: 260px;
-  font-size: .75rem;
 }
 
 .obuchenie-itog {
@@ -183,6 +154,31 @@
   text-decoration: none;
 }
 
+.obuchenie-foto-spisok {
+  width: min(780px, 100%);
+  margin-top: 36px;
+  padding-top: 24px;
+  border-top: 1px solid var(--line);
+}
+.obuchenie-foto-spisok h2 {
+  margin-bottom: 10px;
+}
+.obuchenie-foto-spisok p,
+.obuchenie-foto-spisok li {
+  color: var(--text-muted);
+  font-size: .86rem;
+}
+.obuchenie-foto-spisok p {
+  margin: 0 0 12px;
+}
+.obuchenie-foto-spisok ul {
+  margin: 0;
+  padding-left: 20px;
+}
+.obuchenie-foto-spisok code {
+  color: var(--text);
+}
+
 @media (max-width: 760px) {
   .obuchenie {
     width: min(100% - 34px, 720px);
@@ -194,10 +190,6 @@
   .obuchenie-slajd {
     grid-template-columns: 1fr;
     gap: 25px;
-  }
-  .obuchenie-foto-zagluska {
-    min-height: 220px;
-    order: 2;
   }
   .obuchenie-itog {
     min-height: auto;

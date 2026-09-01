@@ -127,7 +127,7 @@
     });
 
     // === ОТПРАВКА ФОРМЫ ===
-    form.addEventListener('submit', function (event) {
+    form.addEventListener('submit', async function (event) {
       event.preventDefault();
       formError.hidden = true;
 
@@ -187,7 +187,7 @@
 
       // 4. Создаём заявку через EcoAuth
       try {
-        var request = EcoAuth.createRequest({
+        var request = await EcoAuth.createRequest({
           title: title,
           location: locationText,
           coordinates: coordinates,

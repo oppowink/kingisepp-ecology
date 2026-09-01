@@ -4,12 +4,24 @@
 
   var mapInstance = null;
   var selectedPlacemark = null;
+  var renderedPointIds = new Set();
   var normalIcon = 'img/icons/map-point.png';
   var activeIcon = 'img/icons/map-point-active.png';
   var normalIconSize = [41, 45];
   var normalIconOffset = [-20, -42];
   var activeIconSize = [39, 45];
   var activeIconOffset = [-19, -42];
+
+  function api(path) {
+    var base = String(window.ECO_API_BASE || '').replace(/\/$/, '');
+    return base + path;
+  }
+
+  function backendCanBeTried() {
+    if (window.ECO_API_BASE) return true;
+    if (location.protocol === 'file:') return false;
+    return !['localhost', '127.0.0.1'].includes(location.hostname);
+  }
 
   // показать информацию о точке в панели
   function showPoint(data) {
@@ -67,11 +79,17 @@
   // добавить одобренные точки на карту
   function addApprovedPoints(points) {
     if (!mapInstance || !Array.isArray(points)) return;
-    points.filter(function (point) { return point.status === 'approved'; }).forEach(function (point) {
+    points.filter(function (point) {
+      return window.EcoAuth && typeof window.EcoAuth.isRequestPublished === 'function'
+        ? window.EcoAuth.isRequestPublished(point)
+        : point.status === 'published';
+    }).forEach(function (point) {
+      if (point.id && renderedPointIds.has(point.id)) return;
       var coords = parseCoordinates(point);
       var latitude = coords.latitude;
       var longitude = coords.longitude;
       if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) return;
+      if (point.id) renderedPointIds.add(point.id);
       var prepared = preparePoint(point);
 
       var placemark = new ymaps.Placemark([latitude, longitude], {}, {
@@ -107,7 +125,7 @@
       date: point.collectionDate || point.date || '',
       level: point.level || point.title || 'Подтверждённая точка',
       address: point.address || point.location || '',
-      explanation: point.explanation || 'Точка добавлена участником и подтверждена модератором.',
+      explanation: point.explanation || 'Точка добавлена участником и прошла модерацию человека и автоматическую проверку.',
       photos: files.map(function (file) { return file.data; }).filter(Boolean),
       excelUrl: point.excelUrl || '',
       pdfUrl: point.pdfUrl || ''
@@ -127,8 +145,15 @@
   }
 
   function loadApprovedRequests() {
-    if (!window.EcoAuth) return;
-    addApprovedPoints(window.EcoAuth.getAllRequests());
+    if (window.EcoAuth) addApprovedPoints(window.EcoAuth.getAllRequests());
+    if (!backendCanBeTried()) return;
+
+    fetch(api('/api/requests/published'), { cache: 'no-store' })
+      .then(function (response) { return response.ok ? response.json() : null; })
+      .then(function (data) {
+        if (data && Array.isArray(data.requests)) addApprovedPoints(data.requests);
+      })
+      .catch(function () {});
   }
 
   // создание карты

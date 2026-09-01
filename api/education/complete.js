@@ -2,6 +2,7 @@
 
 const { readSession } = require('../../server/session');
 const { getAdminClient } = require('../../server/supabase');
+const { profiles } = require('../../server/users');
 
 const CORRECT = {
   q1: '30',
@@ -10,7 +11,7 @@ const CORRECT = {
   q4: 'top_light',
   q5: 'tree_coords',
   q6: 'moderation',
-  q7: 'after_approval'
+  q7: 'after_checks'
 };
 
 function readBody(req) {
@@ -92,8 +93,7 @@ module.exports = async function handler(req, res) {
     if (error) throw error;
 
     if (passed) {
-      const { error: userError } = await admin
-        .from('users')
+      const { error: userError } = await profiles(admin)
         .update({
           education_completed: true,
           education_score: score,

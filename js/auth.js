@@ -263,8 +263,57 @@
     return isEducationCompleted(user.email);
   }
 
-  // получить все заявки (для модератора)
+  // получить все заявки из локального кэша
   function getAllRequests() { return read(localStorage, REQUESTS_KEY, []); }
+
+  function sortRequests(list) {
+    return (list || []).slice().sort(function (a, b) {
+      return String(b.createdAt || '').localeCompare(String(a.createdAt || ''));
+    });
+  }
+
+  function saveRequests(list) {
+    write(localStorage, REQUESTS_KEY, sortRequests(list));
+  }
+
+  function mergeRequest(request) {
+    if (!request || !request.id) return null;
+    var all = getAllRequests();
+    var index = all.findIndex(function (item) { return item.id === request.id; });
+    if (index >= 0) all[index] = request;
+    else all.unshift(request);
+    saveRequests(all);
+    return request;
+  }
+
+  async function refreshRequests(scope) {
+    var user = getUser();
+    if (!user?.email || backendUnavailableHere()) return getAllRequests();
+
+    var requestedScope = scope === 'all' ? 'all' : 'mine';
+    try {
+      var response = await fetch(api('/api/requests/list?scope=' + encodeURIComponent(requestedScope)), {
+        credentials: 'include',
+        cache: 'no-store'
+      });
+      var data = await response.json().catch(function () { return {}; });
+      if (!response.ok) return getAllRequests();
+
+      var fresh = Array.isArray(data.requests) ? data.requests : [];
+      if (requestedScope === 'all') {
+        saveRequests(fresh);
+      } else {
+        var email = String(user.email || '').toLowerCase();
+        var others = getAllRequests().filter(function (item) {
+          return String(item.userEmail || '').toLowerCase() !== email;
+        });
+        saveRequests(fresh.concat(others));
+      }
+      return getAllRequests();
+    } catch (_) {
+      return getAllRequests();
+    }
+  }
 
   // получить заявки текущего пользователя
   function getMyRequests() {
@@ -273,22 +322,26 @@
     return getAllRequests().filter(function (item) { return item.userEmail === user.email; });
   }
 
+  function isRequestPublished(item) {
+    if (!item) return false;
+    if (item.status === 'published') return true;
+    return item.status === 'approved' && !item.aiStatus;
+  }
+
   function getFirstApprovedRequest() {
-    return getMyRequests().find(function (item) { return item.status === 'approved'; }) || null;
+    return getMyRequests().find(isRequestPublished) || null;
   }
 
   function hasApprovedContribution() {
     return Boolean(getFirstApprovedRequest());
   }
 
-  // создать новую заявку
-  function createRequest(data) {
+  function buildLocalRequest(data) {
     var user = getUser();
     if (!user?.email) throw new Error('AUTH_REQUIRED');
     if (!isEducationCompleted(user.email)) throw new Error('EDUCATION_REQUIRED');
 
-    var all = getAllRequests();
-    var item = {
+    return {
       id: 'ECO-' + new Date().getFullYear() + '-' + String(Date.now()).slice(-7),
       userEmail: user.email,
       userName: user.name || user.email,
@@ -301,13 +354,38 @@
       treeCount: Number(data.treeCount || 1),
       leafCount: Number(data.leafCount || 30),
       aiResult: data.aiResult || null,
-      status: 'pending',
+      status: 'pending_human',
+      humanStatus: 'pending',
+      aiStatus: 'pending',
       moderationReason: '',
+      publishedAt: null,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
     };
-    all.unshift(item);
-    write(localStorage, REQUESTS_KEY, all);
+  }
+
+  // создать новую заявку
+  async function createRequest(data) {
+    var item = buildLocalRequest(data || {});
+
+    if (!backendUnavailableHere()) {
+      var response = await fetch(api('/api/requests/create'), {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify(item)
+      });
+      var result = await response.json().catch(function () { return {}; });
+      if (!response.ok) {
+        var error = new Error(result.error || 'REQUEST_CREATE_FAILED');
+        error.detail = result.message || '';
+        error.status = response.status;
+        throw error;
+      }
+      return mergeRequest(result.request || item);
+    }
+
+    mergeRequest(item);
     return item;
   }
 
@@ -319,6 +397,26 @@
     all[index] = Object.assign({}, all[index], patch, { updatedAt: new Date().toISOString() });
     write(localStorage, REQUESTS_KEY, all);
     return all[index];
+  }
+
+  async function saveRequestUpdate(id, patch) {
+    var local = updateRequest(id, patch);
+    if (backendUnavailableHere()) return local;
+
+    var response = await fetch(api('/api/requests/moderate'), {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ id: id, patch: patch || {} })
+    });
+    var data = await response.json().catch(function () { return {}; });
+    if (!response.ok) {
+      var error = new Error(data.error || 'REQUEST_UPDATE_FAILED');
+      error.detail = data.message || '';
+      error.status = response.status;
+      throw error;
+    }
+    return mergeRequest(data.request || local);
   }
 
   // сохранить обратную связь
@@ -355,10 +453,12 @@
       '.name{margin:0 0 22px;font-size:34px;font-weight:700}' +
       '.text{margin:0 auto 12px;max-width:780px;font-size:19px;line-height:1.55}' +
       '.meta{margin-top:42px;display:flex;justify-content:space-between;gap:24px;font:15px Arial,sans-serif;color:#49624d;text-align:left}' +
-      '.print{position:fixed;right:18px;top:18px;padding:10px 16px;border:1px solid #2f6b3f;background:#2f6b3f;color:#fff;font:16px Arial,sans-serif;cursor:pointer}' +
-      '@media print{body{background:#fff}.page{padding:0}.cert{width:100%;min-height:calc(100vh - 24mm)}.print{display:none}}' +
+      '.actions{position:fixed;right:18px;top:18px;display:flex;gap:8px}' +
+      '.print,.back{padding:10px 16px;border:1px solid #2f6b3f;font:16px Arial,sans-serif;cursor:pointer}' +
+      '.print{background:#2f6b3f;color:#fff}.back{background:#fff;color:#2f6b3f}' +
+      '@media print{body{background:#fff}.page{padding:0}.cert{width:100%;min-height:calc(100vh - 24mm)}.actions{display:none}}' +
       '</style></head><body>' +
-      '<button class="print" onclick="window.print()">Сохранить в PDF</button>' +
+      '<div class="actions"><button class="back" onclick="window.close()">Назад</button><button class="print" onclick="window.print()">Сохранить в PDF</button></div>' +
       '<main class="page"><section class="cert">' +
       '<p class="eyebrow">ЭкоБиоМониторинг</p>' +
       '<h1>Сертификат волонтёра-исследователя экологического мониторинга</h1>' +
@@ -423,12 +523,15 @@
     getEducationRecord: getEducationRecord,
     completeEducation: completeEducation,
     refreshEducationStatus: refreshEducationStatus,
+    refreshRequests: refreshRequests,
     getAllRequests: getAllRequests,
     getMyRequests: getMyRequests,
     getFirstApprovedRequest: getFirstApprovedRequest,
     hasApprovedContribution: hasApprovedContribution,
+    isRequestPublished: isRequestPublished,
     createRequest: createRequest,
     updateRequest: updateRequest,
+    saveRequestUpdate: saveRequestUpdate,
     openVolunteerCertificate: openVolunteerCertificate,
     setUserRole: setUserRole,
     saveFeedback: saveFeedback,

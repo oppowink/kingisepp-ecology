@@ -1,12 +1,20 @@
 'use strict';
 
+function profileTable() {
+  return process.env.SUPABASE_PROFILE_TABLE || 'profiles';
+}
+
+function profiles(admin) {
+  return admin.from(profileTable());
+}
+
 async function upsertUser(admin, input) {
   const email = String(input.email || '').trim().toLowerCase();
   const name = String(input.name || '').trim();
   const authId = input.supabaseAuthId || null;
   const provider = input.provider || 'password';
 
-  let query = admin.from('users').select('*');
+  let query = profiles(admin).select('*');
   if (authId) query = query.eq('supabase_auth_id', authId);
   else query = query.ilike('email', email);
 
@@ -14,8 +22,7 @@ async function upsertUser(admin, input) {
   if (findError) throw findError;
 
   if (!existing && authId) {
-    const byEmail = await admin
-      .from('users')
+    const byEmail = await profiles(admin)
       .select('*')
       .ilike('email', email)
       .maybeSingle();
@@ -24,8 +31,7 @@ async function upsertUser(admin, input) {
   }
 
   if (existing) {
-    const { data, error } = await admin
-      .from('users')
+    const { data, error } = await profiles(admin)
       .update({
         name: name || existing.name,
         supabase_auth_id: authId || existing.supabase_auth_id,
@@ -39,8 +45,7 @@ async function upsertUser(admin, input) {
     return data;
   }
 
-  const { data, error } = await admin
-    .from('users')
+  const { data, error } = await profiles(admin)
     .insert({
       email: email,
       name: name || null,
@@ -66,4 +71,4 @@ function toSessionUser(row) {
   };
 }
 
-module.exports = { upsertUser, toSessionUser };
+module.exports = { upsertUser, toSessionUser, profileTable, profiles };

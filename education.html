@@ -89,6 +89,10 @@
 
 <!-- основной контент -->
 <main class="obuchenie vnutrennyaya-stranica">
+<nav aria-label="Навигация страницы" class="stranica-deystviya">
+<a class="stranica-knopka" href="account.html">Назад в кабинет</a>
+<a class="stranica-knopka" href="index.html">В меню</a>
+</nav>
 <header class="obuchenie-shapka">
 <p class="obuchenie-metka">Курс волонтёра</p>
 <h1>Как собрать точку мониторинга</h1>
@@ -105,10 +109,7 @@
 <h2>1. Выберите правильное дерево</h2>
 <p>Для проекта подходит берёза повислая. Дерево должно быть живым, взрослым, без сильных механических повреждений ствола и кроны. Не выбирайте молодую поросль, кусты и деревья с явно больной кроной.</p>
 </div>
-<figure class="obuchenie-foto-zagluska">
-<span>Фото нет</span>
-<figcaption>Здесь будет пример подходящей берёзы</figcaption>
-</figure>
+<!-- ФОТО: volunteer_birch_tree.jpg -->
 </article>
 
 <article class="obuchenie-slajd" data-obuchenie-slajd="1" hidden>
@@ -116,10 +117,7 @@
 <h2>2. Зафиксируйте точку</h2>
 <p>Координаты записываются рядом с выбранным деревом, а не примерно по улице. В названии точки лучше указать понятный ориентир: улицу, парк, школу или ближайший объект.</p>
 </div>
-<figure class="obuchenie-foto-zagluska">
-<span>Фото нет</span>
-<figcaption>Здесь будет пример точки на местности</figcaption>
-</figure>
+<!-- ФОТО: volunteer_point_coordinates.jpg -->
 </article>
 
 <article class="obuchenie-slajd" data-obuchenie-slajd="2" hidden>
@@ -127,10 +125,7 @@
 <h2>3. Соберите 30 листьев</h2>
 <p>С одного дерева нужно собрать ровно 30 неповреждённых листьев. Листья берутся из одной части кроны, желательно с высоты 1,5-2 м. Не подходят листья с дырками, пятнами, сильным подсыханием или следами насекомых.</p>
 </div>
-<figure class="obuchenie-foto-zagluska">
-<span>Фото нет</span>
-<figcaption>Здесь будет пример подходящего листа</figcaption>
-</figure>
+<!-- ФОТО: volunteer_good_leaf.jpg -->
 </article>
 
 <article class="obuchenie-slajd" data-obuchenie-slajd="3" hidden>
@@ -138,10 +133,7 @@
 <h2>4. Сфотографируйте каждый лист</h2>
 <p>Фотографируйте строго сверху на светлом однотонном фоне. Лист должен полностью помещаться в кадр, быть расправленным, а центральная жилка должна хорошо читаться от основания до верхушки.</p>
 </div>
-<figure class="obuchenie-foto-zagluska">
-<span>Фото нет</span>
-<figcaption>Здесь будет пример правильного кадра</figcaption>
-</figure>
+<!-- ФОТО: volunteer_leaf_photo_setup.jpg -->
 </article>
 
 <article class="obuchenie-slajd" data-obuchenie-slajd="4" hidden>
@@ -149,22 +141,20 @@
 <h2>5. Проверьте фото перед отправкой</h2>
 <p>Перед загрузкой удалите размытые фотографии, кадры с тенью, лишними предметами, обрезанным листом или неправильным видом дерева. Лучше переснять сразу, чем получить отклонение на модерации.</p>
 </div>
-<figure class="obuchenie-foto-zagluska">
-<span>Фото нет</span>
-<figcaption>Здесь будет пример ошибки съёмки</figcaption>
-</figure>
+<!-- ФОТО: volunteer_bad_photo_examples.jpg -->
 </article>
 
 <article class="obuchenie-slajd" data-obuchenie-slajd="5" hidden>
 <div class="obuchenie-tekst">
 <h2>6. Отправьте точку на модерацию</h2>
-<p>После загрузки 30 фото заявка попадает к модератору. Модератор проверяет вид дерева, качество фотографий, целостность листьев, координаты и дату сбора. На карте появляются только подтверждённые точки.</p>
+<p>После загрузки 30 фото заявка попадает к модератору. Модератор проверяет вид дерева, качество фотографий, целостность листьев, координаты и дату сбора. Затем заявка проходит автоматическую проверку нейросетью. На карте появляются только точки, прошедшие оба этапа.</p>
 </div>
+<!-- ФОТО: volunteer_moderation_flow.jpg -->
 <div class="obuchenie-itog" aria-label="Что проверяет модератор">
 <span><strong>30 фото</strong>ровно один набор листьев</span>
 <span><strong>1 дерево</strong>одна заявка от волонтёра</span>
 <span><strong>Координаты</strong>точка привязана к месту сбора</span>
-<span><strong>Модерация</strong>карта обновляется после проверки</span>
+<span><strong>2 этапа</strong>модератор и нейросеть перед публикацией</span>
 </div>
 </article>
 </section>
@@ -196,6 +186,19 @@
 <a href="submit.html">Добавить точку</a>
 <a href="my-requests.html">Мои заявки</a>
 </div>
+</section>
+
+<section aria-labelledby="obuchenieFotoSpisokZagolovok" class="obuchenie-foto-spisok">
+<h2 id="obuchenieFotoSpisokZagolovok">Фото для курса</h2>
+<p>Когда будут готовы реальные иллюстрации, вставьте их в места HTML-комментариев с такими именами:</p>
+<ul>
+<li><code>volunteer_birch_tree.jpg</code> — подходящая берёза повислая.</li>
+<li><code>volunteer_point_coordinates.jpg</code> — фиксация координат у дерева.</li>
+<li><code>volunteer_good_leaf.jpg</code> — неповреждённый лист для основной методики.</li>
+<li><code>volunteer_leaf_photo_setup.jpg</code> — правильная съёмка листа сверху на светлом фоне.</li>
+<li><code>volunteer_bad_photo_examples.jpg</code> — примеры фото, которые нужно переснять.</li>
+<li><code>volunteer_moderation_flow.jpg</code> — схема пути заявки через модератора и нейросеть.</li>
+</ul>
 </section>
 </main>
 

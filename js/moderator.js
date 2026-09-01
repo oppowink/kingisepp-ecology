@@ -29,6 +29,27 @@
     'Количество фото: 30 из 30'
   ];
 
+  function isHumanPending(item) {
+    return item.status === 'pending' || item.status === 'pending_human' || item.humanStatus === 'pending';
+  }
+
+  function isHumanApproved(item) {
+    return item.status === 'human_approved' || item.humanStatus === 'approved';
+  }
+
+  function isPublished(item) {
+    return window.EcoAuth && typeof EcoAuth.isRequestPublished === 'function'
+      ? EcoAuth.isRequestPublished(item)
+      : item.status === 'published';
+  }
+
+  function statusLabel(item) {
+    if (item.status === 'rejected' || item.humanStatus === 'rejected') return 'Отклонена модератором';
+    if (isPublished(item)) return 'Опубликована на карте';
+    if (isHumanApproved(item)) return 'Проверена модератором, ждёт нейросеть';
+    return 'На проверке модератора';
+  }
+
   document.addEventListener('DOMContentLoaded', async function () {
     var user = await EcoAuth.requireAuthAsync();
     if (!user) return;
@@ -52,6 +73,7 @@
 
     list.hidden = false;
     if (adminPanel) adminPanel.hidden = user.role !== 'admin';
+    if (EcoAuth.refreshRequests) await EcoAuth.refreshRequests('all');
 
     function showRoleMessage(text, state) {
       if (!roleMessage) return;
@@ -63,16 +85,18 @@
     function renderAdminStats(requests) {
       if (!adminStats) return;
       var total = requests.length;
-      var approved = requests.filter(function (item) { return item.status === 'approved'; }).length;
-      var pending = requests.filter(function (item) { return item.status === 'pending'; }).length;
-      var rejected = requests.filter(function (item) { return item.status === 'rejected'; }).length;
+      var published = requests.filter(isPublished).length;
+      var pendingHuman = requests.filter(isHumanPending).length;
+      var waitingAi = requests.filter(function (item) { return isHumanApproved(item) && !isPublished(item); }).length;
+      var rejected = requests.filter(function (item) { return item.status === 'rejected' || item.humanStatus === 'rejected'; }).length;
       var trees = requests.reduce(function (sum, item) { return sum + Number(item.treeCount || 1); }, 0);
       var leaves = requests.reduce(function (sum, item) { return sum + Number(item.leafCount || 30); }, 0);
 
       adminStats.innerHTML =
         '<dt>Всего заявок</dt><dd>' + total + '</dd>' +
-        '<dt>На проверке</dt><dd>' + pending + '</dd>' +
-        '<dt>Одобрено точек</dt><dd>' + approved + '</dd>' +
+        '<dt>На проверке модератора</dt><dd>' + pendingHuman + '</dd>' +
+        '<dt>Ждут нейросеть</dt><dd>' + waitingAi + '</dd>' +
+        '<dt>Опубликовано точек</dt><dd>' + published + '</dd>' +
         '<dt>Отклонено</dt><dd>' + rejected + '</dd>' +
         '<dt>Деревьев в заявках</dt><dd>' + trees + '</dd>' +
         '<dt>Листьев в заявках</dt><dd>' + leaves + '</dd>';
@@ -101,6 +125,13 @@
           var selected = (item.moderationReason === r.value) ? 'selected' : '';
           return '<option value="' + r.value + '" ' + selected + '>' + r.label + '</option>';
         }).join('');
+        var humanButtons = isPublished(item)
+          ? '<button class="knopka-vtorichnaya" disabled type="button">Опубликована</button>'
+          : '<button class="knopka-osnovnaya" data-deystvie="human_approved" type="button">Одобрить модератором</button>' +
+            '<button class="knopka-vtorichnaya" data-deystvie="rejected" type="button">Отклонить</button>';
+        var aiButton = isHumanApproved(item) && !isPublished(item)
+          ? '<button class="knopka-osnovnaya" data-deystvie="ai_checked" type="button">Проверить нейросетью</button>'
+          : '';
 
         // Превью фото (если есть base64)
         var photosHtml = '';
@@ -118,6 +149,7 @@
           '<h2>' + escapeHtml(item.title) + '</h2>' +
           '<p class="moderaciya-meta">' + escapeHtml(item.userName) + ', ' + escapeHtml(item.userEmail) + '</p>' +
           '<p class="moderaciya-dannye">' + escapeHtml(item.location) + (item.collectionDate ? ', ' + escapeHtml(item.collectionDate) : '') + '</p>' +
+          '<p class="moderaciya-status">Статус: ' + escapeHtml(statusLabel(item)) + '</p>' +
           '<div class="moderaciya-foto" style="display:flex; flex-wrap:wrap; gap:6px; margin:10px 0;">' + photosHtml + '</div>' +
           '<div class="moderaciya-checklist" style="margin:12px 0; padding:10px; background:var(--surface-soft); border:1px solid var(--line);">' +
           '<span class="mod-checklist-title">Чеклист модератора</span>' +
@@ -132,8 +164,8 @@
           '<p class="pole-oshibka" data-prichina-oshibka hidden>Выберите причину отклонения</p>' +
           '</div>' +
           '<div class="moderaciya-deystviya" style="display:flex; gap:11px; margin-top:13px;">' +
-          '<button class="knopka-osnovnaya" data-deystvie="approved" type="button">Одобрить</button>' +
-          '<button class="knopka-vtorichnaya" data-deystvie="rejected" type="button">Отклонить</button>' +
+          humanButtons +
+          aiButton +
           '</div>' +
           '</article>';
       }).join('');
@@ -149,14 +181,15 @@
             checklist.push(c.checked);
           });
           // Сохраняем чеклист в заявке
-          var request = EcoAuth.updateRequest(id, { moderationChecklist: checklist });
-          if (!request) console.warn('Не удалось сохранить чеклист для заявки ' + id);
+          EcoAuth.saveRequestUpdate(id, { moderationChecklist: checklist }).catch(function () {
+            console.warn('Не удалось сохранить чеклист для заявки ' + id);
+          });
         });
       });
     }
 
     // Обработка кликов по кнопкам "Одобрить" / "Отклонить"
-    list.addEventListener('click', function (event) {
+    list.addEventListener('click', async function (event) {
       var button = event.target.closest('[data-deystvie]');
       if (!button) return;
       var item = button.closest('[data-zayavka-id]');
@@ -165,38 +198,55 @@
       var id = item.dataset.zayavkaId;
       var action = button.dataset.deystvie;
 
+      try {
       // Для отклонения проверяем, выбрана ли причина
       if (action === 'rejected') {
         var reasonSelect = item.querySelector('[data-prichina]');
         var reasonError = item.querySelector('[data-prichina-oshibka]');
         if (!reasonSelect || !reasonSelect.value) {
-          reasonError.hidden = false;
-          reasonSelect.focus();
+          if (reasonError) reasonError.hidden = false;
+          if (reasonSelect) reasonSelect.focus();
           return;
         }
-        reasonError.hidden = true;
+        if (reasonError) reasonError.hidden = true;
         // Сохраняем причину
-        EcoAuth.updateRequest(id, {
+        await EcoAuth.saveRequestUpdate(id, {
           status: 'rejected',
+          humanStatus: 'rejected',
+          aiStatus: 'skipped',
           moderationReason: reasonSelect.value,
           moderatedAt: new Date().toISOString()
         });
-      } else {
-        // Одобрение
-        EcoAuth.updateRequest(id, {
-          status: 'approved',
+      } else if (action === 'human_approved') {
+        // Первый этап: решение человека-модератора
+        await EcoAuth.saveRequestUpdate(id, {
+          status: 'human_approved',
+          humanStatus: 'approved',
+          aiStatus: 'pending',
           moderationReason: '',
-          approvedAt: new Date().toISOString(),
           moderatedAt: new Date().toISOString()
         });
+      } else if (action === 'ai_checked') {
+        // Второй этап: временная заглушка автоматической проверки нейросетью
+        await EcoAuth.saveRequestUpdate(id, {
+          status: 'published',
+          aiStatus: 'checked',
+          aiResult: { status: 'checked_stub', message: 'Проверено нейросетью: заглушка' },
+          aiCheckedAt: new Date().toISOString(),
+          approvedAt: new Date().toISOString(),
+          publishedAt: new Date().toISOString()
+        });
       }
-
-      render(); // Перерисовываем список
+      } catch (error) {
+        console.error('moderationUpdate', error);
+      } finally {
+        render(); // Перерисовываем список
+      }
     });
 
     if (adminVolunteerCert) {
       adminVolunteerCert.addEventListener('click', function () {
-        var approved = EcoAuth.getAllRequests().find(function (item) { return item.status === 'approved'; });
+        var approved = EcoAuth.getAllRequests().find(isPublished);
         EcoAuth.openVolunteerCertificate({
           user: {
             name: approved ? approved.userName : (user.name || 'Волонтёр проекта'),

@@ -1,6 +1,6 @@
 const { readSession, publicUser } = require('../../server/session');
 const { getAdminClient } = require('../../server/supabase');
-const { toSessionUser } = require('../../server/users');
+const { toSessionUser, profiles } = require('../../server/users');
 
 module.exports = async function handler(req, res) {
   res.setHeader('Cache-Control', 'no-store');
@@ -17,8 +17,7 @@ module.exports = async function handler(req, res) {
     }
     try {
       const admin = getAdminClient();
-      const { data: row, error } = await admin
-        .from('users')
+      const { data: row, error } = await profiles(admin)
         .select('*')
         .eq('id', session.sub)
         .maybeSingle();

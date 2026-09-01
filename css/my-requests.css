@@ -46,10 +46,14 @@
   flex: 0 0 auto;
   font-size: .82rem;
 }
-.zayavka__status[data-status='pending'] {
+.zayavka__status[data-status='pending'],
+.zayavka__status[data-status='pending_human'],
+.zayavka__status[data-status='human_approved'],
+.zayavka__status[data-status='ai_checked'] {
   color: var(--warning);
 }
-.zayavka__status[data-status='approved'] {
+.zayavka__status[data-status='approved'],
+.zayavka__status[data-status='published'] {
   color: var(--success);
 }
 .zayavka__status[data-status='rejected'] {

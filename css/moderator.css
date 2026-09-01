@@ -99,6 +99,11 @@
   margin: 14px 0 0;
   color: var(--text-muted);
 }
+.moderaciya-status {
+  margin: 8px 0 0;
+  color: var(--accent);
+  font-size: .84rem;
+}
 
 /* блок с результатом предварительного AI-анализа */
 .moderaciya-ai {
@@ -156,29 +161,6 @@
   border-color: var(--accent);
 }
 
-/* Чеклист модератора */
-.moderaciya-checklist {
-  background: var(--surface-soft);
-  border: 1px solid var(--line);
-  padding: 10px;
-  margin: 12px 0;
-}
-.moderaciya-checklist label {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 0.85rem;
-  color: var(--text);
-  margin: 4px 0;
-  cursor: pointer;
-}
-.moderaciya-checklist input[type="checkbox"] {
-  width: 16px;
-  height: 16px;
-  accent-color: var(--accent);
-  flex-shrink: 0;
-  cursor: pointer;
-}
 /* Заголовок чеклиста — шрифт Comfortaa, не жирный */
 .mod-checklist-title {
   display: block;

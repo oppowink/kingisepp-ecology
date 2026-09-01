@@ -297,6 +297,29 @@ html.dark .knopka-osnovnaya { background: var(--acid); color: var(--bg); }
 button:disabled,
 [aria-disabled='true'] { opacity: .45; cursor: default; transform: none !important; }
 
+.stranica-deystviya {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+.stranica-knopka {
+  display: inline-flex;
+  align-items: center;
+  min-height: 38px;
+  padding: 7px 12px;
+  border: 1px solid var(--line);
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: .84rem;
+  transition: color var(--transition-fast), border-color var(--transition-fast), transform var(--transition-fast);
+}
+.stranica-knopka:hover {
+  border-color: var(--line-strong);
+  color: var(--text);
+  transform: translateY(-1px);
+}
+
 /* поля ввода и формы */
 .pole-gruppa { display: grid; gap: 7px; }
 .pole-podpis { color: var(--text-muted); font-size: .81rem; }

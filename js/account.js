@@ -99,8 +99,8 @@
       }
       if (certificateText) {
         certificateText.textContent = educationDone && approvedRequest
-          ? 'Можно сформировать сертификат по подтверждённой точке: ' + approvedRequest.title + '.'
-          : 'Сертификат доступен после обучения и подтверждения первой точки.';
+          ? 'Можно сформировать сертификат по опубликованной точке: ' + approvedRequest.title + '.'
+          : 'Сертификат доступен после обучения и публикации первой точки.';
       }
       if (countEl) {
         var requestCount = EcoAuth.getMyRequests().length;
@@ -268,6 +268,7 @@
     var user = await EcoAuth.refreshUser() || EcoAuth.getUser();
     if (user) {
       await EcoAuth.refreshEducationStatus();
+      if (EcoAuth.refreshRequests) await EcoAuth.refreshRequests('mine');
       user = EcoAuth.getUser();
     }
     render(user);
