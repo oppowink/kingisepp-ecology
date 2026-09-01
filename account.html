@@ -110,44 +110,31 @@
 <section aria-labelledby="vhodZagolovok" class="vhod-blok" id="vhodBlok">
 <h1 id="vhodZagolovok">Личный кабинет</h1>
 
-<!-- Скрытая кнопка входа разработчика -->
-<div id="devLoginBlock" hidden style="margin-top: 12px;">
-  <button class="knopka-osnovnaya" id="devLoginBtn" type="button" style="background: #d97706; border-color: #d97706;">
-    Вход разработчика
-  </button>
-  <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 4px;">
-    Только для тестирования модерации
-  </p>
+<div aria-label="Выберите действие" class="vhod-rezhimy" role="group">
+<button aria-pressed="true" class="vhod-rezhim vhod-rezhim--aktivnyy" id="rezhimVhod" type="button">Войти</button>
+<button aria-pressed="false" class="vhod-rezhim" id="rezhimRegistraciya" type="button">Создать аккаунт</button>
 </div>
 
-<!-- форма входа по email (OTP) -->
-<form class="vhod-email" id="vhodEmailForma" novalidate="">
-<div class="pole-gruppa">
+<!-- вход и регистрация по email и паролю, без почтового кода -->
+<form class="vhod-email" id="vhodPasswordForma" novalidate="">
+<div class="pole-gruppa" hidden id="vhodImyaGruppa">
 <label class="pole-podpis" for="vhodImya">Имя</label>
-<input autocomplete="name" class="pole-vvod" id="vhodImya" maxlength="80" name="name" type="text"/>
+<input autocomplete="name" class="pole-vvod" id="vhodImya" maxlength="80" minlength="2" name="name" type="text"/>
 </div>
 <div class="pole-gruppa">
 <label class="pole-podpis" for="vhodEmail">E-mail</label>
 <input autocomplete="email" class="pole-vvod" id="vhodEmail" name="email" required="" type="email"/>
 </div>
-<button class="knopka-osnovnaya" id="vhodEmailKod" type="submit">Получить код</button>
-</form>
-
-<!-- форма подтверждения кода -->
-<form class="vhod-kod" hidden="" id="vhodKodForma" novalidate="">
 <div class="pole-gruppa">
-<label class="pole-podpis" for="vhodKod">Код из письма</label>
-<input autocomplete="one-time-code" class="pole-vvod" id="vhodKod" inputmode="numeric" maxlength="6" name="token" pattern="[0-9]{6}" required=""/>
+<label class="pole-podpis" for="vhodParol">Пароль</label>
+<input aria-describedby="vhodParolPodskazka" autocomplete="current-password" class="pole-vvod" id="vhodParol" maxlength="128" minlength="8" name="password" required="" type="password"/>
+<small class="vhod-podskazka" hidden id="vhodParolPodskazka">Не менее 8 символов</small>
 </div>
-<button class="knopka-osnovnaya" id="vhodKodPodtverdit" type="submit">Продолжить</button>
-<button class="knopka-tekst" id="vhodKodNazad" type="button">Другой e-mail</button>
+<button class="knopka-osnovnaya" id="vhodPasswordKnopka" type="submit">Войти</button>
 </form>
-
-<!-- вход через Яндекс -->
-<button class="knopka-vtorichnaya vhod-yandex" id="vhodYandex" type="button">Войти через Яндекс ID</button>
 
 <!-- сообщение об ошибке -->
-<p class="soobshchenie" hidden="" id="vhodSoobshchenie"></p>
+<p aria-live="polite" class="soobshchenie" hidden="" id="vhodSoobshchenie"></p>
 </section>
 
 <!-- блок личного кабинета (скрыт до входа) -->

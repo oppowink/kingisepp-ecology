@@ -46,15 +46,14 @@
 
   // проверка параметров URL для включения предпросмотра
   function previewFromUrl() {
+    if (!previewAvailable()) return;
     var role = new URLSearchParams(location.search).get('preview');
     if (['participant', 'moderator', 'admin'].includes(role)) setPreview(role);
   }
   previewFromUrl();
 
-  // доступен ли предпросмотр (локально или с параметром ?preview=1)
+  // предпросмотр доступен только при локальной разработке
   function previewAvailable() {
-    var params = new URLSearchParams(location.search);
-    if (params.get('preview') === '1') return true;
     if (location.protocol === 'file:') return true;
     return ['localhost', '127.0.0.1'].includes(location.hostname);
   }
@@ -106,48 +105,38 @@
     location.assign(api('/api/auth/yandex/start'));
   }
 
-  // начало входа по email (отправка OTP-кода)
-  async function startEmailLogin(payload) {
+  async function passwordRequest(path, payload) {
     if (backendUnavailableHere()) throw new Error('BACKEND_NOT_CONFIGURED');
-    var response = await fetch(api('/api/auth/email/start'), {
+    var response = await fetch(api(path), {
       method: 'POST',
       credentials: 'include',
       headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({
-        email: String(payload?.email || '').trim(),
-        name: String(payload?.name || '').trim()
-      })
+      body: JSON.stringify(payload || {})
     });
     var data = await response.json().catch(function () { return {}; });
     if (!response.ok) {
-      var err = new Error(data.error || 'EMAIL_START_FAILED');
-      err.detail = data.message || '';
-      throw err;
-    }
-    return data;
-  }
-
-  // подтверждение OTP-кода и вход
-  async function verifyEmailLogin(payload) {
-    if (backendUnavailableHere()) throw new Error('BACKEND_NOT_CONFIGURED');
-    var response = await fetch(api('/api/auth/email/verify'), {
-      method: 'POST',
-      credentials: 'include',
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({
-        email: String(payload?.email || '').trim(),
-        token: String(payload?.token || '').trim(),
-        name: String(payload?.name || '').trim()
-      })
-    });
-    var data = await response.json().catch(function () { return {}; });
-    if (!response.ok) {
-      var err2 = new Error(data.error || 'EMAIL_VERIFY_FAILED');
-      err2.detail = data.message || '';
-      throw err2;
+      var error = new Error(data.error || 'AUTH_FAILED');
+      error.detail = data.message || '';
+      error.status = response.status;
+      throw error;
     }
     setCachedUser(data.user || null);
     return data.user || null;
+  }
+
+  function registerWithPassword(payload) {
+    return passwordRequest('/api/auth/password/register', {
+      email: String(payload?.email || '').trim(),
+      name: String(payload?.name || '').trim(),
+      password: String(payload?.password || '')
+    });
+  }
+
+  function signInWithPassword(payload) {
+    return passwordRequest('/api/auth/password/login', {
+      email: String(payload?.email || '').trim(),
+      password: String(payload?.password || '')
+    });
   }
 
   // выход (удаление сессии)
@@ -263,8 +252,8 @@
     refreshUser: refreshUser,
     isAuthenticated: isAuthenticated,
     startYandexLogin: startYandexLogin,
-    startEmailLogin: startEmailLogin,
-    verifyEmailLogin: verifyEmailLogin,
+    registerWithPassword: registerWithPassword,
+    signInWithPassword: signInWithPassword,
     signOut: signOut,
     startPreview: setPreview,
     previewAvailable: previewAvailable,
@@ -284,4 +273,3 @@
 
 
 })();
-

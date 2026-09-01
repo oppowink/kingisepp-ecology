@@ -3,6 +3,10 @@
   "private": true,
   "version": "0.1.0",
   "description": "ЭкоБиоМониторинг — frontend + Vercel API",
+  "scripts": {
+    "test": "node --test tests/*.test.js",
+    "check": "node --check js/auth.js && node --check js/account.js && node --check server/*.js && node --check api/auth/password/*.js"
+  },
   "dependencies": {
     "@supabase/supabase-js": "^2.49.1"
   }

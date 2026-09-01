@@ -15,22 +15,50 @@
   margin-bottom: 31px;
 }
 
-/* формы email и кода — сетка с отступами между полями */
-.vhod-email,
-.vhod-kod {
+/* переключатель входа и регистрации */
+.vhod-rezhimy {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-bottom: 24px;
+  border: 1px solid var(--line);
+}
+.vhod-rezhim {
+  min-height: 46px;
+  padding: 10px 14px;
+  border: 0;
+  background: transparent;
+  color: var(--text-muted);
+  font: inherit;
+  cursor: pointer;
+}
+.vhod-rezhim + .vhod-rezhim {
+  border-left: 1px solid var(--line);
+}
+.vhod-rezhim--aktivnyy {
+  background: var(--surface-soft);
+  color: var(--text);
+  font-weight: 600;
+}
+.vhod-rezhim:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* форма email и пароля */
+.vhod-email {
   display: grid;
   gap: 18px;
   width: 100%;
 }
-.vhod-email .knopka-osnovnaya,
-.vhod-kod .knopka-osnovnaya {
+.vhod-email .knopka-osnovnaya {
   width: fit-content;
   margin-top: 2px;
 }
-
-/* кнопка яндекс — отдельный отступ сверху */
-.vhod-yandex {
-  margin-top: 24px;
+.vhod-podskazka {
+  display: block;
+  margin-top: 7px;
+  color: var(--text-muted);
+  font-size: .78rem;
 }
 
 /* сообщение об ошибке или успехе */
