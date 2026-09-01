@@ -84,6 +84,7 @@ function sessionCookieValue(user) {
     email: user.email,
     name: user.name || '',
     role: user.role || 'participant',
+    educationCompleted: Boolean(user.educationCompleted),
     exp: Date.now() + MAX_AGE_SEC * 1000
   });
   const secure = process.env.NODE_ENV === 'production' || (process.env.APP_URL || '').startsWith('https');
@@ -117,7 +118,10 @@ function publicUser(sessionOrRow) {
     id: sessionOrRow.sub || sessionOrRow.id,
     email: sessionOrRow.email,
     name: sessionOrRow.name || '',
-    role: sessionOrRow.role || 'participant'
+    role: sessionOrRow.role || 'participant',
+    educationCompleted: Boolean(sessionOrRow.educationCompleted || sessionOrRow.education_completed),
+    educationScore: Number(sessionOrRow.educationScore || sessionOrRow.education_score || 0),
+    educationCompletedAt: sessionOrRow.educationCompletedAt || sessionOrRow.education_completed_at || null
   };
 }
 

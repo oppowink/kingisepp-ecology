@@ -68,9 +68,11 @@
   function addApprovedPoints(points) {
     if (!mapInstance || !Array.isArray(points)) return;
     points.filter(function (point) { return point.status === 'approved'; }).forEach(function (point) {
-      var latitude = Number(point.latitude);
-      var longitude = Number(point.longitude);
+      var coords = parseCoordinates(point);
+      var latitude = coords.latitude;
+      var longitude = coords.longitude;
       if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) return;
+      var prepared = preparePoint(point);
 
       var placemark = new ymaps.Placemark([latitude, longitude], {}, {
         openBalloonOnClick: false,
@@ -82,10 +84,51 @@
       });
       placemark.events.add('click', function () {
         setSelected(placemark);
-        showPoint(point);
+        showPoint(prepared);
       });
       mapInstance.geoObjects.add(placemark);
     });
+  }
+
+  function parseCoordinates(point) {
+    if (Number.isFinite(Number(point.latitude)) && Number.isFinite(Number(point.longitude))) {
+      return { latitude: Number(point.latitude), longitude: Number(point.longitude) };
+    }
+    var parts = String(point.coordinates || '').split(',').map(function (part) { return part.trim(); });
+    return {
+      latitude: Number(parts[0]),
+      longitude: Number(parts[1])
+    };
+  }
+
+  function preparePoint(point) {
+    var files = Array.isArray(point.files) ? point.files : [];
+    return {
+      date: point.collectionDate || point.date || '',
+      level: point.level || point.title || 'Подтверждённая точка',
+      address: point.address || point.location || '',
+      explanation: point.explanation || 'Точка добавлена участником и подтверждена модератором.',
+      photos: files.map(function (file) { return file.data; }).filter(Boolean),
+      excelUrl: point.excelUrl || '',
+      pdfUrl: point.pdfUrl || ''
+    };
+  }
+
+  function applyCityFromData() {
+    fetch('data/cities.json')
+      .then(function (res) { return res.json(); })
+      .then(function (cities) {
+        var activeCity = cities.find(function (city) { return city.active; });
+        if (activeCity && mapInstance) {
+          mapInstance.setCenter(activeCity.center, activeCity.zoom);
+        }
+      })
+      .catch(function () {});
+  }
+
+  function loadApprovedRequests() {
+    if (!window.EcoAuth) return;
+    addApprovedPoints(window.EcoAuth.getAllRequests());
   }
 
   // создание карты
@@ -103,6 +146,8 @@
       dobavitOdobrennyeTochki: addApprovedPoints,
       pokazatTochku: showPoint
     };
+    applyCityFromData();
+    loadApprovedRequests();
   }
 
   document.addEventListener('DOMContentLoaded', function () {
@@ -110,13 +155,3 @@
     ymaps.ready(createMap);
   });
 })();
-
-
-fetch('data/cities.json')
-  .then(res => res.json())
-  .then(cities => {
-    const activeCity = cities.find(c => c.active);
-    if (activeCity) {
-      map.setCenter(activeCity.center, activeCity.zoom);
-    }
-  });

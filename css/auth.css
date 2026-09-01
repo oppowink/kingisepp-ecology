@@ -92,6 +92,25 @@
   margin: 9px 0 16px;
   color: var(--text-muted);
 }
+.kabinet-status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 32px;
+  margin: 4px 0 16px !important;
+  padding: 5px 12px;
+  border: 1px solid var(--line);
+  color: var(--text-muted);
+  font-size: .8rem;
+}
+.kabinet-status[data-state='success'] {
+  border-color: color-mix(in srgb, var(--success) 55%, var(--line));
+  color: var(--success);
+}
+.kabinet-status[data-state='warning'] {
+  border-color: color-mix(in srgb, var(--warning) 55%, var(--line));
+  color: var(--warning);
+}
 
 /* навигация внутри кабинета — сетка 2 колонки */
 .kabinet-navigaciya {
@@ -126,6 +145,37 @@
   background: var(--surface-soft);
   transform: translateY(-1px);
   outline: none;
+}
+.kabinet-navigaciya__ssylka--disabled {
+  opacity: .62;
+}
+.kabinet-navigaciya__ssylka--disabled::after {
+  content: 'после обучения';
+  margin-left: 8px;
+  color: var(--text-muted);
+  font-family: var(--font-body);
+  font-size: .72rem;
+  font-weight: 400;
+}
+
+.kabinet-sertifikat {
+  width: min(620px, 100%);
+  margin: 34px auto 0;
+  padding-top: 25px;
+  border-top: 1px solid var(--line);
+  text-align: center;
+}
+.kabinet-sertifikat h2 {
+  margin-bottom: 10px;
+}
+.kabinet-sertifikat p {
+  margin: 0 auto 16px;
+  max-width: 520px;
+  color: var(--text-muted);
+  font-size: .86rem;
+}
+.kabinet-sertifikat .soobshchenie {
+  margin-top: 12px;
 }
 
 /* ссылка на модерацию — на всю ширину, если показана */

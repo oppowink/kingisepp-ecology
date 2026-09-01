@@ -46,6 +46,16 @@ function isDuplicate(error) {
   return text.includes('already') || text.includes('registered') || text.includes('exists');
 }
 
+function passwordProblems(password) {
+  const problems = [];
+  if (password.length < 8 || password.length > 128) problems.push('length');
+  if (!/[A-ZА-ЯЁ]/.test(password)) problems.push('upper');
+  if (!/[a-zа-яё]/.test(password)) problems.push('lower');
+  if (!/\d/.test(password)) problems.push('digit');
+  if (!/[^A-Za-zА-Яа-яЁё0-9]/.test(password)) problems.push('special');
+  return problems;
+}
+
 module.exports = async function handler(req, res) {
   res.setHeader('Cache-Control', 'no-store');
   res.setHeader('Content-Type', 'application/json; charset=utf-8');
@@ -60,6 +70,7 @@ module.exports = async function handler(req, res) {
     const email = String(body.email || '').trim().toLowerCase();
     const name = String(body.name || '').trim();
     const password = String(body.password || '');
+    const passwordConfirm = String(body.passwordConfirm || '');
 
     if (!isEmail(email)) {
       res.statusCode = 400;
@@ -69,7 +80,11 @@ module.exports = async function handler(req, res) {
       res.statusCode = 400;
       return res.end(JSON.stringify({ error: 'INVALID_NAME' }));
     }
-    if (password.length < 8 || password.length > 128) {
+    if (!passwordConfirm || password !== passwordConfirm) {
+      res.statusCode = 400;
+      return res.end(JSON.stringify({ error: 'PASSWORD_MISMATCH' }));
+    }
+    if (passwordProblems(password).length) {
       res.statusCode = 400;
       return res.end(JSON.stringify({ error: 'WEAK_PASSWORD' }));
     }

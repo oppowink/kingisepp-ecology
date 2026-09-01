@@ -7,6 +7,11 @@
 .podacha-nablyudeniya > h1 {
   margin-bottom: 39px;
 }
+.forma-nablyudeniya__poyasnenie {
+  margin: -12px 0 0;
+  color: var(--text-muted);
+  font-size: .86rem;
+}
 
 /* блок, если обучение не пройдено */
 .dostup-soobshchenie p {

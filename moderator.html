@@ -93,8 +93,40 @@
 <h1>Модерация</h1>
 <!-- сообщение о недоступности (скрыто) -->
 <p class="soobshchenie" hidden="" id="moderaciyaNetDostupa">Раздел недоступен</p>
+<section aria-labelledby="adminPanelZagolovok" class="admin-panel" hidden="" id="adminPanel">
+<p class="admin-panel__metka">Админ-панель</p>
+<h2 id="adminPanelZagolovok">Управление проектом</h2>
+<div class="admin-panel__deystviya">
+<button class="knopka-osnovnaya" id="adminSertifikatVolontera" type="button">Получить сертификат волонтёра</button>
+<button class="knopka-vtorichnaya" disabled="" id="adminSertifikatModeratora" type="button">Получить сертификат модератора</button>
+</div>
+<div class="admin-panel__setka">
+<section aria-labelledby="adminStatistikaZagolovok" class="admin-panel__blok">
+<h3 id="adminStatistikaZagolovok">Точки и деревья</h3>
+<dl class="admin-statistika" id="adminStatistika"></dl>
+</section>
+<section aria-labelledby="adminRoliZagolovok" class="admin-panel__blok">
+<h3 id="adminRoliZagolovok">Назначение модератора</h3>
+<form class="admin-rol-forma" id="adminRolForma">
+<label class="pole-podpis" for="adminRolEmail">E-mail пользователя</label>
+<input class="pole-vvod" id="adminRolEmail" name="email" placeholder="user@example.com" required="" type="email"/>
+<label class="pole-podpis" for="adminRolZnachenie">Роль</label>
+<select class="pole-vybor" id="adminRolZnachenie" name="role">
+<option value="moderator">Модератор</option>
+<option value="participant">Волонтёр</option>
+<option value="admin">Админ</option>
+</select>
+<button class="knopka-osnovnaya" type="submit">Сохранить роль</button>
+</form>
+<p aria-live="polite" class="soobshchenie" hidden="" id="adminRolSoobshchenie"></p>
+</section>
+</div>
+</section>
+<section aria-labelledby="moderaciyaZayavkiZagolovok" class="moderaciya-razdel">
+<h2 id="moderaciyaZayavkiZagolovok">Просмотр заявок</h2>
 <!-- список заявок (заполняется через JS) -->
 <section class="moderaciya-spisok" hidden="" id="moderaciyaSpisok"></section>
+</section>
 </main>
 
 <!-- подвал -->

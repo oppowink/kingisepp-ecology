@@ -48,6 +48,9 @@ function adminClient(options) {
         async createUser() {
           if (options.createError) return { data: null, error: new Error(options.createError) };
           return { data: { user: { id: 'auth-1' } }, error: null };
+        },
+        async deleteUser() {
+          return { data: {}, error: null };
         }
       }
     },
@@ -78,6 +81,32 @@ test('registration validates input before calling Supabase', async function () {
   assert.equal(JSON.parse(res.body).error, 'INVALID_EMAIL');
 });
 
+test('registration rejects weak passwords before calling Supabase', async function () {
+  const handler = loadHandler('../api/auth/password/register', {
+    getAdminClient() { throw new Error('must not be called'); }
+  });
+  const res = response();
+  await handler({
+    method: 'POST',
+    body: { email: 'user@example.com', name: 'Полина', password: 'password123', passwordConfirm: 'password123' }
+  }, res);
+  assert.equal(res.statusCode, 400);
+  assert.equal(JSON.parse(res.body).error, 'WEAK_PASSWORD');
+});
+
+test('registration rejects password confirmation mismatch', async function () {
+  const handler = loadHandler('../api/auth/password/register', {
+    getAdminClient() { throw new Error('must not be called'); }
+  });
+  const res = response();
+  await handler({
+    method: 'POST',
+    body: { email: 'user@example.com', name: 'Полина', password: 'Password123!', passwordConfirm: 'Password124!' }
+  }, res);
+  assert.equal(res.statusCode, 400);
+  assert.equal(JSON.parse(res.body).error, 'PASSWORD_MISMATCH');
+});
+
 test('registration creates a confirmed account and session cookie', async function () {
   const admin = adminClient();
   const handler = loadHandler('../api/auth/password/register', {
@@ -86,7 +115,7 @@ test('registration creates a confirmed account and session cookie', async functi
   const res = response();
   await handler({
     method: 'POST',
-    body: { email: 'User@Example.com', name: 'Полина', password: 'strong-pass-123' }
+    body: { email: 'User@Example.com', name: 'Полина', password: 'Strong-pass-123!', passwordConfirm: 'Strong-pass-123!' }
   }, res);
   assert.equal(res.statusCode, 201);
   assert.match(res.headers['set-cookie'], /^eco_session=/);
@@ -100,7 +129,7 @@ test('registration reports an existing account', async function () {
   const res = response();
   await handler({
     method: 'POST',
-    body: { email: 'user@example.com', name: 'Полина', password: 'strong-pass-123' }
+    body: { email: 'user@example.com', name: 'Полина', password: 'Strong-pass-123!', passwordConfirm: 'Strong-pass-123!' }
   }, res);
   assert.equal(res.statusCode, 409);
   assert.equal(JSON.parse(res.body).error, 'ACCOUNT_EXISTS');
@@ -139,7 +168,7 @@ test('login creates a session for valid Supabase credentials', async function ()
   const res = response();
   await handler({
     method: 'POST',
-    body: { email: 'user@example.com', password: 'strong-pass-123' }
+    body: { email: 'user@example.com', password: 'Strong-pass-123!' }
   }, res);
   assert.equal(res.statusCode, 200);
   assert.match(res.headers['set-cookie'], /^eco_session=/);
@@ -165,4 +194,66 @@ test('login rejects invalid credentials without revealing details', async functi
   }, res);
   assert.equal(res.statusCode, 401);
   assert.equal(JSON.parse(res.body).error, 'INVALID_CREDENTIALS');
+});
+
+test('education complete scores volunteer test and stores progress', async function () {
+  const session = require('../server/session');
+  const cookie = session.sessionCookieValue({
+    id: 'profile-1',
+    email: 'user@example.com',
+    name: 'Полина',
+    role: 'participant'
+  });
+  const saved = {};
+  const admin = {
+    from(table) {
+      if (table === 'education_progress') {
+        return {
+          async upsert(value) {
+            saved.progress = value;
+            return { data: value, error: null };
+          }
+        };
+      }
+      if (table === 'users') {
+        return {
+          update(value) {
+            saved.user = value;
+            return {
+              async eq() {
+                return { data: value, error: null };
+              }
+            };
+          }
+        };
+      }
+      throw new Error('unexpected table ' + table);
+    }
+  };
+  const handler = loadHandler('../api/education/complete', {
+    getAdminClient() { return admin; }
+  });
+  const res = response();
+  await handler({
+    method: 'POST',
+    headers: { cookie: cookie },
+    body: {
+      answers: {
+        q1: '30',
+        q2: 'betula',
+        q3: 'no_damage',
+        q4: 'top_light',
+        q5: 'tree_coords',
+        q6: 'moderation',
+        q7: 'after_approval'
+      }
+    }
+  }, res);
+
+  const body = JSON.parse(res.body);
+  assert.equal(res.statusCode, 200);
+  assert.equal(body.completed, true);
+  assert.equal(body.score, 7);
+  assert.equal(saved.progress.passed, true);
+  assert.equal(saved.user.education_completed, true);
 });

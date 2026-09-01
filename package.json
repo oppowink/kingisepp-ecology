@@ -5,7 +5,7 @@
   "description": "ЭкоБиоМониторинг — frontend + Vercel API",
   "scripts": {
     "test": "node --test tests/*.test.js",
-    "check": "node --check js/auth.js && node --check js/account.js && node --check server/*.js && node --check api/auth/password/*.js"
+    "check": "find api js server -name '*.js' -print0 | xargs -0 -n 1 node --check"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.49.1"

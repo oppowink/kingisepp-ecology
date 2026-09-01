@@ -9,7 +9,7 @@
 <meta content="Отправка наблюдения участником экологического мониторинга." name="description"/>
 <meta content="noindex,nofollow" name="robots"/>
 
-<title>Подать наблюдение | ЭкоБиоМониторинг</title>
+<title>Добавить точку | ЭкоБиоМониторинг</title>
 
 <!-- фавиконка -->
 <link href="img/favicon.ico" rel="icon"/>
@@ -90,19 +90,20 @@
 <!-- основной контент -->
 <main class="podacha-nablyudeniya vnutrennyaya-stranica">
 <!-- заголовок -->
-<h1>Подать наблюдение</h1>
+<h1>Добавить точку мониторинга</h1>
 
 <!-- блок, если обучение не пройдено -->
 <section class="dostup-soobshchenie" hidden="" id="podachaBlokirovka">
-<p>Сначала нужно завершить обучение</p>
+<p>Сначала нужно пройти обучение волонтёра и тест.</p>
 <a href="education.html">Перейти к обучению</a>
 </section>
 
 <!-- форма подачи наблюдения -->
 <form class="forma-nablyudeniya" hidden="" id="formaNablyudeniya" novalidate="">
+<p class="forma-nablyudeniya__poyasnenie">Одна заявка = одна точка, одно дерево и 30 фотографий листьев.</p>
 <!-- поле "Название наблюдения" -->
 <div class="pole-gruppa">
-<label class="pole-podpis" for="nazvanieNablyudeniya">Название наблюдения</label>
+<label class="pole-podpis" for="nazvanieNablyudeniya">Название точки</label>
 <input autocomplete="off" class="pole-vvod" id="nazvanieNablyudeniya" name="title" required=""/>
 </div>
 
@@ -183,7 +184,7 @@
 
 
 <!-- кнопка отправки -->
-<button class="knopka-osnovnaya" type="submit">Отправить на проверку</button>
+<button class="knopka-osnovnaya" type="submit">Отправить точку на проверку</button>
 </form>
 </main>
 

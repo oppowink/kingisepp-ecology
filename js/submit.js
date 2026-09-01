@@ -14,7 +14,11 @@
     if (!form || !locked) return;
 
     // Если обучение не пройдено — блокируем доступ
-    if (!EcoAuth.isEducationCompleted(user.email)) {
+    var educationDone = EcoAuth.isEducationCompleted(user.email);
+    if (!educationDone && EcoAuth.refreshEducationStatus) {
+      educationDone = await EcoAuth.refreshEducationStatus();
+    }
+    if (!educationDone) {
       locked.hidden = false;
       form.hidden = true;
       return;
@@ -190,6 +194,8 @@
           collectionDate: collectionDate,
           comment: document.getElementById('kommentariyNablyudeniya').value.trim(),
           files: filesData,
+          treeCount: 1,
+          leafCount: MAX_PHOTOS,
           backgroundFlags: filesData.map(function (f) { return f.bgLight; }) // дополнительный массив для удобства
         });
         sessionStorage.setItem('eco-last-request-id', request.id);

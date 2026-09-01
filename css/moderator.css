@@ -8,6 +8,73 @@
   margin-bottom: 39px;
 }
 
+.admin-panel {
+  margin-bottom: 44px;
+  padding-bottom: 32px;
+  border-bottom: 1px solid var(--line);
+}
+.admin-panel__metka {
+  margin: 0 0 8px;
+  color: var(--accent);
+  font-size: .76rem;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.admin-panel h2 {
+  margin-bottom: 18px;
+}
+.admin-panel h3 {
+  margin: 0 0 13px;
+  font-family: var(--font-heading);
+  font-size: 1rem;
+  font-weight: 400;
+}
+.admin-panel__deystviya {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+.admin-panel__setka {
+  display: grid;
+  grid-template-columns: minmax(0, .9fr) minmax(280px, 1.1fr);
+  gap: 24px;
+}
+.admin-panel__blok {
+  min-width: 0;
+  padding: 18px 0 0;
+  border-top: 1px solid var(--line);
+}
+.admin-statistika {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px 16px;
+  margin: 0;
+}
+.admin-statistika dt {
+  color: var(--text-muted);
+}
+.admin-statistika dd {
+  margin: 0;
+  color: var(--text);
+  font-family: var(--font-heading);
+}
+.admin-rol-forma {
+  display: grid;
+  gap: 9px;
+}
+.admin-rol-forma .knopka-osnovnaya {
+  justify-self: start;
+  margin-top: 6px;
+}
+.admin-panel .soobshchenie {
+  margin-top: 12px;
+}
+
+.moderaciya-razdel > h2 {
+  margin-bottom: 23px;
+}
+
 /* список заявок — сетка с отступами */
 .moderaciya-spisok {
   display: grid;
@@ -120,4 +187,13 @@
   font-weight: 400;
   font-size: 0.95rem;
   color: var(--text);
+}
+
+@media (max-width: 720px) {
+  .admin-panel__setka {
+    grid-template-columns: 1fr;
+  }
+  .moderaciya-deystviya {
+    flex-wrap: wrap;
+  }
 }

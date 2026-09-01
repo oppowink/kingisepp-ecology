@@ -35,6 +35,13 @@
 
     var denied = document.getElementById('moderaciyaNetDostupa');
     var list = document.getElementById('moderaciyaSpisok');
+    var adminPanel = document.getElementById('adminPanel');
+    var adminStats = document.getElementById('adminStatistika');
+    var adminVolunteerCert = document.getElementById('adminSertifikatVolontera');
+    var roleForm = document.getElementById('adminRolForma');
+    var roleEmail = document.getElementById('adminRolEmail');
+    var roleValue = document.getElementById('adminRolZnachenie');
+    var roleMessage = document.getElementById('adminRolSoobshchenie');
     if (!list || !denied) return;
 
     if (!['moderator', 'admin'].includes(user.role)) {
@@ -44,9 +51,36 @@
     }
 
     list.hidden = false;
+    if (adminPanel) adminPanel.hidden = user.role !== 'admin';
+
+    function showRoleMessage(text, state) {
+      if (!roleMessage) return;
+      roleMessage.textContent = text || '';
+      roleMessage.dataset.state = state || '';
+      roleMessage.hidden = !text;
+    }
+
+    function renderAdminStats(requests) {
+      if (!adminStats) return;
+      var total = requests.length;
+      var approved = requests.filter(function (item) { return item.status === 'approved'; }).length;
+      var pending = requests.filter(function (item) { return item.status === 'pending'; }).length;
+      var rejected = requests.filter(function (item) { return item.status === 'rejected'; }).length;
+      var trees = requests.reduce(function (sum, item) { return sum + Number(item.treeCount || 1); }, 0);
+      var leaves = requests.reduce(function (sum, item) { return sum + Number(item.leafCount || 30); }, 0);
+
+      adminStats.innerHTML =
+        '<dt>Всего заявок</dt><dd>' + total + '</dd>' +
+        '<dt>На проверке</dt><dd>' + pending + '</dd>' +
+        '<dt>Одобрено точек</dt><dd>' + approved + '</dd>' +
+        '<dt>Отклонено</dt><dd>' + rejected + '</dd>' +
+        '<dt>Деревьев в заявках</dt><dd>' + trees + '</dd>' +
+        '<dt>Листьев в заявках</dt><dd>' + leaves + '</dd>';
+    }
 
     function render() {
       var requests = EcoAuth.getAllRequests();
+      renderAdminStats(requests);
       if (!requests.length) {
         list.innerHTML = '<p class="zayavki-pusty">Заявок пока нет</p>';
         return;
@@ -144,18 +178,56 @@
         // Сохраняем причину
         EcoAuth.updateRequest(id, {
           status: 'rejected',
-          moderationReason: reasonSelect.value
+          moderationReason: reasonSelect.value,
+          moderatedAt: new Date().toISOString()
         });
       } else {
         // Одобрение
         EcoAuth.updateRequest(id, {
           status: 'approved',
-          moderationReason: ''
+          moderationReason: '',
+          approvedAt: new Date().toISOString(),
+          moderatedAt: new Date().toISOString()
         });
       }
 
       render(); // Перерисовываем список
     });
+
+    if (adminVolunteerCert) {
+      adminVolunteerCert.addEventListener('click', function () {
+        var approved = EcoAuth.getAllRequests().find(function (item) { return item.status === 'approved'; });
+        EcoAuth.openVolunteerCertificate({
+          user: {
+            name: approved ? approved.userName : (user.name || 'Волонтёр проекта'),
+            email: approved ? approved.userEmail : user.email
+          },
+          pointTitle: approved ? approved.title : 'Тестовая подтверждённая точка',
+          date: new Date().toLocaleDateString('ru-RU')
+        });
+      });
+    }
+
+    if (roleForm) {
+      roleForm.addEventListener('submit', async function (event) {
+        event.preventDefault();
+        showRoleMessage('');
+        try {
+          var updated = await EcoAuth.setUserRole(roleEmail.value, roleValue.value);
+          showRoleMessage('Роль сохранена: ' + (updated?.email || roleEmail.value) + ' -> ' + roleValue.value + '.', 'success');
+          roleForm.reset();
+          roleValue.value = 'moderator';
+        } catch (error) {
+          var code = String(error && error.message || '');
+          var text = code === 'USER_NOT_FOUND'
+            ? 'Пользователь с таким e-mail не найден.'
+            : code === 'ADMIN_REQUIRED'
+              ? 'Назначать роли может только админ.'
+              : 'Не удалось сохранить роль. Проверьте Supabase и права админа.';
+          showRoleMessage(text, 'error');
+        }
+      });
+    }
 
     render();
   });

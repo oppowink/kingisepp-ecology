@@ -59,7 +59,10 @@ function toSessionUser(row) {
     id: row.id,
     email: row.email,
     name: row.name || '',
-    role: row.role || 'participant'
+    role: row.role || 'participant',
+    educationCompleted: Boolean(row.education_completed),
+    educationScore: Number(row.education_score || 0),
+    educationCompletedAt: row.education_completed_at || null
   };
 }
 

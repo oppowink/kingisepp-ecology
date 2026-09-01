@@ -128,7 +128,11 @@
 <div class="pole-gruppa">
 <label class="pole-podpis" for="vhodParol">Пароль</label>
 <input aria-describedby="vhodParolPodskazka" autocomplete="current-password" class="pole-vvod" id="vhodParol" maxlength="128" minlength="8" name="password" required="" type="password"/>
-<small class="vhod-podskazka" hidden id="vhodParolPodskazka">Не менее 8 символов</small>
+<small class="vhod-podskazka" hidden id="vhodParolPodskazka">Минимум 8 символов, заглавная и строчная буквы, цифра и спецсимвол</small>
+</div>
+<div class="pole-gruppa" hidden id="vhodParolPovtorGruppa">
+<label class="pole-podpis" for="vhodParolPovtor">Повторите пароль</label>
+<input autocomplete="new-password" class="pole-vvod" id="vhodParolPovtor" maxlength="128" minlength="8" name="passwordConfirm" type="password"/>
 </div>
 <button class="knopka-osnovnaya" id="vhodPasswordKnopka" type="submit">Войти</button>
 </form>
@@ -143,16 +147,23 @@
 <div class="kabinet-polzovatel">
 <h1 id="kabinetImya"></h1>
 <p id="kabinetEmail"></p>
+<p class="kabinet-status" id="kabinetObuchenie"></p>
 <button class="knopka-tekst" id="vyhodKnopka" type="button">Выйти</button>
 </div>
 <!-- навигация в кабинете -->
 <nav aria-label="Разделы личного кабинета" class="kabinet-navigaciya">
 <a href="education.html">Обучение</a>
-<a href="submit.html" id="ssylkaPodacha">Подать наблюдение</a>
+<a href="submit.html" id="ssylkaPodacha">Добавить точку</a>
 <a href="my-requests.html">Мои заявки <span class="kabinet-navigaciya__schetchik" id="kolichestvoZayavok"></span></a>
 <a href="feedback.html">Обратная связь</a>
 <a hidden="" href="moderator.html" id="ssylkaModerator">Модерация</a>
 </nav>
+<section aria-labelledby="sertifikatZagolovok" class="kabinet-sertifikat">
+<h2 id="sertifikatZagolovok">Сертификат</h2>
+<p id="sertifikatTekst">Сертификат доступен после обучения и подтверждения первой точки.</p>
+<button class="knopka-osnovnaya" id="sertifikatVolonteraKnopka" type="button">Получить сертификат</button>
+<p aria-live="polite" class="soobshchenie" hidden="" id="sertifikatSoobshchenie"></p>
+</section>
 </section>
 </main>
 

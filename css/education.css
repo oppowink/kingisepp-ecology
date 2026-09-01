@@ -1,22 +1,39 @@
-/* education.css — страница обучения по методике */
+/* education.css — обучение волонтёра */
 
 .obuchenie {
   width: min(1040px, calc(100% - 46px));
 }
 
-/* счётчик слайдов */
+.obuchenie-shapka {
+  max-width: 780px;
+  margin-bottom: 30px;
+}
+.obuchenie-metka {
+  margin: 0 0 10px;
+  color: var(--accent);
+  font-size: .78rem;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.obuchenie-shapka h1 {
+  margin-bottom: 14px;
+}
+.obuchenie-shapka p {
+  margin: 0;
+  color: var(--text-muted);
+  font-weight: 300;
+}
+
 .obuchenie-schetchik {
   margin-bottom: 17px;
   color: var(--text-muted);
   font-size: .78rem;
 }
 
-/* контейнер слайдов — минимальная высота */
 .obuchenie-ekran {
   min-height: 470px;
 }
 
-/* один слайд — текст слева, картинка справа */
 .obuchenie-slajd {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(300px, 43%);
@@ -24,52 +41,49 @@
   gap: clamp(27px, 5vw, 64px);
 }
 
-/* текстовая часть слайда */
 .obuchenie-tekst {
-  max-width: 540px;
+  max-width: 560px;
 }
 .obuchenie-tekst h2 {
   margin-bottom: 19px;
 }
-.obuchenie-tekst p {
+.obuchenie-tekst p,
+.obuchenie-test > p,
+.obuchenie-zaversheno p {
   margin: 0;
   color: var(--text-muted);
   font-weight: 300;
 }
 
-/* заглушка для фото */
 .obuchenie-foto-zagluska {
   min-height: 330px;
   margin: 0;
   display: grid;
-  place-items: center;
+  align-content: center;
+  justify-items: center;
+  gap: 12px;
   padding: 22px;
-  background: var(--surface-soft);
+  border: 1px dashed var(--line-strong);
+  background: color-mix(in srgb, var(--surface-soft) 86%, #9ca3af);
   color: var(--text-soft);
   text-align: center;
 }
+.obuchenie-foto-zagluska span {
+  min-width: 128px;
+  min-height: 48px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--text-muted);
+  font-family: var(--font-heading);
+  font-size: .95rem;
+}
 .obuchenie-foto-zagluska figcaption {
+  max-width: 260px;
   font-size: .75rem;
 }
 
-/* ряд из двух или трёх фото */
-.obuchenie-foto-ryad {
-  min-width: 0;
-  min-height: 330px;
-  display: flex;
-  gap: 7px;
-}
-.obuchenie-foto-ryad .obuchenie-foto-zagluska {
-  flex: 1 1 0;
-  min-width: 0;
-  min-height: 330px;
-  padding: 12px;
-}
-.obuchenie-foto-ryad--tri .obuchenie-foto-zagluska figcaption {
-  overflow-wrap: anywhere;
-}
-
-/* итоговый блок — 2 колонки с краткой сводкой */
 .obuchenie-itog {
   min-height: 330px;
   display: grid;
@@ -94,33 +108,81 @@
   font-weight: 400;
 }
 
-/* кнопки управления слайдами */
 .obuchenie-upravlenie {
   display: flex;
+  flex-wrap: wrap;
   gap: 11px;
   margin-top: 29px;
 }
 
-/* блок завершения обучения */
-.obuchenie-zaversheno {
-  margin-top: 47px;
+.obuchenie-test {
+  width: min(780px, 100%);
+  margin-top: 22px;
 }
-.obuchenie-zaversheno > p {
-  margin: 0 0 15px;
+.obuchenie-test h2 {
+  margin-bottom: 10px;
+}
+.obuchenie-test form {
+  display: grid;
+  gap: 22px;
+  margin-top: 28px;
+}
+.obuchenie-voprosy {
+  display: grid;
+  gap: 18px;
+}
+.obuchenie-vopros {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 18px 0 0;
+  border: 0;
+  border-top: 1px solid var(--line);
+}
+.obuchenie-vopros legend {
+  padding: 0;
+  color: var(--text);
+  font-family: var(--font-heading);
+  font-size: .98rem;
+}
+.obuchenie-variant {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+.obuchenie-variant input {
+  width: 18px;
+  height: 18px;
+  margin-top: 5px;
+  flex: 0 0 auto;
+  accent-color: var(--accent);
+}
+.obuchenie-test .soobshchenie {
+  margin-top: 16px;
 }
 
-/* ссылки после завершения */
+.obuchenie-zaversheno {
+  width: min(720px, 100%);
+  margin-top: 30px;
+  padding-top: 25px;
+  border-top: 1px solid var(--line);
+}
+.obuchenie-zaversheno h2 {
+  margin-bottom: 10px;
+}
 .obuchenie-posle {
   display: flex;
   flex-wrap: wrap;
   gap: 11px 21px;
+  margin-top: 16px;
 }
 .obuchenie-posle a {
   color: var(--accent);
   text-decoration: none;
 }
 
-/* мобильная адаптивность */
 @media (max-width: 760px) {
   .obuchenie {
     width: min(100% - 34px, 720px);
@@ -137,15 +199,6 @@
     min-height: 220px;
     order: 2;
   }
-  .obuchenie-foto-ryad {
-    order: 2;
-    min-height: 220px;
-    overflow-x: auto;
-  }
-  .obuchenie-foto-ryad .obuchenie-foto-zagluska {
-    flex: 0 0 min(62vw, 230px);
-    min-height: 220px;
-  }
   .obuchenie-itog {
     min-height: auto;
     order: 2;
@@ -155,5 +208,14 @@
   }
   .obuchenie-upravlenie {
     margin-top: 25px;
+  }
+}
+
+@media (max-width: 520px) {
+  .obuchenie-itog {
+    grid-template-columns: 1fr;
+  }
+  .obuchenie-test form {
+    gap: 18px;
   }
 }

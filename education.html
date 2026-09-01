@@ -89,38 +89,111 @@
 
 <!-- основной контент -->
 <main class="obuchenie vnutrennyaya-stranica">
+<header class="obuchenie-shapka">
+<p class="obuchenie-metka">Курс волонтёра</p>
+<h1>Как собрать точку мониторинга</h1>
+<p>Одна заявка на сайте означает одну точку, одно дерево и 30 фотографий неповреждённых листьев берёзы повислой. После курса нужно пройти короткий тест.</p>
+</header>
+
 <!-- счётчик слайдов -->
-<div class="obuchenie-schetchik" id="obuchenieSchetchik">1 из 7</div>
+<div class="obuchenie-schetchik" id="obuchenieSchetchik">1 из 6</div>
 
 <!-- контейнер слайдов -->
 <section aria-live="polite" class="obuchenie-ekran" id="obuchenieEkran">
-<!-- слайды (каждый — отдельный article) -->
 <article class="obuchenie-slajd" data-obuchenie-slajd="0">
 <div class="obuchenie-tekst">
-<h2>Выбор дерева</h2>
-<p>...</p>
+<h2>1. Выберите правильное дерево</h2>
+<p>Для проекта подходит берёза повислая. Дерево должно быть живым, взрослым, без сильных механических повреждений ствола и кроны. Не выбирайте молодую поросль, кусты и деревья с явно больной кроной.</p>
 </div>
-<figure class="obuchenie-foto-zagluska" data-asset="img/education/bereza-obshchiy-vid.jpg">
-<figcaption>Общий вид берёзы повислой</figcaption>
+<figure class="obuchenie-foto-zagluska">
+<span>Фото нет</span>
+<figcaption>Здесь будет пример подходящей берёзы</figcaption>
 </figure>
 </article>
-<!-- остальные слайды (1–6) – скрыты через hidden, показываются через JS -->
-...
+
+<article class="obuchenie-slajd" data-obuchenie-slajd="1" hidden>
+<div class="obuchenie-tekst">
+<h2>2. Зафиксируйте точку</h2>
+<p>Координаты записываются рядом с выбранным деревом, а не примерно по улице. В названии точки лучше указать понятный ориентир: улицу, парк, школу или ближайший объект.</p>
+</div>
+<figure class="obuchenie-foto-zagluska">
+<span>Фото нет</span>
+<figcaption>Здесь будет пример точки на местности</figcaption>
+</figure>
+</article>
+
+<article class="obuchenie-slajd" data-obuchenie-slajd="2" hidden>
+<div class="obuchenie-tekst">
+<h2>3. Соберите 30 листьев</h2>
+<p>С одного дерева нужно собрать ровно 30 неповреждённых листьев. Листья берутся из одной части кроны, желательно с высоты 1,5-2 м. Не подходят листья с дырками, пятнами, сильным подсыханием или следами насекомых.</p>
+</div>
+<figure class="obuchenie-foto-zagluska">
+<span>Фото нет</span>
+<figcaption>Здесь будет пример подходящего листа</figcaption>
+</figure>
+</article>
+
+<article class="obuchenie-slajd" data-obuchenie-slajd="3" hidden>
+<div class="obuchenie-tekst">
+<h2>4. Сфотографируйте каждый лист</h2>
+<p>Фотографируйте строго сверху на светлом однотонном фоне. Лист должен полностью помещаться в кадр, быть расправленным, а центральная жилка должна хорошо читаться от основания до верхушки.</p>
+</div>
+<figure class="obuchenie-foto-zagluska">
+<span>Фото нет</span>
+<figcaption>Здесь будет пример правильного кадра</figcaption>
+</figure>
+</article>
+
+<article class="obuchenie-slajd" data-obuchenie-slajd="4" hidden>
+<div class="obuchenie-tekst">
+<h2>5. Проверьте фото перед отправкой</h2>
+<p>Перед загрузкой удалите размытые фотографии, кадры с тенью, лишними предметами, обрезанным листом или неправильным видом дерева. Лучше переснять сразу, чем получить отклонение на модерации.</p>
+</div>
+<figure class="obuchenie-foto-zagluska">
+<span>Фото нет</span>
+<figcaption>Здесь будет пример ошибки съёмки</figcaption>
+</figure>
+</article>
+
+<article class="obuchenie-slajd" data-obuchenie-slajd="5" hidden>
+<div class="obuchenie-tekst">
+<h2>6. Отправьте точку на модерацию</h2>
+<p>После загрузки 30 фото заявка попадает к модератору. Модератор проверяет вид дерева, качество фотографий, целостность листьев, координаты и дату сбора. На карте появляются только подтверждённые точки.</p>
+</div>
+<div class="obuchenie-itog" aria-label="Что проверяет модератор">
+<span><strong>30 фото</strong>ровно один набор листьев</span>
+<span><strong>1 дерево</strong>одна заявка от волонтёра</span>
+<span><strong>Координаты</strong>точка привязана к месту сбора</span>
+<span><strong>Модерация</strong>карта обновляется после проверки</span>
+</div>
+</article>
 </section>
 
 <!-- управление слайдами -->
 <div class="obuchenie-upravlenie">
 <button class="knopka-vtorichnaya" disabled="" id="obuchenieNazad" type="button">Назад</button>
-<button class="knopka-osnovnaya" disabled="" id="obuchenieDalshe" type="button">Дальше</button>
-<button class="knopka-osnovnaya" disabled="" hidden="" id="obuchenieZavershit" type="button">Завершить обучение</button>
+<button class="knopka-osnovnaya" id="obuchenieDalshe" type="button">Дальше</button>
+<button class="knopka-osnovnaya" hidden="" id="obuchenieKTestu" type="button">Перейти к тесту</button>
 </div>
 
-<!-- блок завершения обучения (скрыт, пока не завершат) -->
+<!-- тест -->
+<section aria-labelledby="obuchenieTestZagolovok" class="obuchenie-test" hidden="" id="obuchenieTest">
+<p class="obuchenie-metka">Проверка знаний</p>
+<h2 id="obuchenieTestZagolovok">Тест волонтёра</h2>
+<p>Нужно набрать минимум 6 правильных ответов из 7. После успешного теста откроется добавление точки.</p>
+<form id="obuchenieTestForma" novalidate="">
+<div class="obuchenie-voprosy" id="obuchenieVoprosy"></div>
+<button class="knopka-osnovnaya" type="submit">Проверить ответы</button>
+</form>
+<p aria-live="polite" class="soobshchenie" hidden="" id="obuchenieTestRezultat"></p>
+</section>
+
+<!-- блок завершения обучения -->
 <section class="obuchenie-zaversheno" hidden="" id="obuchenieZaversheno">
-<p>Обучение завершено</p>
+<h2>Обучение пройдено</h2>
+<p>Теперь можно добавить первую точку мониторинга. Сертификат станет доступен после подтверждения точки модератором.</p>
 <div class="obuchenie-posle">
-<a href="education.html">Обучение</a>
-<a href="submit.html">Подать наблюдение</a>
+<a href="submit.html">Добавить точку</a>
 <a href="my-requests.html">Мои заявки</a>
 </div>
 </section>
