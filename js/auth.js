@@ -10,6 +10,9 @@
   var REQUESTS_KEY = 'eco-requests-v1';
   var FEEDBACK_KEY = 'eco-feedback-v1';
   var TRAINING_VERSION = '2026-08';
+  var CONFIRMATION_TEST_ENABLED = false;
+  var MODERATOR_EXAM_KEY = 'eco-moderator-exam-v1';
+  var MODERATOR_EXAM_VERSION = '2026-09';
 
   // построение URL для API (с учетом базового пути)
   function api(path) {
@@ -186,6 +189,7 @@
 
   // проверка, пройдено ли обучение для данного email
   function isEducationCompleted(email) {
+    if (!CONFIRMATION_TEST_ENABLED) return false;
     var user = getUser();
     if (user?.preview) return true;
     if (user?.educationCompleted) return true;
@@ -235,6 +239,7 @@
   async function refreshEducationStatus() {
     var user = getUser();
     if (!user?.email) return false;
+    if (!CONFIRMATION_TEST_ENABLED) return false;
     if (user.preview || backendUnavailableHere()) return isEducationCompleted(user.email);
 
     try {
@@ -255,6 +260,50 @@
     } catch (_) {}
 
     return isEducationCompleted(user.email);
+  }
+
+  function moderatorExamMap() { return read(localStorage, MODERATOR_EXAM_KEY, {}); }
+
+  function saveModeratorExam(email, record) {
+    var key = String(email || '').trim().toLowerCase();
+    if (!key) return;
+    var map = moderatorExamMap();
+    map[key] = Object.assign({
+      completed: false,
+      score: 0,
+      total: 10,
+      version: MODERATOR_EXAM_VERSION,
+      completedAt: null
+    }, record || {}, { version: MODERATOR_EXAM_VERSION });
+    write(localStorage, MODERATOR_EXAM_KEY, map);
+  }
+
+  function getModeratorExamRecord(email) {
+    var user = getUser();
+    var key = String(email || user?.email || '').trim().toLowerCase();
+    if (!key) return null;
+    return moderatorExamMap()[key] || null;
+  }
+
+  function isModeratorExamCompleted(email) {
+    var record = getModeratorExamRecord(email);
+    return Boolean(record && record.completed && record.version === MODERATOR_EXAM_VERSION);
+  }
+
+  function completeModeratorExam(result) {
+    var user = getUser();
+    if (!user?.email) return null;
+    result = result || {};
+    var passed = Number(result.score || 0) >= 9 && Number(result.total || 10) === 10;
+    var record = {
+      completed: passed,
+      score: Number(result.score || 0),
+      total: Number(result.total || 10),
+      answers: result.answers || {},
+      completedAt: passed ? new Date().toISOString() : null
+    };
+    saveModeratorExam(user.email, record);
+    return record;
   }
 
   // получить все заявки из локального кэша
@@ -468,6 +517,51 @@
     return true;
   }
 
+  function openModeratorCertificate(details) {
+    details = details || {};
+    var user = details.user || getUser() || {};
+    var date = details.date || new Date().toLocaleDateString('ru-RU');
+    var number = details.number || ('EBM-MOD-' + new Date().getFullYear() + '-' + String(Date.now()).slice(-6));
+    var win = window.open('', '_blank');
+    if (!win) return false;
+
+    win.document.open();
+    win.document.write(
+      '<!doctype html><html lang="ru"><head><meta charset="utf-8">' +
+      '<title>Сертификат модератора</title>' +
+      '<style>' +
+      '@page{size:A4 landscape;margin:12mm}' +
+      '*{box-sizing:border-box}' +
+      'body{margin:0;background:#eef4ed;color:#183120;font-family:Georgia,\"Times New Roman\",serif}' +
+      '.page{min-height:100vh;display:grid;place-items:center;padding:28px}' +
+      '.cert{width:min(1060px,100%);min-height:680px;border:8px double #2f6b3f;background:#fff;padding:56px 64px;text-align:center;display:flex;flex-direction:column;justify-content:center}' +
+      '.eyebrow{margin:0 0 18px;font:700 14px Arial,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#5f7c63}' +
+      'h1{margin:0 auto 34px;max-width:820px;font-size:40px;line-height:1.2;color:#2f6b3f}' +
+      '.lead{margin:0 0 18px;font-size:22px}' +
+      '.name{margin:0 0 22px;font-size:34px;font-weight:700}' +
+      '.text{margin:0 auto 12px;max-width:790px;font-size:19px;line-height:1.55}' +
+      '.meta{margin-top:42px;display:flex;justify-content:space-between;gap:24px;font:15px Arial,sans-serif;color:#49624d;text-align:left}' +
+      '.actions{position:fixed;right:18px;top:18px;display:flex;gap:8px}' +
+      '.print,.back{padding:10px 16px;border:1px solid #2f6b3f;font:16px Arial,sans-serif;cursor:pointer}' +
+      '.print{background:#2f6b3f;color:#fff}.back{background:#fff;color:#2f6b3f}' +
+      '@media print{body{background:#fff}.page{padding:0}.cert{width:100%;min-height:calc(100vh - 24mm)}.actions{display:none}}' +
+      '</style></head><body>' +
+      '<div class="actions"><button class="back" onclick="window.close()">Назад</button><button class="print" onclick="window.print()">Сохранить в PDF</button></div>' +
+      '<main class="page"><section class="cert">' +
+      '<p class="eyebrow">ЭкоБиоМониторинг</p>' +
+      '<h1>Сертификат модератора проекта</h1>' +
+      '<p class="lead">Настоящий сертификат подтверждает, что</p>' +
+      '<p class="name">' + escapeHtml(user.name || user.email || 'Модератор проекта') + '</p>' +
+      '<p class="text">прошёл(ла) обучение модератора и успешно сдал(а) тест по проверке заявок гражданского экологического мониторинга.</p>' +
+      '<p class="text">Статус: модератор проекта «ЭкоБиоМониторинг».</p>' +
+      '<div class="meta"><span>Дата выдачи: ' + escapeHtml(date) + '</span><span>Номер: ' + escapeHtml(number) + '</span></div>' +
+      '</section></main></body></html>'
+    );
+    win.document.close();
+    win.focus();
+    return true;
+  }
+
   async function setUserRole(email, role) {
     if (backendUnavailableHere()) throw new Error('BACKEND_NOT_CONFIGURED');
     var response = await fetch(api('/api/admin/users/role'), {
@@ -516,6 +610,9 @@
     getEducationRecord: getEducationRecord,
     completeEducation: completeEducation,
     refreshEducationStatus: refreshEducationStatus,
+    getModeratorExamRecord: getModeratorExamRecord,
+    isModeratorExamCompleted: isModeratorExamCompleted,
+    completeModeratorExam: completeModeratorExam,
     refreshRequests: refreshRequests,
     getAllRequests: getAllRequests,
     getMyRequests: getMyRequests,
@@ -526,10 +623,12 @@
     updateRequest: updateRequest,
     saveRequestUpdate: saveRequestUpdate,
     openVolunteerCertificate: openVolunteerCertificate,
+    openModeratorCertificate: openModeratorCertificate,
     setUserRole: setUserRole,
     saveFeedback: saveFeedback,
     requireAuthAsync: requireAuthAsync,
     trainingVersion: TRAINING_VERSION,
+    confirmationTestEnabled: CONFIRMATION_TEST_ENABLED,
     isPreview: function () { return Boolean(read(sessionStorage, PREVIEW_USER, null)); }
   };
 

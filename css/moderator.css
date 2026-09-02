@@ -10,8 +10,7 @@
 
 .admin-panel {
   margin-bottom: 44px;
-  padding-bottom: 32px;
-  border-bottom: 1px solid var(--line);
+  padding-bottom: 10px;
 }
 .admin-panel__metka {
   margin: 0 0 8px;
@@ -43,7 +42,6 @@
 .admin-panel__blok {
   min-width: 0;
   padding: 18px 0 0;
-  border-top: 1px solid var(--line);
 }
 .admin-statistika {
   display: grid;
@@ -73,6 +71,79 @@
 
 .moderaciya-razdel > h2 {
   margin-bottom: 23px;
+}
+
+/* обучение модератора — блоки разделены отступами, без декоративных линий */
+.moderator-obuchenie {
+  display: grid;
+  gap: 18px;
+  margin-bottom: 46px;
+}
+.moderator-obuchenie__plashka {
+  margin: 0;
+  padding: 14px 16px;
+  background: var(--surface-soft);
+  color: var(--text);
+}
+.moderator-obuchenie__opisanie {
+  margin: 0;
+  color: var(--text-muted);
+}
+.moderator-obuchenie__deystviya {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.moderator-uroki {
+  display: grid;
+  gap: 18px;
+}
+.moderator-urok {
+  padding: 16px;
+  background: var(--surface-soft);
+}
+.moderator-urok h3,
+.moderator-test h3 {
+  margin: 0 0 9px;
+  font-family: var(--font-heading);
+  font-size: 1rem;
+  font-weight: 400;
+}
+.moderator-urok p,
+.moderator-test p {
+  margin: 0;
+  color: var(--text-muted);
+  line-height: 1.7;
+}
+.moderator-test {
+  display: grid;
+  gap: 16px;
+  padding: 16px;
+  background: var(--surface-soft);
+}
+.moderator-test[hidden] {
+  display: none;
+}
+.moderator-test__voprosy {
+  display: grid;
+  gap: 16px;
+}
+.moderator-vopros {
+  display: grid;
+  gap: 8px;
+}
+.moderator-vopros > p {
+  color: var(--text);
+}
+.moderator-variant {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  color: var(--text-muted);
+}
+.moderator-variant input {
+  margin-top: 4px;
+  accent-color: var(--accent);
 }
 
 /* список заявок — сетка с отступами */
@@ -125,7 +196,6 @@
 /* moderator.css — дополнение для чеклиста и селекта */
 .moderaciya-checklist {
   background: var(--surface-soft);
-  border: 1px solid var(--line);
   padding: 10px;
   margin: 12px 0;
 }
