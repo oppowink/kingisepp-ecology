@@ -105,10 +105,14 @@ async function handleList(req, res, admin) {
     return res.end(JSON.stringify({ error: 'AUTH_REQUIRED' }));
   }
 
-  const currentUser = await currentProfile(admin, session, 'id, email, name, role');
+  const currentUser = await currentProfile(admin, session, 'id, email, name, role, blocked');
   if (!currentUser) {
     res.statusCode = 401;
     return res.end(JSON.stringify({ error: 'AUTH_REQUIRED' }));
+  }
+  if (currentUser.blocked) {
+    res.statusCode = 403;
+    return res.end(JSON.stringify({ error: 'ACCOUNT_BLOCKED' }));
   }
 
   let query = requests(admin)
@@ -133,10 +137,14 @@ async function handleCreate(req, res, admin, body) {
     return res.end(JSON.stringify({ error: 'AUTH_REQUIRED' }));
   }
 
-  const currentUser = await currentProfile(admin, session, 'id, email, name, role, education_completed');
+  const currentUser = await currentProfile(admin, session, 'id, email, name, role, blocked, education_completed');
   if (!currentUser) {
     res.statusCode = 401;
     return res.end(JSON.stringify({ error: 'AUTH_REQUIRED' }));
+  }
+  if (currentUser.blocked) {
+    res.statusCode = 403;
+    return res.end(JSON.stringify({ error: 'ACCOUNT_BLOCKED' }));
   }
   if (!currentUser.education_completed && !['moderator', 'admin'].includes(currentUser.role)) {
     res.statusCode = 403;
@@ -188,8 +196,8 @@ async function handleModerate(req, res, admin, body) {
     return res.end(JSON.stringify({ error: 'MODERATOR_REQUIRED' }));
   }
 
-  const currentUser = await currentProfile(admin, session, 'role');
-  if (!currentUser || !['moderator', 'admin'].includes(currentUser.role)) {
+  const currentUser = await currentProfile(admin, session, 'role, blocked');
+  if (!currentUser || currentUser.blocked || !['moderator', 'admin'].includes(currentUser.role)) {
     res.statusCode = 403;
     return res.end(JSON.stringify({ error: 'MODERATOR_REQUIRED' }));
   }

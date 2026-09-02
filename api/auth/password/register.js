@@ -117,6 +117,11 @@ module.exports = async function handler(req, res) {
       await admin.auth.admin.deleteUser(created.user.id).catch(function () {});
       throw profileError;
     }
+    if (row.blocked) {
+      await admin.auth.admin.deleteUser(created.user.id).catch(function () {});
+      res.statusCode = 403;
+      return res.end(JSON.stringify({ error: 'ACCOUNT_BLOCKED' }));
+    }
     const user = toSessionUser(row);
 
     res.setHeader('Set-Cookie', sessionCookieValue(user));

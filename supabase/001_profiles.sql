@@ -16,6 +16,7 @@ create table if not exists public.profiles (
   name text,
   role text not null default 'participant'
     check (role in ('participant', 'moderator', 'admin')),
+  blocked boolean not null default false,
   supabase_auth_id uuid unique,
   last_auth_provider text,
   created_at timestamptz not null default now(),
@@ -24,6 +25,9 @@ create table if not exists public.profiles (
 
 create unique index if not exists profiles_email_lower_uidx
   on public.profiles (lower(email));
+
+alter table public.profiles
+  add column if not exists blocked boolean not null default false;
 
 alter table public.profiles enable row level security;
 

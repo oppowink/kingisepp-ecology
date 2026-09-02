@@ -65,6 +65,26 @@
   justify-self: start;
   margin-top: 6px;
 }
+.admin-block-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  width: fit-content;
+  margin-top: 4px;
+  color: var(--text);
+  cursor: pointer;
+}
+.admin-block-switch input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--accent);
+}
+.admin-poyasnenie {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: .82rem;
+  line-height: 1.55;
+}
 .admin-panel .soobshchenie {
   margin-top: 12px;
 }
@@ -98,6 +118,11 @@
   opacity: .52;
   pointer-events: none;
 }
+.moderator-obuchenie__progress {
+  margin: 0 0 10px;
+  color: var(--accent);
+  font-size: .82rem;
+}
 .moderator-uroki {
   display: grid;
   gap: 18px;
@@ -127,34 +152,6 @@
   background: var(--surface);
   color: var(--text-muted);
   font-size: .82rem;
-}
-.moderator-samoproverka {
-  display: grid;
-  gap: 12px;
-  padding: 16px;
-  background: var(--surface-soft);
-}
-.moderator-samoproverka h3 {
-  margin: 0;
-  font-family: var(--font-heading);
-  font-size: 1rem;
-  font-weight: 400;
-}
-.moderator-samoproverka p {
-  margin: 0;
-  color: var(--text-muted);
-}
-.moderator-samoproverka__zadaniya {
-  display: grid;
-  gap: 12px;
-}
-.moderator-samoproverka__blok {
-  display: grid;
-  gap: 8px;
-}
-.moderator-samoproverka__otvet {
-  color: var(--text-muted);
-  font-size: .86rem;
 }
 .moderator-test-intro {
   max-width: 760px;

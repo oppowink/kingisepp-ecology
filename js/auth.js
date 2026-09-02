@@ -79,9 +79,8 @@
   }
 
   function canSwitchRoleForTesting(user) {
-    var original = read(sessionStorage, ROLE_TEST_ORIGINAL, null);
-    if (original && original.role === 'admin') return true;
-    return (user || getUser())?.role === 'admin';
+    var current = user || getUser();
+    return Boolean(current && current.role === 'admin' && !current.testRole);
   }
 
   function switchRoleForTesting(role) {
@@ -137,7 +136,7 @@
     try {
       var response = await fetch(api('/api/auth/me'), { credentials: 'include', cache: 'no-store' });
       if (!response.ok) {
-        if (response.status === 401) setCachedUser(null);
+        if (response.status === 401 || response.status === 403) setCachedUser(null);
         return getUser();
       }
       var data = await response.json();
@@ -468,6 +467,7 @@
   function buildLocalRequest(data) {
     var user = getUser();
     if (!user?.email) throw new Error('AUTH_REQUIRED');
+    if (user.blocked) throw new Error('ACCOUNT_BLOCKED');
     if (!isEducationCompleted(user.email)) throw new Error('EDUCATION_REQUIRED');
 
     return {
@@ -648,13 +648,21 @@
     return true;
   }
 
-  async function setUserRole(email, role) {
+  async function setUserRole(email, role, options) {
+    options = options || {};
     if (backendUnavailableHere()) throw new Error('BACKEND_NOT_CONFIGURED');
+    var payload = {
+      email: String(email || '').trim(),
+      role: String(role || '').trim()
+    };
+    if (Object.prototype.hasOwnProperty.call(options, 'blocked')) {
+      payload.blocked = options.blocked === true;
+    }
     var response = await fetch(api('/api/admin/users/role'), {
       method: 'POST',
       credentials: 'include',
       headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ email: String(email || '').trim(), role: String(role || '').trim() })
+      body: JSON.stringify(payload)
     });
     var data = await response.json().catch(function () { return {}; });
     if (!response.ok) {

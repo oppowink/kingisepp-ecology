@@ -19,7 +19,14 @@
     var message = document.getElementById('vhodSoobshchenie');
     var logoutButton = document.getElementById('vyhodKnopka');
     var educationStatus = document.getElementById('kabinetObuchenie');
+    var userInfo = document.querySelector('.kabinet-polzovatel');
+    var cabinetNav = document.getElementById('kabinetNavigaciya');
+    var educationLink = document.getElementById('ssylkaObuchenie');
     var submitLink = document.getElementById('ssylkaPodacha');
+    var myRequestsLink = document.getElementById('ssylkaMoiZayavki');
+    var feedbackLink = document.getElementById('ssylkaFeedback');
+    var moderatorLink = document.getElementById('ssylkaModerator');
+    var certificateSection = document.querySelector('.kabinet-sertifikat');
     var certificateText = document.getElementById('sertifikatTekst');
     var certificateButton = document.getElementById('sertifikatVolonteraKnopka');
     var certificateMessage = document.getElementById('sertifikatSoobshchenie');
@@ -81,18 +88,40 @@
       var nameEl = document.getElementById('kabinetImya');
       var emailEl = document.getElementById('kabinetEmail');
       var countEl = document.getElementById('kolichestvoZayavok');
-      var modLink = document.getElementById('ssylkaModerator');
       var educationDone = EcoAuth.isEducationCompleted(user.email);
       var approvedRequest = EcoAuth.getFirstApprovedRequest();
+      var role = user.role || 'participant';
+      var chooseRole = EcoAuth.canSwitchRoleForTesting && EcoAuth.canSwitchRoleForTesting(user);
 
       if (nameEl) nameEl.textContent = user.name || 'Участник';
       if (emailEl) emailEl.textContent = user.email || '';
+      if (userInfo) userInfo.hidden = chooseRole;
+      if (cabinetNav) cabinetNav.hidden = chooseRole;
+      if (certificateSection) certificateSection.hidden = chooseRole || role !== 'participant';
+      if (roleTestBlock) roleTestBlock.hidden = !chooseRole;
+      if (chooseRole) return;
+
       if (educationStatus) {
         var record = EcoAuth.getEducationRecord(user.email);
-        educationStatus.textContent = educationDone
-          ? 'Обучение волонтёра пройдено' + (record?.score ? ': ' + record.score + '/' + record.total : '')
-          : 'Добавление точки откроется после основного подтверждающего теста';
-        educationStatus.dataset.state = educationDone ? 'success' : 'warning';
+        if (role === 'participant') {
+          educationStatus.textContent = educationDone
+            ? 'Обучение волонтёра пройдено' + (record?.score ? ': ' + record.score + '/' + record.total : '')
+            : 'Добавление точки откроется после основного подтверждающего теста';
+          educationStatus.dataset.state = educationDone ? 'success' : 'warning';
+          educationStatus.hidden = false;
+        } else {
+          educationStatus.textContent = role === 'admin' ? 'Режим администратора' : 'Режим модератора';
+          educationStatus.dataset.state = 'success';
+          educationStatus.hidden = false;
+        }
+      }
+      if (educationLink) educationLink.hidden = role !== 'participant';
+      if (submitLink) submitLink.hidden = role !== 'participant';
+      if (myRequestsLink) myRequestsLink.hidden = role !== 'participant';
+      if (feedbackLink) feedbackLink.hidden = true;
+      if (moderatorLink) {
+        moderatorLink.hidden = !['moderator', 'admin'].includes(role);
+        moderatorLink.textContent = role === 'admin' ? 'Админка' : 'Проверка заявок';
       }
       if (submitLink) {
         submitLink.classList.toggle('kabinet-navigaciya__ssylka--disabled', !educationDone);
@@ -107,11 +136,6 @@
         var requestCount = EcoAuth.getMyRequests().length;
         countEl.textContent = requestCount ? String(requestCount) : '';
       }
-      if (modLink) modLink.hidden = !['moderator', 'admin'].includes(user.role);
-      if (roleTestBlock) {
-        roleTestBlock.hidden = !(EcoAuth.canSwitchRoleForTesting && EcoAuth.canSwitchRoleForTesting(user));
-      }
-
       var next = nextPage();
       if (next) location.replace(next);
     }
@@ -157,6 +181,7 @@
       if (code === 'PASSWORD_MISMATCH') return 'Пароли не совпадают.';
       if (code === 'ACCOUNT_EXISTS') return 'Аккаунт с таким e-mail уже существует. Переключитесь на вход.';
       if (code === 'INVALID_CREDENTIALS') return 'Неверный e-mail или пароль.';
+      if (code === 'ACCOUNT_BLOCKED') return 'Аккаунт заблокирован администратором.';
       if (code === 'CREDENTIALS_REQUIRED') return 'Введите e-mail и пароль.';
       if (code === 'REGISTRATION_FAILED') return 'Не удалось создать аккаунт. Проверьте настройки Supabase на Vercel.';
       if (code === 'LOGIN_FAILED') return 'Не удалось выполнить вход. Попробуйте ещё раз.';
@@ -274,6 +299,10 @@
         var user = EcoAuth.switchRoleForTesting && EcoAuth.switchRoleForTesting(role);
         if (!user) {
           showMessage('Тестовые роли доступны только администратору.', 'error');
+          return;
+        }
+        if (role === 'moderator' || role === 'admin') {
+          location.href = 'moderator.html';
           return;
         }
         render(user);

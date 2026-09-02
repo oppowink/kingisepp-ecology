@@ -1,4 +1,4 @@
-const { readSession, publicUser } = require('../../server/session');
+const { readSession, clearSessionCookie, publicUser } = require('../../server/session');
 const { getAdminClient } = require('../../server/supabase');
 const { toSessionUser, profiles } = require('../../server/users');
 
@@ -23,6 +23,12 @@ module.exports = async function handler(req, res) {
         .maybeSingle();
 
       if (!error && row) {
+        if (row.blocked) {
+          res.statusCode = 403;
+          res.setHeader('Set-Cookie', clearSessionCookie());
+          res.setHeader('Content-Type', 'application/json');
+          return res.end(JSON.stringify({ error: 'ACCOUNT_BLOCKED', user: null }));
+        }
         res.statusCode = 200;
         res.setHeader('Content-Type', 'application/json');
         return res.end(JSON.stringify({ user: publicUser(toSessionUser(row)) }));

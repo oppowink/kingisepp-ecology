@@ -59,12 +59,12 @@ module.exports = async function handler(req, res) {
 
     const admin = getAdminClient();
     const { data: currentUser, error: currentError } = await profiles(admin)
-      .select('role')
+      .select('role, blocked')
       .eq('id', session.sub)
       .maybeSingle();
 
     if (currentError) throw currentError;
-    if (!currentUser || currentUser.role !== 'admin') {
+    if (!currentUser || currentUser.role !== 'admin' || currentUser.blocked) {
       res.statusCode = 403;
       return res.end(JSON.stringify({ error: 'ADMIN_REQUIRED' }));
     }
@@ -72,14 +72,20 @@ module.exports = async function handler(req, res) {
     const body = await readBody(req);
     const email = String(body.email || '').trim().toLowerCase();
     const role = String(body.role || '').trim();
+    const hasRole = Object.prototype.hasOwnProperty.call(body, 'role') && role;
+    const hasBlocked = Object.prototype.hasOwnProperty.call(body, 'blocked');
 
     if (!validEmail(email)) {
       res.statusCode = 400;
       return res.end(JSON.stringify({ error: 'INVALID_EMAIL' }));
     }
-    if (!['participant', 'moderator', 'admin'].includes(role)) {
+    if (hasRole && !['participant', 'moderator', 'admin'].includes(role)) {
       res.statusCode = 400;
       return res.end(JSON.stringify({ error: 'INVALID_ROLE' }));
+    }
+    if (!hasRole && !hasBlocked) {
+      res.statusCode = 400;
+      return res.end(JSON.stringify({ error: 'NO_CHANGES' }));
     }
 
     const { data: row, error: findError } = await profiles(admin)
@@ -93,8 +99,12 @@ module.exports = async function handler(req, res) {
       return res.end(JSON.stringify({ error: 'USER_NOT_FOUND' }));
     }
 
+    const patch = { updated_at: new Date().toISOString() };
+    if (hasRole) patch.role = role;
+    if (hasBlocked) patch.blocked = body.blocked === true;
+
     const { data: updated, error: updateError } = await profiles(admin)
-      .update({ role: role, updated_at: new Date().toISOString() })
+      .update(patch)
       .eq('id', row.id)
       .select('*')
       .single();

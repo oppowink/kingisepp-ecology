@@ -75,6 +75,10 @@ module.exports = async function handler(req, res) {
       supabaseAuthId: login.user.id,
       provider: 'password'
     });
+    if (row.blocked) {
+      res.statusCode = 403;
+      return res.end(JSON.stringify({ error: 'ACCOUNT_BLOCKED' }));
+    }
     const user = toSessionUser(row);
 
     res.setHeader('Set-Cookie', sessionCookieValue(user));

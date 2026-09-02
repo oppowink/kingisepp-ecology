@@ -31,6 +31,7 @@ async function upsertUser(admin, input) {
   }
 
   if (existing) {
+    if (existing.blocked) return existing;
     const { data, error } = await profiles(admin)
       .update({
         name: name || existing.name,
@@ -50,6 +51,7 @@ async function upsertUser(admin, input) {
       email: email,
       name: name || null,
       role: 'participant',
+      blocked: false,
       supabase_auth_id: authId,
       last_auth_provider: provider
     })
@@ -65,6 +67,7 @@ function toSessionUser(row) {
     email: row.email,
     name: row.name || '',
     role: row.role || 'participant',
+    blocked: Boolean(row.blocked),
     educationCompleted: Boolean(row.education_completed),
     educationScore: Number(row.education_score || 0),
     educationCompletedAt: row.education_completed_at || null

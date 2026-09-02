@@ -84,6 +84,7 @@ function sessionCookieValue(user) {
     email: user.email,
     name: user.name || '',
     role: user.role || 'participant',
+    blocked: Boolean(user.blocked),
     educationCompleted: Boolean(user.educationCompleted),
     exp: Date.now() + MAX_AGE_SEC * 1000
   });
@@ -119,6 +120,7 @@ function publicUser(sessionOrRow) {
     email: sessionOrRow.email,
     name: sessionOrRow.name || '',
     role: sessionOrRow.role || 'participant',
+    blocked: Boolean(sessionOrRow.blocked),
     educationCompleted: Boolean(sessionOrRow.educationCompleted || sessionOrRow.education_completed),
     educationScore: Number(sessionOrRow.educationScore || sessionOrRow.education_score || 0),
     educationCompletedAt: sessionOrRow.educationCompletedAt || sessionOrRow.education_completed_at || null

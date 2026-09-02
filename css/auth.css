@@ -117,10 +117,6 @@
   margin: 0 auto 28px;
   text-align: center;
 }
-.kabinet-roli-test h2 {
-  margin-bottom: 12px;
-  font-size: 1rem;
-}
 .kabinet-roli-test__knopki {
   display: flex;
   flex-wrap: wrap;

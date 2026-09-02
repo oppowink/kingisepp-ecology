@@ -29,7 +29,7 @@
     'Количество фото: 30 из 30'
   ];
 
-  // Краткие уроки для модератора: их можно прочитать или пропустить перед тестом
+  // Краткие уроки для модератора: один шаг показывается за раз
   var MODERATOR_LESSONS = [
     {
       title: '1. Роль модератора',
@@ -63,24 +63,6 @@
     }
   ];
 
-  var MODERATOR_SELF_CHECK = [
-    {
-      title: 'Ситуация 1',
-      text: 'В заявке 30 фотографий, но на части снимков листья обрезаны краем кадра.',
-      answer: 'Отклонить или запросить пересъёмку: контур листа должен быть виден полностью.'
-    },
-    {
-      title: 'Ситуация 2',
-      text: 'Фотографии чёткие, но в одной заявке смешаны листья с двух деревьев.',
-      answer: 'Отклонить: одна заявка должна соответствовать одному дереву.'
-    },
-    {
-      title: 'Ситуация 3',
-      text: 'Листья подходят, но координаты указывают на другой район города.',
-      answer: 'Не публиковать до исправления координат или отклонить с причиной.'
-    }
-  ];
-
   function isHumanPending(item) {
     return item.status === 'pending' || item.status === 'pending_human' || item.humanStatus === 'pending';
   }
@@ -110,20 +92,22 @@
     var list = document.getElementById('moderaciyaSpisok');
     var adminPanel = document.getElementById('adminPanel');
     var adminStats = document.getElementById('adminStatistika');
-    var adminVolunteerCert = document.getElementById('adminSertifikatVolontera');
-    var adminModeratorCert = document.getElementById('adminSertifikatModeratora');
+    var adminRoleButton = document.getElementById('adminNaznachenieRoley');
     var roleForm = document.getElementById('adminRolForma');
     var roleEmail = document.getElementById('adminRolEmail');
     var roleValue = document.getElementById('adminRolZnachenie');
+    var roleBlocked = document.getElementById('adminRolBlocked');
     var roleMessage = document.getElementById('adminRolSoobshchenie');
     var requestsSection = document.getElementById('moderaciyaZayavkiRazdel');
     var moderatorTraining = document.getElementById('moderatorObuchenie');
     var moderatorLessons = document.getElementById('moderatorUroki');
-    var moderatorSelfCheck = document.getElementById('moderatorSamoproverka');
     var moderatorFinish = document.getElementById('moderatorZavershitObuchenie');
     var moderatorTestLink = document.getElementById('moderatorKTestu');
     var moderatorCert = document.getElementById('moderatorSertifikat');
     var moderatorMessage = document.getElementById('moderatorObuchenieSoobshchenie');
+    var lessonIndex = 0;
+    var lessonTimer = null;
+    var LESSON_DELAY_SECONDS = 5;
     if (!list || !denied) return;
 
     if (!['moderator', 'admin'].includes(user.role)) {
@@ -132,17 +116,16 @@
       return;
     }
 
-    if (moderatorTraining) moderatorTraining.hidden = false;
-    if (EcoAuth.isModeratorExamCompleted && EcoAuth.isModeratorExamCompleted(user.email)) {
-      if (requestsSection) requestsSection.hidden = false;
-      list.hidden = false;
-      if (adminPanel) adminPanel.hidden = user.role !== 'admin';
-      if (EcoAuth.refreshRequests) await EcoAuth.refreshRequests('all');
-    } else {
-      if (requestsSection) requestsSection.hidden = true;
-      list.hidden = true;
-      if (adminPanel) adminPanel.hidden = true;
-    }
+    var isAdmin = user.role === 'admin';
+    var isModerator = user.role === 'moderator';
+    var moderatorPassed = EcoAuth.isModeratorExamCompleted && EcoAuth.isModeratorExamCompleted(user.email);
+    var canModerate = isModerator && moderatorPassed;
+
+    if (moderatorTraining) moderatorTraining.hidden = !isModerator;
+    if (adminPanel) adminPanel.hidden = !isAdmin;
+    if (requestsSection) requestsSection.hidden = !(isAdmin || canModerate);
+    list.hidden = !(isAdmin || canModerate);
+    if (EcoAuth.refreshRequests && (isAdmin || canModerate)) await EcoAuth.refreshRequests('all');
 
     function showRoleMessage(text, state) {
       if (!roleMessage) return;
@@ -165,36 +148,65 @@
         moderatorTestLink.classList.toggle('moderator-test-link--disabled', !trainingDone);
         moderatorTestLink.setAttribute('aria-disabled', String(!trainingDone));
       }
-      [moderatorCert, adminModeratorCert].forEach(function (button) {
-        if (!button) return;
-        button.disabled = !passed;
-        button.title = passed ? '' : 'Сертификат доступен после теста модератора на 9 из 10';
-      });
+      if (moderatorCert) {
+        moderatorCert.disabled = !passed;
+        moderatorCert.title = passed ? '' : 'Сертификат доступен после теста модератора на 9 из 10';
+      }
       if (passed) showModeratorMessage('Тест модератора пройден. Сертификат доступен.', 'success');
       else if (trainingDone) showModeratorMessage('Обучение завершено. Теперь можно перейти к тесту модератора.', 'success');
       else showModeratorMessage('Модерация откроется после обучения и теста модератора.', 'warning');
     }
 
     function renderModeratorTraining() {
-      if (moderatorLessons) {
-        moderatorLessons.innerHTML = MODERATOR_LESSONS.map(function (lesson) {
-          return '<article class="moderator-urok">' +
-            '<div class="moderator-urok__foto">Фото: ' + escapeHtml(lesson.photo) + '</div>' +
-            '<h3>' + escapeHtml(lesson.title) + '</h3>' +
-            '<p>' + escapeHtml(lesson.text) + '</p>' +
-            '</article>';
-        }).join('');
+      var trainingDone = EcoAuth.isModeratorTrainingCompleted && EcoAuth.isModeratorTrainingCompleted(user.email);
+      if (!moderatorLessons) {
+        updateModeratorCertificateButtons();
+        return;
+      }
+      if (lessonTimer) {
+        clearInterval(lessonTimer);
+        lessonTimer = null;
       }
 
-      if (moderatorSelfCheck) {
-        moderatorSelfCheck.innerHTML = MODERATOR_SELF_CHECK.map(function (item, index) {
-          return '<article class="moderator-samoproverka__blok">' +
-            '<h4>' + escapeHtml(item.title) + '</h4>' +
-            '<p>' + escapeHtml(item.text) + '</p>' +
-            '<button class="knopka-vtorichnaya" data-self-check="' + index + '" type="button">Показать самопроверку</button>' +
-            '<p class="moderator-samoproverka__otvet" hidden>' + escapeHtml(item.answer) + '</p>' +
-            '</article>';
-        }).join('');
+      if (trainingDone) {
+        moderatorLessons.innerHTML =
+          '<article class="moderator-urok">' +
+          '<h3>Обучение завершено</h3>' +
+          '<p>Откройте отдельную страницу теста. Для доступа к модерации нужно набрать не менее 9 баллов из 10.</p>' +
+          '</article>';
+        if (moderatorFinish) {
+          moderatorFinish.disabled = true;
+          moderatorFinish.textContent = 'Обучение завершено';
+        }
+        updateModeratorCertificateButtons();
+        return;
+      }
+
+      var lesson = MODERATOR_LESSONS[lessonIndex] || MODERATOR_LESSONS[0];
+      moderatorLessons.innerHTML =
+        '<article class="moderator-urok">' +
+        '<p class="moderator-obuchenie__progress">Шаг ' + (lessonIndex + 1) + ' из ' + MODERATOR_LESSONS.length + '</p>' +
+        '<div class="moderator-urok__foto">Фото: ' + escapeHtml(lesson.photo) + '</div>' +
+        '<h3>' + escapeHtml(lesson.title) + '</h3>' +
+        '<p>' + escapeHtml(lesson.text) + '</p>' +
+        '</article>';
+
+      if (moderatorFinish) {
+        var secondsLeft = LESSON_DELAY_SECONDS;
+        var finalStep = lessonIndex === MODERATOR_LESSONS.length - 1;
+        moderatorFinish.disabled = true;
+        moderatorFinish.textContent = (finalStep ? 'Завершить обучение' : 'Далее') + ' (' + secondsLeft + ')';
+        lessonTimer = setInterval(function () {
+          secondsLeft -= 1;
+          if (secondsLeft <= 0) {
+            clearInterval(lessonTimer);
+            lessonTimer = null;
+            moderatorFinish.disabled = false;
+            moderatorFinish.textContent = finalStep ? 'Завершить обучение и открыть тест' : 'Далее';
+            return;
+          }
+          moderatorFinish.textContent = (finalStep ? 'Завершить обучение' : 'Далее') + ' (' + secondsLeft + ')';
+        }, 1000);
       }
 
       updateModeratorCertificateButtons();
@@ -250,6 +262,24 @@
         var aiButton = isHumanApproved(item) && !isPublished(item)
           ? '<button class="knopka-osnovnaya" data-deystvie="ai_checked" type="button">Проверить нейросетью</button>'
           : '';
+        var moderationControls = canModerate
+          ? '<div class="moderaciya-checklist">' +
+            '<span class="mod-checklist-title">Чеклист модератора</span>' +
+            checklistHtml +
+            '</div>' +
+            '<div class="pole-gruppa moderaciya-prichina">' +
+            '<label class="pole-podpis" for="prichina-' + escapeHtml(item.id) + '">Причина отклонения</label>' +
+            '<select class="pole-vybor" id="prichina-' + escapeHtml(item.id) + '" data-prichina>' +
+            '<option value="">Выберите причину</option>' +
+            reasonOptions +
+            '</select>' +
+            '<p class="pole-oshibka" data-prichina-oshibka hidden>Выберите причину отклонения</p>' +
+            '</div>' +
+            '<div class="moderaciya-deystviya">' +
+            humanButtons +
+            aiButton +
+            '</div>'
+          : '<p class="admin-poyasnenie">Режим администратора: просмотр заявки без решения модератора.</p>';
 
         // Превью фото (если есть base64)
         var photosHtml = '';
@@ -269,27 +299,12 @@
           '<p class="moderaciya-dannye">' + escapeHtml(item.location) + (item.collectionDate ? ', ' + escapeHtml(item.collectionDate) : '') + '</p>' +
           '<p class="moderaciya-status">Статус: ' + escapeHtml(statusLabel(item)) + '</p>' +
           '<div class="moderaciya-foto" style="display:flex; flex-wrap:wrap; gap:6px; margin:10px 0;">' + photosHtml + '</div>' +
-          '<div class="moderaciya-checklist" style="margin:12px 0; padding:10px; background:var(--surface-soft);">' +
-          '<span class="mod-checklist-title">Чеклист модератора</span>' +
-          checklistHtml +
-          '</div>' +
-          '<div class="pole-gruppa moderaciya-prichina" style="margin-top:12px;">' +
-          '<label class="pole-podpis" for="prichina-' + escapeHtml(item.id) + '">Причина отклонения</label>' +
-          '<select class="pole-vybor" id="prichina-' + escapeHtml(item.id) + '" data-prichina style="min-height:44px; padding:8px;">' +
-          '<option value="">Выберите причину</option>' +
-          reasonOptions +
-          '</select>' +
-          '<p class="pole-oshibka" data-prichina-oshibka hidden>Выберите причину отклонения</p>' +
-          '</div>' +
-          '<div class="moderaciya-deystviya" style="display:flex; gap:11px; margin-top:13px;">' +
-          humanButtons +
-          aiButton +
-          '</div>' +
+          moderationControls +
           '</article>';
       }).join('');
 
       // После рендеринга вешаем обработчики на чекбоксы чеклиста, чтобы сохранять состояние
-      document.querySelectorAll('.mod-checklist').forEach(function (cb) {
+      if (canModerate) document.querySelectorAll('.mod-checklist').forEach(function (cb) {
         cb.addEventListener('change', function () {
           var article = this.closest('[data-zayavka-id]');
           if (!article) return;
@@ -310,6 +325,7 @@
     list.addEventListener('click', async function (event) {
       var button = event.target.closest('[data-deystvie]');
       if (!button) return;
+      if (!canModerate) return;
       var item = button.closest('[data-zayavka-id]');
       if (!item) return;
 
@@ -362,20 +378,6 @@
       }
     });
 
-    if (adminVolunteerCert) {
-      adminVolunteerCert.addEventListener('click', function () {
-        var approved = EcoAuth.getAllRequests().find(isPublished);
-        EcoAuth.openVolunteerCertificate({
-          user: {
-            name: approved ? approved.userName : (user.name || 'Волонтёр проекта'),
-            email: approved ? approved.userEmail : user.email
-          },
-          pointTitle: approved ? approved.title : 'Тестовая подтверждённая точка',
-          date: new Date().toLocaleDateString('ru-RU')
-        });
-      });
-    }
-
     function openModeratorCertificate() {
       if (!(EcoAuth.isModeratorExamCompleted && EcoAuth.isModeratorExamCompleted(user.email))) {
         showModeratorMessage('Сначала пройдите тест модератора минимум на 9 из 10.', 'error');
@@ -387,18 +389,20 @@
       });
     }
 
-    if (adminModeratorCert) {
-      adminModeratorCert.addEventListener('click', openModeratorCertificate);
-    }
-
     if (moderatorCert) {
       moderatorCert.addEventListener('click', openModeratorCertificate);
     }
 
     if (moderatorFinish) {
       moderatorFinish.addEventListener('click', function () {
+        if (moderatorFinish.disabled) return;
+        if (lessonIndex < MODERATOR_LESSONS.length - 1) {
+          lessonIndex += 1;
+          renderModeratorTraining();
+          return;
+        }
         EcoAuth.completeModeratorTraining();
-        updateModeratorCertificateButtons();
+        renderModeratorTraining();
         if (moderatorTestLink) moderatorTestLink.focus();
       });
     }
@@ -412,15 +416,10 @@
       });
     }
 
-    if (moderatorSelfCheck) {
-      moderatorSelfCheck.addEventListener('click', function (event) {
-        var button = event.target.closest('[data-self-check]');
-        if (!button) return;
-        var block = button.closest('.moderator-samoproverka__blok');
-        var answer = block && block.querySelector('.moderator-samoproverka__otvet');
-        if (!answer) return;
-        answer.hidden = !answer.hidden;
-        button.textContent = answer.hidden ? 'Показать самопроверку' : 'Скрыть самопроверку';
+    if (adminRoleButton && roleForm) {
+      adminRoleButton.addEventListener('click', function () {
+        roleForm.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        if (roleEmail) roleEmail.focus();
       });
     }
 
@@ -429,8 +428,9 @@
         event.preventDefault();
         showRoleMessage('');
         try {
-          var updated = await EcoAuth.setUserRole(roleEmail.value, roleValue.value);
-          showRoleMessage('Роль сохранена: ' + (updated?.email || roleEmail.value) + ' -> ' + roleValue.value + '.', 'success');
+          var blocked = roleBlocked ? roleBlocked.checked : false;
+          var updated = await EcoAuth.setUserRole(roleEmail.value, roleValue.value, { blocked: blocked });
+          showRoleMessage('Пользователь сохранён: ' + (updated?.email || roleEmail.value) + ', роль ' + roleValue.value + (blocked ? ', заблокирован.' : ', не заблокирован.'), 'success');
           roleForm.reset();
           roleValue.value = 'moderator';
         } catch (error) {
@@ -445,7 +445,8 @@
       });
     }
 
-    renderModeratorTraining();
+    if (isModerator) renderModeratorTraining();
+    else if (moderatorLessons) moderatorLessons.innerHTML = '';
     render();
   });
 })();

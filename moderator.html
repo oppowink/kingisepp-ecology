@@ -101,8 +101,7 @@
 <p class="admin-panel__metka">Админ-панель</p>
 <h2 id="adminPanelZagolovok">Управление проектом</h2>
 <div class="admin-panel__deystviya">
-<button class="knopka-osnovnaya" id="adminSertifikatVolontera" type="button">Получить сертификат волонтёра</button>
-<button class="knopka-vtorichnaya" disabled="" id="adminSertifikatModeratora" type="button">Получить сертификат модератора</button>
+<button class="knopka-osnovnaya" id="adminNaznachenieRoley" type="button">Назначение ролей</button>
 </div>
 <div class="admin-panel__setka">
 <section aria-labelledby="adminStatistikaZagolovok" class="admin-panel__blok">
@@ -110,7 +109,7 @@
 <dl class="admin-statistika" id="adminStatistika"></dl>
 </section>
 <section aria-labelledby="adminRoliZagolovok" class="admin-panel__blok">
-<h3 id="adminRoliZagolovok">Назначение модератора</h3>
+<h3 id="adminRoliZagolovok">Назначение ролей</h3>
 <form class="admin-rol-forma" id="adminRolForma">
 <label class="pole-podpis" for="adminRolEmail">E-mail пользователя</label>
 <input class="pole-vvod" id="adminRolEmail" name="email" placeholder="user@example.com" required="" type="email"/>
@@ -120,7 +119,12 @@
 <option value="participant">Волонтёр</option>
 <option value="admin">Админ</option>
 </select>
-<button class="knopka-osnovnaya" type="submit">Сохранить роль</button>
+<label class="admin-block-switch" for="adminRolBlocked">
+<input id="adminRolBlocked" name="blocked" type="checkbox"/>
+<span>Заблокирован</span>
+</label>
+<p class="admin-poyasnenie">Заблокированный пользователь не может входить и отправлять заявки.</p>
+<button class="knopka-osnovnaya" type="submit">Сохранить пользователя</button>
 </form>
 <p aria-live="polite" class="soobshchenie" hidden="" id="adminRolSoobshchenie"></p>
 </section>
@@ -132,17 +136,12 @@
 <p class="moderator-obuchenie__opisanie">Раздел помогает быстро повторить правила проверки заявок. Сначала изучите методичку или интерактивные блоки, затем откройте отдельную страницу теста.</p>
 <p aria-live="polite" class="soobshchenie" hidden="" id="moderatorObuchenieSoobshchenie"></p>
 <div class="moderator-obuchenie__deystviya">
-<a class="knopka-vtorichnaya" download="" href="docs/moderator-method-guide.docx">Скачать методичку Word</a>
-<button class="knopka-vtorichnaya" id="moderatorZavershitObuchenie" type="button">Завершить обучение и открыть тест</button>
+<a class="knopka-vtorichnaya" download="" href="docs/moderator-method-guide.pdf">Скачать методичку PDF</a>
+<button class="knopka-vtorichnaya" id="moderatorZavershitObuchenie" type="button">Начать обучение</button>
 <a aria-disabled="true" class="knopka-vtorichnaya moderator-test-link--disabled" href="moderator-test.html" id="moderatorKTestu">Перейти к тесту</a>
 <button class="knopka-osnovnaya" disabled="" id="moderatorSertifikat" type="button">Получить сертификат модератора</button>
 </div>
 <div class="moderator-uroki" id="moderatorUroki"></div>
-<section aria-labelledby="moderatorSamoproverkaZagolovok" class="moderator-samoproverka">
-<h3 id="moderatorSamoproverkaZagolovok">Тестовый вариант с самопроверкой</h3>
-<p>Этот блок необязательный и не влияет на допуск. Он нужен, чтобы потренироваться на типовых ситуациях до основного теста.</p>
-<div class="moderator-samoproverka__zadaniya" id="moderatorSamoproverka"></div>
-</section>
 </section>
 <section aria-labelledby="moderaciyaZayavkiZagolovok" class="moderaciya-razdel" hidden="" id="moderaciyaZayavkiRazdel">
 <h2 id="moderaciyaZayavkiZagolovok">Просмотр заявок</h2>
