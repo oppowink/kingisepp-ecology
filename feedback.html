@@ -17,10 +17,6 @@
 <meta content="Задайте вопрос по методике, сообщите об ошибке или предложите улучшение проекта" property="og:description"/>
 <meta content="img/leaf1.png" property="og:image"/>
 <meta content="Фирменный лист проекта ЭкоБиоМониторинг" property="og:image:alt"/>
-<meta content="summary" name="twitter:card"/>
-<meta content="Обратная связь - ЭкоБиоМониторинг" name="twitter:title"/>
-<meta content="Задайте вопрос по методике, сообщите об ошибке или предложите улучшение проекта" name="twitter:description"/>
-<meta content="img/leaf1.png" name="twitter:image"/>
 
 <!-- Open Graph расширенный -->
 <meta property="og:title" content="Обратная связь — ЭкоБиоМониторинг" />
@@ -29,7 +25,6 @@
 <meta property="og:url" content="https://oppowink.github.io/kingisepp-ecology/feedback.html" />
 <meta property="og:type" content="website" />
 <meta property="og:locale" content="ru_RU" />
-<meta name="twitter:card" content="summary_large_image" />
 
 <title>Обратная связь - ЭкоБиоМониторинг</title>
 
@@ -167,6 +162,12 @@
 </footer>
 
 <!-- скрипты -->
+<!-- Supabase нужен только для формы обратной связи; ключ должен быть anon/publishable, не service role -->
+<script>
+window.ECO_SUPABASE_URL = window.ECO_SUPABASE_URL || '';
+window.ECO_SUPABASE_ANON_KEY = window.ECO_SUPABASE_ANON_KEY || '';
+</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="js/auth.js"></script>
 <script defer src="js/header.js"></script>
 <script defer src="js/cursor.js"></script>

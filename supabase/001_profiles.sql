@@ -16,7 +16,6 @@ create table if not exists public.profiles (
   name text,
   role text not null default 'participant'
     check (role in ('participant', 'moderator', 'admin')),
-  yandex_id text unique,
   supabase_auth_id uuid unique,
   last_auth_provider text,
   created_at timestamptz not null default now(),

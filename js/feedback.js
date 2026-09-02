@@ -1,10 +1,11 @@
-// feedback.js — форма обратной связи (упрощённая, без вызовов API)
+// feedback.js — форма обратной связи с отправкой в Supabase
 (function () {
   'use strict';
 
   document.addEventListener('DOMContentLoaded', function () {
     var form = document.getElementById('formaObratnoySvyazi');
     var message = document.getElementById('svyazSoobshchenie');
+    var submitButton = form ? form.querySelector('[type="submit"]') : null;
     if (!form) return;
 
     // === КАСТОМНЫЙ СЕЛЕКТ ===
@@ -80,32 +81,91 @@
       });
     }
 
+    function showMessage(text, state) {
+      if (!message) return;
+      message.textContent = text || '';
+      message.dataset.state = state || '';
+      message.hidden = !text;
+    }
+
+    function setBusy(busy) {
+      if (!submitButton) return;
+      submitButton.disabled = Boolean(busy);
+      submitButton.textContent = busy ? 'Отправляем...' : 'Отправить';
+    }
+
+    function feedbackClient() {
+      var url = String(window.ECO_SUPABASE_URL || '').trim();
+      var key = String(window.ECO_SUPABASE_ANON_KEY || window.ECO_SUPABASE_PUBLISHABLE_KEY || '').trim();
+      if (!url || !key || !window.supabase || typeof window.supabase.createClient !== 'function') return null;
+      return window.supabase.createClient(url, key, {
+        auth: { persistSession: false, autoRefreshToken: false }
+      });
+    }
+
+    function validEmail(email) {
+      return !email || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    }
+
     // === ОТПРАВКА ФОРМЫ ===
-    form.addEventListener('submit', function (e) {
+    form.addEventListener('submit', async function (e) {
       e.preventDefault();
+      showMessage('');
+
+      var name = document.getElementById('svyazImya').value.trim();
+      var email = document.getElementById('svyazEmail').value.trim();
+      var type = document.getElementById('svyazTip').value;
       var text = document.getElementById('svyazTekst').value.trim();
+
       if (!text) {
-        if (message) {
-          message.textContent = 'Напишите сообщение';
-          message.dataset.state = 'error';
-          message.hidden = false;
-        }
+        showMessage('Напишите сообщение', 'error');
+        document.getElementById('svyazTekst').focus();
+        return;
+      }
+      if (!validEmail(email)) {
+        showMessage('Проверьте e-mail или оставьте поле пустым', 'error');
+        document.getElementById('svyazEmail').focus();
         return;
       }
 
-      // Без EcoAuth — просто выводим в консоль
-      console.log('Обратная связь:', {
-        name: document.getElementById('svyazImya').value.trim(),
-        email: document.getElementById('svyazEmail').value.trim(),
-        type: document.getElementById('svyazTip').value,
-        text: text
-      });
+      var client = feedbackClient();
+      if (!client) {
+        showMessage('Supabase для обратной связи не настроен: заполните ECO_SUPABASE_URL и ECO_SUPABASE_ANON_KEY в feedback.html.', 'error');
+        return;
+      }
 
-      document.getElementById('svyazTekst').value = '';
-      if (message) {
-        message.textContent = 'Сообщение отправлено (демо)';
-        message.dataset.state = 'success';
-        message.hidden = false;
+      setBusy(true);
+      try {
+        var payload = {
+          name: name || null,
+          email: email || null,
+          topic: type || 'idea',
+          message: text,
+          page_url: location.href,
+          user_agent: navigator.userAgent
+        };
+        var result = await client.from('feedback_messages').insert(payload);
+        if (result.error) throw result.error;
+
+        if (window.EcoAuth && typeof EcoAuth.saveFeedback === 'function') {
+          EcoAuth.saveFeedback(payload);
+        }
+        form.reset();
+        if (topicInput && topicText && topicOptions.length) {
+          topicInput.value = 'idea';
+          topicText.textContent = 'Предложение';
+          topicOptions.forEach(function (item) {
+            var isActive = item.dataset.value === 'idea';
+            item.classList.toggle('aktivny', isActive);
+            item.setAttribute('aria-selected', isActive ? 'true' : 'false');
+          });
+        }
+        showMessage('Сообщение отправлено. Спасибо!', 'success');
+      } catch (error) {
+        console.error('feedbackSubmit', error);
+        showMessage('Не удалось отправить сообщение. Проверьте таблицу feedback_messages и RLS-политику.', 'error');
+      } finally {
+        setBusy(false);
       }
     });
   });

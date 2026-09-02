@@ -105,12 +105,6 @@
     return ['localhost', '127.0.0.1'].includes(location.hostname);
   }
 
-  // начало входа через Яндекс ID
-  function startYandexLogin() {
-    if (backendUnavailableHere()) throw new Error('BACKEND_NOT_CONFIGURED');
-    location.assign(api('/api/auth/yandex/start'));
-  }
-
   async function passwordRequest(path, payload) {
     if (backendUnavailableHere()) throw new Error('BACKEND_NOT_CONFIGURED');
     var response = await fetch(api(path), {
@@ -513,7 +507,6 @@
     getUser: getUser,
     refreshUser: refreshUser,
     isAuthenticated: isAuthenticated,
-    startYandexLogin: startYandexLogin,
     registerWithPassword: registerWithPassword,
     signInWithPassword: signInWithPassword,
     signOut: signOut,

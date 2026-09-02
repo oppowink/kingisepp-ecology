@@ -378,14 +378,19 @@ button:disabled,
   html { font-size: 17px; }
   :root { --header-height: 62px; }
   .shapka { min-height: var(--header-height); padding: 0 16px; gap: 10px; }
-  .shapka-logo__nazvanie { font-size: .88rem; }
+  .shapka-logo__nazvanie { font-size: .78rem; }
   .shapka-logo__list { height: 1.14em; }
-  .shapka-deystviya { gap: 9px; }
-  .shapka-ssylka { min-height: 40px; }
-  .shapka-ssylka span { display: none; }
-  .shapka-ssylka__ikona { width: 30px; height: 30px; }
-  .nastroiki-knopka { min-height: 40px; padding-left: 2px; }
+  .shapka-deystviya { gap: 8px; }
+  .shapka-ssylka {
+    min-height: 40px;
+    gap: 6px;
+    font-size: .72rem;
+    line-height: 1.15;
+  }
+  .shapka-ssylka span { display: inline; }
+  .shapka-ssylka__ikona,
   .nastroiki-knopka__ikona { width: 28px; height: 28px; }
+  .nastroiki-knopka { min-height: 40px; padding-left: 2px; }
   .nastroiki-knopka__tekst { display: none; }
   .nastroiki-panel { padding-inline: 21px; }
   .vnutrennyaya-stranica { width: calc(100% - 34px); padding-top: 48px; }
@@ -397,7 +402,8 @@ button:disabled,
   .shapka { padding-inline: 12px; }
   .shapka-logo__nazvanie { font-size: .75rem; }
   .shapka-deystviya { gap: 6px; }
-  .shapka-ssylka__ikona { width: 27px; height: 27px; }
+  .shapka-ssylka { font-size: .68rem; }
+  .shapka-ssylka__ikona,
   .nastroiki-knopka__ikona { width: 26px; height: 26px; }
 }
 
