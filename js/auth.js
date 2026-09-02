@@ -363,11 +363,11 @@
     var item = buildLocalRequest(data || {});
 
     if (!backendUnavailableHere()) {
-      var response = await fetch(api('/api/requests/create'), {
+      var response = await fetch(api('/api/requests/list'), {
         method: 'POST',
         credentials: 'include',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify(item)
+        body: JSON.stringify(Object.assign({ action: 'create' }, item))
       });
       var result = await response.json().catch(function () { return {}; });
       if (!response.ok) {
@@ -397,11 +397,11 @@
     var local = updateRequest(id, patch);
     if (backendUnavailableHere()) return local;
 
-    var response = await fetch(api('/api/requests/moderate'), {
+    var response = await fetch(api('/api/requests/list'), {
       method: 'POST',
       credentials: 'include',
       headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ id: id, patch: patch || {} })
+      body: JSON.stringify({ action: 'moderate', id: id, patch: patch || {} })
     });
     var data = await response.json().catch(function () { return {}; });
     if (!response.ok) {

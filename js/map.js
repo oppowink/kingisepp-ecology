@@ -148,7 +148,7 @@
     if (window.EcoAuth) addApprovedPoints(window.EcoAuth.getAllRequests());
     if (!backendCanBeTried()) return;
 
-    fetch(api('/api/requests/published'), { cache: 'no-store' })
+    fetch(api('/api/requests/list?scope=published'), { cache: 'no-store' })
       .then(function (response) { return response.ok ? response.json() : null; })
       .then(function (data) {
         if (data && Array.isArray(data.requests)) addApprovedPoints(data.requests);
