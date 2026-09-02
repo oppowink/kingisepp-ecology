@@ -94,6 +94,10 @@
   flex-wrap: wrap;
   gap: 10px;
 }
+.moderator-test-link--disabled {
+  opacity: .52;
+  pointer-events: none;
+}
 .moderator-uroki {
   display: grid;
   gap: 18px;
@@ -115,6 +119,48 @@
   color: var(--text-muted);
   line-height: 1.7;
 }
+.moderator-urok__foto {
+  display: grid;
+  place-items: center;
+  min-height: 126px;
+  margin-bottom: 12px;
+  background: var(--surface);
+  color: var(--text-muted);
+  font-size: .82rem;
+}
+.moderator-samoproverka {
+  display: grid;
+  gap: 12px;
+  padding: 16px;
+  background: var(--surface-soft);
+}
+.moderator-samoproverka h3 {
+  margin: 0;
+  font-family: var(--font-heading);
+  font-size: 1rem;
+  font-weight: 400;
+}
+.moderator-samoproverka p {
+  margin: 0;
+  color: var(--text-muted);
+}
+.moderator-samoproverka__zadaniya {
+  display: grid;
+  gap: 12px;
+}
+.moderator-samoproverka__blok {
+  display: grid;
+  gap: 8px;
+}
+.moderator-samoproverka__otvet {
+  color: var(--text-muted);
+  font-size: .86rem;
+}
+.moderator-test-intro {
+  max-width: 760px;
+  margin: 18px 0 24px;
+  color: var(--text-muted);
+}
 .moderator-test {
   display: grid;
   gap: 16px;
@@ -126,24 +172,49 @@
 }
 .moderator-test__voprosy {
   display: grid;
-  gap: 16px;
+  gap: 18px;
 }
 .moderator-vopros {
   display: grid;
   gap: 8px;
+  padding: 16px;
+  background: var(--surface-soft);
 }
 .moderator-vopros > p {
   color: var(--text);
 }
-.moderator-variant {
-  display: flex;
-  gap: 8px;
-  align-items: flex-start;
-  color: var(--text-muted);
+.moderator-test-page {
+  display: grid;
+  gap: 18px;
 }
-.moderator-variant input {
-  margin-top: 4px;
-  accent-color: var(--accent);
+.moderator-test-page[hidden] {
+  display: none;
+}
+.moderator-test__deystviya {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.moderator-variant {
+  display: block;
+  width: 100%;
+  padding: 11px 13px;
+  border: 0;
+  background: var(--surface);
+  color: var(--text-muted);
+  text-align: left;
+  cursor: pointer;
+  transition: background-color var(--transition-fast), color var(--transition-fast), transform var(--transition-fast);
+}
+.moderator-variant:hover,
+.moderator-variant:focus-visible {
+  color: var(--text);
+  background: color-mix(in srgb, var(--surface-soft) 70%, var(--accent) 10%);
+  outline: none;
+}
+.moderator-variant--vybran {
+  color: var(--text);
+  background: color-mix(in srgb, var(--accent) 18%, var(--surface) 82%);
 }
 
 /* список заявок — сетка с отступами */

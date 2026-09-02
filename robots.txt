@@ -6,5 +6,6 @@ Disallow: /education.html
 Disallow: /submit.html
 Disallow: /my-requests.html
 Disallow: /moderator.html
+Disallow: /moderator-test.html
 
 Sitemap: https://oppowink.github.io/kingisepp-ecology/sitemap.xml

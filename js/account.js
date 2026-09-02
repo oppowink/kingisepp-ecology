@@ -23,6 +23,7 @@
     var certificateText = document.getElementById('sertifikatTekst');
     var certificateButton = document.getElementById('sertifikatVolonteraKnopka');
     var certificateMessage = document.getElementById('sertifikatSoobshchenie');
+    var roleTestBlock = document.getElementById('kabinetRoliTest');
     var mode = 'login';
 
     if (!loginBlock || !cabinetBlock || !authForm || !emailInput || !passwordInput) return;
@@ -90,7 +91,7 @@
         var record = EcoAuth.getEducationRecord(user.email);
         educationStatus.textContent = educationDone
           ? 'Обучение волонтёра пройдено' + (record?.score ? ': ' + record.score + '/' + record.total : '')
-          : 'Обучение волонтёра пока не пройдено';
+          : 'Добавление точки откроется после основного подтверждающего теста';
         educationStatus.dataset.state = educationDone ? 'success' : 'warning';
       }
       if (submitLink) {
@@ -107,6 +108,9 @@
         countEl.textContent = requestCount ? String(requestCount) : '';
       }
       if (modLink) modLink.hidden = !['moderator', 'admin'].includes(user.role);
+      if (roleTestBlock) {
+        roleTestBlock.hidden = !(EcoAuth.canSwitchRoleForTesting && EcoAuth.canSwitchRoleForTesting(user));
+      }
 
       var next = nextPage();
       if (next) location.replace(next);
@@ -263,6 +267,18 @@
         showCertificateMessage(opened ? 'Сертификат открыт в новой вкладке.' : 'Разрешите открытие новой вкладки для сертификата.', opened ? 'success' : 'error');
       });
     }
+
+    document.querySelectorAll('[data-test-role]').forEach(function (button) {
+      button.addEventListener('click', function () {
+        var role = button.getAttribute('data-test-role');
+        var user = EcoAuth.switchRoleForTesting && EcoAuth.switchRoleForTesting(role);
+        if (!user) {
+          showMessage('Тестовые роли доступны только администратору.', 'error');
+          return;
+        }
+        render(user);
+      });
+    });
 
     setMode('login');
     var user = await EcoAuth.refreshUser() || EcoAuth.getUser();

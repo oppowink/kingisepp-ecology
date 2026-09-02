@@ -112,6 +112,22 @@
   color: var(--warning);
 }
 
+.kabinet-roli-test {
+  width: min(620px, 100%);
+  margin: 0 auto 28px;
+  text-align: center;
+}
+.kabinet-roli-test h2 {
+  margin-bottom: 12px;
+  font-size: 1rem;
+}
+.kabinet-roli-test__knopki {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+
 /* навигация внутри кабинета — сетка 2 колонки */
 .kabinet-navigaciya {
   display: grid;

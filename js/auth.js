@@ -5,12 +5,14 @@
   // ключи для sessionStorage и localStorage
   var SESSION_CACHE = 'eco-session-user-v1';
   var PREVIEW_USER = 'eco-preview-user-v1';
+  var ROLE_TEST_ORIGINAL = 'eco-role-test-original-v1';
   var LEGACY_USER = 'eco-user-v1';
   var EDUCATION_KEY = 'eco-education-v2';
   var REQUESTS_KEY = 'eco-requests-v1';
   var FEEDBACK_KEY = 'eco-feedback-v1';
   var TRAINING_VERSION = '2026-08';
   var CONFIRMATION_TEST_ENABLED = false;
+  var MODERATOR_TRAINING_KEY = 'eco-moderator-training-v1';
   var MODERATOR_EXAM_KEY = 'eco-moderator-exam-v1';
   var MODERATOR_EXAM_VERSION = '2026-09';
 
@@ -51,6 +53,51 @@
     };
     write(sessionStorage, PREVIEW_USER, user);
     return user;
+  }
+
+  function roleTitle(role) {
+    if (role === 'admin') return 'админ';
+    if (role === 'moderator') return 'модератор';
+    return 'волонтёр';
+  }
+
+  function applyRoleTest(user) {
+    if (!user?.email) return user;
+    var original = read(sessionStorage, ROLE_TEST_ORIGINAL, null);
+    var cached = read(sessionStorage, SESSION_CACHE, null);
+    var testRole = cached && ['participant', 'moderator', 'admin'].includes(cached.testRole)
+      ? cached.testRole
+      : '';
+    if (!original || original.role !== 'admin' || !testRole) return user;
+    if (String(original.email || '').toLowerCase() !== String(user.email || '').toLowerCase()) return user;
+    return Object.assign({}, user, {
+      role: testRole,
+      testRole: testRole,
+      originalRole: 'admin',
+      name: (original.name || user.name || user.email) + ' (режим: ' + roleTitle(testRole) + ')'
+    });
+  }
+
+  function canSwitchRoleForTesting(user) {
+    var original = read(sessionStorage, ROLE_TEST_ORIGINAL, null);
+    if (original && original.role === 'admin') return true;
+    return (user || getUser())?.role === 'admin';
+  }
+
+  function switchRoleForTesting(role) {
+    if (!['participant', 'moderator', 'admin'].includes(role)) return null;
+    var current = getUser();
+    var original = read(sessionStorage, ROLE_TEST_ORIGINAL, null) || current;
+    if (!original || original.role !== 'admin') return null;
+    write(sessionStorage, ROLE_TEST_ORIGINAL, original);
+    var switched = Object.assign({}, original, {
+      role: role,
+      testRole: role,
+      originalRole: 'admin',
+      name: (original.name || original.email || 'Администратор') + ' (режим: ' + roleTitle(role) + ')'
+    });
+    setCachedUser(switched);
+    return switched;
   }
 
   // проверка параметров URL для включения предпросмотра
@@ -94,8 +141,9 @@
         return getUser();
       }
       var data = await response.json();
-      setCachedUser(data.user || null);
-      return data.user || null;
+      var user = applyRoleTest(data.user || null);
+      setCachedUser(user || null);
+      return user || null;
     } catch (_) {
       return getUser();
     }
@@ -152,6 +200,7 @@
     }
     sessionStorage.removeItem(SESSION_CACHE);
     sessionStorage.removeItem(PREVIEW_USER);
+    sessionStorage.removeItem(ROLE_TEST_ORIGINAL);
     localStorage.removeItem(LEGACY_USER);
   }
 
@@ -263,6 +312,43 @@
   }
 
   function moderatorExamMap() { return read(localStorage, MODERATOR_EXAM_KEY, {}); }
+
+  function moderatorTrainingMap() { return read(localStorage, MODERATOR_TRAINING_KEY, {}); }
+
+  function saveModeratorTraining(email, record) {
+    var key = String(email || '').trim().toLowerCase();
+    if (!key) return;
+    var map = moderatorTrainingMap();
+    map[key] = Object.assign({
+      completed: false,
+      version: MODERATOR_EXAM_VERSION,
+      completedAt: null
+    }, record || {}, { version: MODERATOR_EXAM_VERSION });
+    write(localStorage, MODERATOR_TRAINING_KEY, map);
+  }
+
+  function getModeratorTrainingRecord(email) {
+    var user = getUser();
+    var key = String(email || user?.email || '').trim().toLowerCase();
+    if (!key) return null;
+    return moderatorTrainingMap()[key] || null;
+  }
+
+  function isModeratorTrainingCompleted(email) {
+    var record = getModeratorTrainingRecord(email);
+    return Boolean(record && record.completed && record.version === MODERATOR_EXAM_VERSION);
+  }
+
+  function completeModeratorTraining() {
+    var user = getUser();
+    if (!user?.email) return null;
+    var record = {
+      completed: true,
+      completedAt: new Date().toISOString()
+    };
+    saveModeratorTraining(user.email, record);
+    return getModeratorTrainingRecord(user.email);
+  }
 
   function saveModeratorExam(email, record) {
     var key = String(email || '').trim().toLowerCase();
@@ -605,11 +691,16 @@
     signInWithPassword: signInWithPassword,
     signOut: signOut,
     startPreview: setPreview,
+    canSwitchRoleForTesting: canSwitchRoleForTesting,
+    switchRoleForTesting: switchRoleForTesting,
     previewAvailable: previewAvailable,
     isEducationCompleted: isEducationCompleted,
     getEducationRecord: getEducationRecord,
     completeEducation: completeEducation,
     refreshEducationStatus: refreshEducationStatus,
+    getModeratorTrainingRecord: getModeratorTrainingRecord,
+    isModeratorTrainingCompleted: isModeratorTrainingCompleted,
+    completeModeratorTraining: completeModeratorTraining,
     getModeratorExamRecord: getModeratorExamRecord,
     isModeratorExamCompleted: isModeratorExamCompleted,
     completeModeratorExam: completeModeratorExam,

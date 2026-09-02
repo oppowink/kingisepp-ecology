@@ -21,11 +21,13 @@
   };
 
   var terms = [];
+  var overlay = null;
   var tooltip = null;
   var tooltipText = null;
   var activeTerm = null;
   var pinned = false;
   var demoMode = false;
+  var scrollLocked = false;
   var closeTimer = 0;
   var resizeFrame = 0;
 
@@ -34,6 +36,12 @@
   }
 
   function createTooltip() {
+    overlay = document.createElement('div');
+    overlay.className = 'termin-overlay';
+    overlay.id = 'terminOverlay';
+    overlay.setAttribute('aria-hidden', 'true');
+    document.body.appendChild(overlay);
+
     tooltip = document.createElement('div');
     tooltip.className = 'termin-tooltip';
     tooltip.id = 'terminTooltip';
@@ -49,6 +57,30 @@
     tooltip.addEventListener('mouseleave', function () {
       if (!pinned && !demoMode) scheduleHide();
     });
+
+    overlay.addEventListener('click', function () {
+      hide(true);
+    });
+  }
+
+  function setScrollLock(lock) {
+    if (lock && !scrollLocked) {
+      var scrollbar = window.innerWidth - document.documentElement.clientWidth;
+      if (scrollbar > 0) document.body.style.paddingRight = scrollbar + 'px';
+      document.body.classList.add('termin-podskazka-otkryta');
+      scrollLocked = true;
+    } else if (!lock && scrollLocked) {
+      document.body.classList.remove('termin-podskazka-otkryta');
+      document.body.style.paddingRight = '';
+      scrollLocked = false;
+    }
+  }
+
+  function setOverlay(open) {
+    if (!overlay) return;
+    overlay.classList.toggle('vidim', Boolean(open));
+    overlay.setAttribute('aria-hidden', String(!open));
+    setScrollLock(open);
   }
 
   function positionTooltip() {
@@ -90,6 +122,7 @@
     term.setAttribute('aria-expanded', 'true');
     tooltip.setAttribute('aria-hidden', 'false');
     tooltip.classList.add('vidim');
+    setOverlay(pinned || demoMode || !supportsHover());
     positionTooltip();
     window.requestAnimationFrame(positionTooltip);
   }
@@ -106,6 +139,7 @@
     activeTerm = null;
     tooltip.classList.remove('vidim');
     tooltip.setAttribute('aria-hidden', 'true');
+    setOverlay(false);
   }
 
   function scheduleHide() {

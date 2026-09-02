@@ -285,6 +285,24 @@ html.dark .termin:focus-visible,
 html.dark .termin--aktivny { color: var(--accent-soft); }
 
 /* всплывающая подсказка для термина */
+.termin-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1070;
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+  background: var(--overlay);
+  transition: opacity 150ms ease, visibility 150ms ease;
+}
+.termin-overlay.vidim {
+  visibility: visible;
+  opacity: 1;
+  pointer-events: auto;
+}
+body.termin-podskazka-otkryta {
+  overflow: hidden;
+}
 .termin-tooltip {
   position: fixed;
   z-index: 1080;

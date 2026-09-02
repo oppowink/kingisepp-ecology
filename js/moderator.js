@@ -33,120 +33,51 @@
   var MODERATOR_LESSONS = [
     {
       title: '1. Роль модератора',
+      photo: 'moderator_role_check.jpg',
       text: 'Модератор проверяет не научный вывод, а качество исходных данных. Его задача - не пропустить заявку, где неверно выбран вид растения, перепутаны точки, не хватает листьев или фотографии не подходят для измерений.'
     },
     {
       title: '2. Проверка вида и набора',
+      photo: 'moderator_species_check.jpg',
       text: 'В одной заявке должна быть одна точка, одно дерево и 30 листьев. Основной объект - берёза повислая. Если листья относятся к другому виду или набор смешан из разных деревьев, заявку нужно отклонить с понятной причиной.'
     },
     {
       title: '3. Качество фотографий',
+      photo: 'moderator_good_bad_photo.jpg',
       text: 'Каждый лист должен быть снят отдельно, сверху, на светлом фоне. В кадре должны быть видны верхушка, основание, края листовой пластинки и центральная жилка. Размытые, обрезанные и затемнённые фотографии не подходят.'
     },
     {
       title: '4. Повреждения и артефакты',
+      photo: 'moderator_damaged_leaf_examples.jpg',
       text: 'Для расчёта ФА нужны целые листья. Листья с дырками, крупными пятнами, следами насекомых, разрывами, сильным подсыханием или скручиванием исключаются. Если таких листьев много, заявка отклоняется.'
     },
     {
       title: '5. Координаты и дерево',
+      photo: 'moderator_point_tree_scheme.jpg',
       text: 'Координаты должны относиться к месту сбора у конкретного дерева. Если точка указана слишком приблизительно, противоречит описанию места или явно находится не там, модератор просит исправление или отклоняет заявку.'
     },
     {
       title: '6. Два этапа проверки',
+      photo: 'moderator_status_pipeline.jpg',
       text: 'Сначала решение принимает человек-модератор. После одобрения заявка переходит на автоматическую проверку. На карте публикуются только те точки, у которых пройдены оба этапа.'
     }
   ];
 
-  var MODERATOR_TEST = [
+  var MODERATOR_SELF_CHECK = [
     {
-      question: 'Что проверяет модератор в первую очередь?',
-      options: [
-        { value: 'design', label: 'Красоту оформления заявки' },
-        { value: 'data_quality', label: 'Качество исходных данных и соответствие методике' },
-        { value: 'final_fa', label: 'Окончательный научный вывод по городу' }
-      ],
-      answer: 'data_quality'
+      title: 'Ситуация 1',
+      text: 'В заявке 30 фотографий, но на части снимков листья обрезаны краем кадра.',
+      answer: 'Отклонить или запросить пересъёмку: контур листа должен быть виден полностью.'
     },
     {
-      question: 'Какой набор соответствует одной заявке?',
-      options: [
-        { value: 'one_tree_30', label: 'Одна точка, одно дерево, 30 листьев' },
-        { value: 'many_trees', label: 'Одна точка, несколько деревьев в одном наборе' },
-        { value: 'free_count', label: 'Любое количество листьев, если фото хорошие' }
-      ],
-      answer: 'one_tree_30'
+      title: 'Ситуация 2',
+      text: 'Фотографии чёткие, но в одной заявке смешаны листья с двух деревьев.',
+      answer: 'Отклонить: одна заявка должна соответствовать одному дереву.'
     },
     {
-      question: 'Когда лист нельзя принимать для дальнейшего анализа?',
-      options: [
-        { value: 'flat', label: 'Лист лежит ровно на светлом фоне' },
-        { value: 'damaged', label: 'Есть дырки, разрывы или крупные пятна' },
-        { value: 'full_frame', label: 'Лист полностью помещается в кадр' }
-      ],
-      answer: 'damaged'
-    },
-    {
-      question: 'Какая фотография подходит для измерений?',
-      options: [
-        { value: 'top_clear', label: 'Снята сверху, лист целиком виден, фон светлый' },
-        { value: 'angle_shadow', label: 'Снята под углом с сильной тенью' },
-        { value: 'many_leaves', label: 'На одном фото сразу много листьев' }
-      ],
-      answer: 'top_clear'
-    },
-    {
-      question: 'Что делать, если координаты не совпадают с описанием места?',
-      options: [
-        { value: 'publish_anyway', label: 'Опубликовать, если фотографии хорошие' },
-        { value: 'fix_or_reject', label: 'Попросить исправление или отклонить заявку' },
-        { value: 'hide_coords', label: 'Удалить координаты и оставить только название' }
-      ],
-      answer: 'fix_or_reject'
-    },
-    {
-      question: 'На каком этапе точка появляется на карте?',
-      options: [
-        { value: 'after_send', label: 'Сразу после отправки волонтёром' },
-        { value: 'after_human', label: 'После одобрения модератором' },
-        { value: 'after_two_checks', label: 'После модерации человеком и автоматической проверки' }
-      ],
-      answer: 'after_two_checks'
-    },
-    {
-      question: 'Что обязан указать модератор при отклонении?',
-      options: [
-        { value: 'reason', label: 'Понятную причину отклонения' },
-        { value: 'personal_comment', label: 'Личное мнение об участнике' },
-        { value: 'new_result', label: 'Новый рассчитанный результат ФА' }
-      ],
-      answer: 'reason'
-    },
-    {
-      question: 'Почему нельзя смешивать листья разных деревьев?',
-      options: [
-        { value: 'file_size', label: 'Так фотографии занимают больше места' },
-        { value: 'method_break', label: 'Нарушается сопоставимость данных по точке и дереву' },
-        { value: 'map_color', label: 'Карта не сможет выбрать цвет маркера' }
-      ],
-      answer: 'method_break'
-    },
-    {
-      question: 'Что означает статус "Проверена модератором, ждёт нейросеть"?',
-      options: [
-        { value: 'published', label: 'Точка уже опубликована' },
-        { value: 'human_only', label: 'Первый этап пройден, автоматический этап ещё нет' },
-        { value: 'rejected', label: 'Заявка отклонена' }
-      ],
-      answer: 'human_only'
-    },
-    {
-      question: 'Как модератор снижает риск субъективной ошибки?',
-      options: [
-        { value: 'checklist', label: 'Работает по единому чеклисту и фиксирует причину решения' },
-        { value: 'memory', label: 'Проверяет по памяти без критериев' },
-        { value: 'speed', label: 'Принимает решение как можно быстрее' }
-      ],
-      answer: 'checklist'
+      title: 'Ситуация 3',
+      text: 'Листья подходят, но координаты указывают на другой район города.',
+      answer: 'Не публиковать до исправления координат или отклонить с причиной.'
     }
   ];
 
@@ -185,11 +116,12 @@
     var roleEmail = document.getElementById('adminRolEmail');
     var roleValue = document.getElementById('adminRolZnachenie');
     var roleMessage = document.getElementById('adminRolSoobshchenie');
+    var requestsSection = document.getElementById('moderaciyaZayavkiRazdel');
     var moderatorTraining = document.getElementById('moderatorObuchenie');
     var moderatorLessons = document.getElementById('moderatorUroki');
-    var moderatorTest = document.getElementById('moderatorTest');
-    var moderatorQuestions = document.getElementById('moderatorTestVoprosy');
-    var moderatorSkip = document.getElementById('moderatorKTestu');
+    var moderatorSelfCheck = document.getElementById('moderatorSamoproverka');
+    var moderatorFinish = document.getElementById('moderatorZavershitObuchenie');
+    var moderatorTestLink = document.getElementById('moderatorKTestu');
     var moderatorCert = document.getElementById('moderatorSertifikat');
     var moderatorMessage = document.getElementById('moderatorObuchenieSoobshchenie');
     if (!list || !denied) return;
@@ -200,10 +132,17 @@
       return;
     }
 
-    list.hidden = false;
     if (moderatorTraining) moderatorTraining.hidden = false;
-    if (adminPanel) adminPanel.hidden = user.role !== 'admin';
-    if (EcoAuth.refreshRequests) await EcoAuth.refreshRequests('all');
+    if (EcoAuth.isModeratorExamCompleted && EcoAuth.isModeratorExamCompleted(user.email)) {
+      if (requestsSection) requestsSection.hidden = false;
+      list.hidden = false;
+      if (adminPanel) adminPanel.hidden = user.role !== 'admin';
+      if (EcoAuth.refreshRequests) await EcoAuth.refreshRequests('all');
+    } else {
+      if (requestsSection) requestsSection.hidden = true;
+      list.hidden = true;
+      if (adminPanel) adminPanel.hidden = true;
+    }
 
     function showRoleMessage(text, state) {
       if (!roleMessage) return;
@@ -220,49 +159,45 @@
     }
 
     function updateModeratorCertificateButtons() {
+      var trainingDone = EcoAuth.isModeratorTrainingCompleted && EcoAuth.isModeratorTrainingCompleted(user.email);
       var passed = EcoAuth.isModeratorExamCompleted && EcoAuth.isModeratorExamCompleted(user.email);
+      if (moderatorTestLink) {
+        moderatorTestLink.classList.toggle('moderator-test-link--disabled', !trainingDone);
+        moderatorTestLink.setAttribute('aria-disabled', String(!trainingDone));
+      }
       [moderatorCert, adminModeratorCert].forEach(function (button) {
         if (!button) return;
         button.disabled = !passed;
         button.title = passed ? '' : 'Сертификат доступен после теста модератора на 9 из 10';
       });
       if (passed) showModeratorMessage('Тест модератора пройден. Сертификат доступен.', 'success');
+      else if (trainingDone) showModeratorMessage('Обучение завершено. Теперь можно перейти к тесту модератора.', 'success');
+      else showModeratorMessage('Модерация откроется после обучения и теста модератора.', 'warning');
     }
 
     function renderModeratorTraining() {
       if (moderatorLessons) {
         moderatorLessons.innerHTML = MODERATOR_LESSONS.map(function (lesson) {
           return '<article class="moderator-urok">' +
+            '<div class="moderator-urok__foto">Фото: ' + escapeHtml(lesson.photo) + '</div>' +
             '<h3>' + escapeHtml(lesson.title) + '</h3>' +
             '<p>' + escapeHtml(lesson.text) + '</p>' +
             '</article>';
         }).join('');
       }
 
-      if (moderatorQuestions) {
-        moderatorQuestions.innerHTML = MODERATOR_TEST.map(function (item, index) {
-          var name = 'moderator-question-' + index;
-          var titleId = 'moderator-question-title-' + index;
-          var options = item.options.map(function (option) {
-            return '<label class="moderator-variant">' +
-              '<input name="' + name + '" type="radio" value="' + escapeHtml(option.value) + '">' +
-              '<span>' + escapeHtml(option.label) + '</span>' +
-              '</label>';
-          }).join('');
-          return '<div class="moderator-vopros" role="group" aria-labelledby="' + titleId + '">' +
-            '<p id="' + titleId + '">' + (index + 1) + '. ' + escapeHtml(item.question) + '</p>' +
-            options +
-            '</div>';
+      if (moderatorSelfCheck) {
+        moderatorSelfCheck.innerHTML = MODERATOR_SELF_CHECK.map(function (item, index) {
+          return '<article class="moderator-samoproverka__blok">' +
+            '<h4>' + escapeHtml(item.title) + '</h4>' +
+            '<p>' + escapeHtml(item.text) + '</p>' +
+            '<button class="knopka-vtorichnaya" data-self-check="' + index + '" type="button">Показать самопроверку</button>' +
+            '<p class="moderator-samoproverka__otvet" hidden>' + escapeHtml(item.answer) + '</p>' +
+            '</article>';
         }).join('');
       }
 
       updateModeratorCertificateButtons();
-    }
-
-    function openModeratorTest() {
-      if (!moderatorTest) return;
-      moderatorTest.hidden = false;
-      moderatorTest.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
     function renderAdminStats(requests) {
@@ -460,41 +395,32 @@
       moderatorCert.addEventListener('click', openModeratorCertificate);
     }
 
-    if (moderatorSkip) {
-      moderatorSkip.addEventListener('click', openModeratorTest);
+    if (moderatorFinish) {
+      moderatorFinish.addEventListener('click', function () {
+        EcoAuth.completeModeratorTraining();
+        updateModeratorCertificateButtons();
+        if (moderatorTestLink) moderatorTestLink.focus();
+      });
     }
 
-    if (moderatorTest) {
-      moderatorTest.addEventListener('submit', function (event) {
-        event.preventDefault();
-        var answers = {};
-        var unanswered = false;
-        var score = 0;
-
-        MODERATOR_TEST.forEach(function (item, index) {
-          var selected = moderatorTest.querySelector('input[name="moderator-question-' + index + '"]:checked');
-          if (!selected) unanswered = true;
-          answers[index] = selected ? selected.value : '';
-          if (selected && selected.value === item.answer) score += 1;
-        });
-
-        if (unanswered) {
-          showModeratorMessage('Ответьте на все вопросы теста.', 'error');
-          return;
+    if (moderatorTestLink) {
+      moderatorTestLink.addEventListener('click', function (event) {
+        if (!(EcoAuth.isModeratorTrainingCompleted && EcoAuth.isModeratorTrainingCompleted(user.email))) {
+          event.preventDefault();
+          showModeratorMessage('Сначала завершите обучение модератора.', 'error');
         }
+      });
+    }
 
-        var record = EcoAuth.completeModeratorExam({
-          score: score,
-          total: MODERATOR_TEST.length,
-          answers: answers
-        });
-
-        if (record && record.completed) {
-          showModeratorMessage('Тест модератора пройден: ' + score + '/10. Сертификат доступен.', 'success');
-          updateModeratorCertificateButtons();
-        } else {
-          showModeratorMessage('Результат: ' + score + '/10. Для допуска нужно 9/10, попробуйте ещё раз.', 'error');
-        }
+    if (moderatorSelfCheck) {
+      moderatorSelfCheck.addEventListener('click', function (event) {
+        var button = event.target.closest('[data-self-check]');
+        if (!button) return;
+        var block = button.closest('.moderator-samoproverka__blok');
+        var answer = block && block.querySelector('.moderator-samoproverka__otvet');
+        if (!answer) return;
+        answer.hidden = !answer.hidden;
+        button.textContent = answer.hidden ? 'Показать самопроверку' : 'Скрыть самопроверку';
       });
     }
 
