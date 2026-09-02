@@ -12,6 +12,20 @@
 
     var previousFocus = null;
     var currentPage = (location.pathname.split('/').pop() || 'index.html').toLowerCase();
+    var nav = panel.querySelector('.nastroiki-navigaciya');
+
+    // Общедоступные страницы добавляются единообразно на всех экранах.
+    function appendNavLink(href, text, dataName) {
+      if (!nav || nav.querySelector('[href="' + href + '"]')) return;
+      var link = document.createElement('a');
+      link.href = href;
+      link.className = 'nastroiki-ssylka';
+      link.textContent = text;
+      if (dataName) link.dataset[dataName] = '';
+      nav.appendChild(link);
+    }
+    appendNavLink('about.html', 'О проекте и авторе');
+    appendNavLink('game.html', 'Передохни: экокейсы');
 
     // подсветка текущей страницы в навигации
     panel.querySelectorAll('.nastroiki-navigaciya a').forEach(function (link) {
@@ -75,7 +89,6 @@
     // если в sessionStorage есть пользователь с ролью модератора — добавляем ссылку на модерацию
     try {
       var cached = JSON.parse(sessionStorage.getItem('eco-preview-user-v1') || sessionStorage.getItem('eco-session-user-v1') || 'null');
-      var nav = panel.querySelector('.nastroiki-navigaciya');
       if (cached && ['moderator', 'admin'].includes(cached.role) && nav && !nav.querySelector('[data-moderator-link]')) {
         var link = document.createElement('a');
         link.href = 'moderator.html';
@@ -84,6 +97,15 @@
         link.textContent = 'Модерация';
         if (currentPage === 'moderator.html') link.setAttribute('aria-current', 'page');
         nav.appendChild(link);
+      }
+      if (cached && cached.role === 'curator' && nav && !nav.querySelector('[data-curator-link]')) {
+        var curatorLink = document.createElement('a');
+        curatorLink.href = 'curator.html';
+        curatorLink.className = 'nastroiki-ssylka' + (currentPage === 'curator.html' ? ' nastroiki-ssylka--aktivna' : '');
+        curatorLink.dataset.curatorLink = '';
+        curatorLink.textContent = 'Кабинет куратора';
+        if (currentPage === 'curator.html') curatorLink.setAttribute('aria-current', 'page');
+        nav.appendChild(curatorLink);
       }
     } catch (_) {}
   });

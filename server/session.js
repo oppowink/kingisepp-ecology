@@ -120,6 +120,7 @@ function publicUser(sessionOrRow) {
     email: sessionOrRow.email,
     name: sessionOrRow.name || '',
     role: sessionOrRow.role || 'participant',
+    city: sessionOrRow.city || '',
     blocked: Boolean(sessionOrRow.blocked),
     educationCompleted: Boolean(sessionOrRow.educationCompleted || sessionOrRow.education_completed),
     educationScore: Number(sessionOrRow.educationScore || sessionOrRow.education_score || 0),

@@ -10,6 +10,7 @@
   var EDUCATION_KEY = 'eco-education-v2';
   var REQUESTS_KEY = 'eco-requests-v1';
   var FEEDBACK_KEY = 'eco-feedback-v1';
+  var PARTICIPATION_KEY = 'eco-participation-v1';
   var TRAINING_VERSION = '2026-08';
   var CONFIRMATION_TEST_ENABLED = false;
   var MODERATOR_TRAINING_KEY = 'eco-moderator-training-v1';
@@ -477,11 +478,30 @@
       title: String(data.title || '').trim(),
       location: String(data.location || '').trim(),
       coordinates: String(data.coordinates || '').trim(),
+      latitude: Number.isFinite(Number(data.latitude)) ? Number(data.latitude) : null,
+      longitude: Number.isFinite(Number(data.longitude)) ? Number(data.longitude) : null,
       collectionDate: String(data.collectionDate || ''),
       comment: String(data.comment || '').trim(),
       files: Array.isArray(data.files) ? data.files : [],
+      treePhoto: data.treePhoto || null,
       treeCount: Number(data.treeCount || 1),
       leafCount: Number(data.leafCount || 30),
+      sourceType: data.sourceType || 'own',
+      organizationId: data.organizationId || null,
+      projectId: data.projectId || null,
+      objectId: data.objectId || null,
+      territoryType: String(data.territoryType || '').trim(),
+      landUse: String(data.landUse || '').trim(),
+      nearbySources: String(data.nearbySources || '').trim(),
+      roadDistanceM: data.roadDistanceM === '' ? null : Number(data.roadDistanceM),
+      trafficIntensity: String(data.trafficIntensity || '').trim(),
+      surfaceCover: String(data.surfaceCover || '').trim(),
+      weatherConditions: String(data.weatherConditions || '').trim(),
+      treeSpecies: String(data.treeSpecies || 'Берёза повислая').trim(),
+      trunkDiameterCm: data.trunkDiameterCm === '' ? null : Number(data.trunkDiameterCm),
+      treeHeightEstimateM: data.treeHeightEstimateM === '' ? null : Number(data.treeHeightEstimateM),
+      treeCondition: String(data.treeCondition || '').trim(),
+      treeDamageNotes: String(data.treeDamageNotes || '').trim(),
       aiResult: data.aiResult || null,
       status: 'pending_human',
       humanStatus: 'pending',
@@ -648,6 +668,227 @@
     return true;
   }
 
+  // Данные организаций и объектов: в опубликованной версии хранятся в Supabase,
+  // локальное хранилище используется только для автономного предпросмотра.
+  function localParticipationData() {
+    return read(localStorage, PARTICIPATION_KEY, {
+      organizations: [], memberships: [], projects: [], objects: [], assignments: []
+    });
+  }
+
+  function saveLocalParticipationData(data) {
+    write(localStorage, PARTICIPATION_KEY, data);
+  }
+
+  function localId(prefix) {
+    return prefix + '-' + Date.now() + '-' + Math.random().toString(16).slice(2, 8);
+  }
+
+  function localParticipationAction(action, payload) {
+    var user = getUser();
+    if (!user?.id) throw new Error('AUTH_REQUIRED');
+    var data = localParticipationData();
+    var now = new Date().toISOString();
+
+    if (action === 'save_profile') {
+      user.city = String(payload.city || '').trim();
+      setCachedUser(user);
+      return { profile: user };
+    }
+    if (action === 'create_organization') {
+      var organization = {
+        id: localId('org'), name: String(payload.name || '').trim(), type: payload.type || 'school',
+        city: String(payload.city || '').trim(), description: String(payload.description || '').trim(),
+        joinCode: Math.random().toString(36).slice(2, 10).toUpperCase(), createdBy: user.id, status: 'active'
+      };
+      data.organizations.push(organization);
+      data.memberships.push({ id: localId('member'), organizationId: organization.id, userId: user.id,
+        memberRole: 'curator', status: 'active', joinedAt: now });
+      saveLocalParticipationData(data);
+      return { organization: organization };
+    }
+    if (action === 'join_organization') {
+      var found = data.organizations.find(function (item) {
+        return item.joinCode === String(payload.code || '').trim().toUpperCase() && item.status === 'active';
+      });
+      if (!found) throw new Error('ORGANIZATION_NOT_FOUND');
+      var oldMembership = data.memberships.find(function (item) {
+        return item.organizationId === found.id && item.userId === user.id;
+      });
+      if (oldMembership) oldMembership.status = 'active';
+      else data.memberships.push({ id: localId('member'), organizationId: found.id, userId: user.id,
+        memberRole: user.role === 'curator' ? 'curator' : 'participant', status: 'active', joinedAt: now });
+      saveLocalParticipationData(data);
+      return { organization: found };
+    }
+    if (action === 'leave_organization') {
+      data.memberships.forEach(function (item) {
+        if (item.organizationId === payload.organizationId && item.userId === user.id) item.status = 'left';
+      });
+      saveLocalParticipationData(data);
+      return { left: true };
+    }
+    if (action === 'create_project') {
+      var project = {
+        id: localId('project'), organizationId: payload.organizationId, curatorId: user.id,
+        title: String(payload.title || '').trim(), description: String(payload.description || '').trim(),
+        city: String(payload.city || '').trim(), visibility: payload.visibility === 'public' ? 'public' : 'organization',
+        status: 'open', startsAt: payload.startsAt || null, endsAt: payload.endsAt || null
+      };
+      data.projects.push(project);
+      saveLocalParticipationData(data);
+      return { project: project };
+    }
+    if (action === 'create_object') {
+      var object = {
+        id: localId('object'), organizationId: payload.organizationId, projectId: payload.projectId,
+        curatorId: user.id, title: String(payload.title || '').trim(), description: String(payload.description || '').trim(),
+        city: String(payload.city || '').trim(), addressHint: String(payload.addressHint || '').trim(),
+        centerLat: payload.centerLat === '' ? null : Number(payload.centerLat),
+        centerLng: payload.centerLng === '' ? null : Number(payload.centerLng),
+        radiusM: payload.radiusM === '' ? null : Number(payload.radiusM),
+        requiredPoints: Number(payload.requiredPoints || 1), visibility: payload.visibility === 'public' ? 'public' : 'organization',
+        status: 'open', dueDate: payload.dueDate || null
+      };
+      data.objects.push(object);
+      saveLocalParticipationData(data);
+      return { object: object };
+    }
+    if (action === 'assign_object') {
+      var assignment = { id: localId('assignment'), objectId: payload.objectId, userId: payload.userId,
+        assignedBy: user.id, status: 'assigned' };
+      data.assignments.push(assignment);
+      saveLocalParticipationData(data);
+      return { assignment: assignment };
+    }
+    throw new Error('UNKNOWN_REQUEST_ACTION');
+  }
+
+  async function participationAction(action, payload) {
+    payload = Object.assign({}, payload || {}, { action: action });
+    if (backendUnavailableHere()) return localParticipationAction(action, payload);
+    var response = await fetch(api('/api/requests/list'), {
+      method: 'POST', credentials: 'include', headers: { 'content-type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    var data = await response.json().catch(function () { return {}; });
+    if (!response.ok) {
+      var error = new Error(data.error || 'PARTICIPATION_ACTION_FAILED');
+      error.detail = data.message || '';
+      error.status = response.status;
+      throw error;
+    }
+    return data;
+  }
+
+  function localParticipationContext() {
+    var user = getUser() || {};
+    var data = localParticipationData();
+    var memberships = data.memberships.filter(function (item) {
+      return item.userId === user.id && item.status === 'active';
+    });
+    var orgIds = memberships.map(function (item) { return item.organizationId; });
+    var assignedIds = data.assignments.filter(function (item) {
+      return item.userId === user.id && ['assigned', 'accepted'].includes(item.status);
+    }).map(function (item) { return item.objectId; });
+    var objects = data.objects.filter(function (item) {
+      return item.status === 'open' && (item.visibility === 'public' || orgIds.includes(item.organizationId) || assignedIds.includes(item.id));
+    }).map(function (item) { return Object.assign({}, item, { assigned: assignedIds.includes(item.id) }); });
+    return {
+      profile: user,
+      memberships: memberships.map(function (item) {
+        return Object.assign({}, item, { organization: data.organizations.find(function (org) { return org.id === item.organizationId; }) || null });
+      }),
+      projects: data.projects.filter(function (item) { return objects.some(function (object) { return object.projectId === item.id; }); }),
+      objects: objects
+    };
+  }
+
+  async function getParticipationContext() {
+    if (backendUnavailableHere()) return localParticipationContext();
+    var response = await fetch(api('/api/requests/list?scope=participation'), { credentials: 'include', cache: 'no-store' });
+    var data = await response.json().catch(function () { return {}; });
+    if (!response.ok) throw new Error(data.error || 'PARTICIPATION_LOAD_FAILED');
+    return data;
+  }
+
+  async function getCuratorDashboard() {
+    if (backendUnavailableHere()) {
+      var user = getUser() || {};
+      var data = localParticipationData();
+      var allowedOrgIds = data.organizations.filter(function (org) {
+        return user.role === 'admin' || org.createdBy === user.id || data.memberships.some(function (member) {
+          return member.userId === user.id && member.organizationId === org.id && member.memberRole === 'curator' && member.status === 'active';
+        });
+      }).map(function (org) { return org.id; });
+      return {
+        organizations: data.organizations.filter(function (org) { return allowedOrgIds.includes(org.id); }),
+        projects: data.projects.filter(function (project) { return allowedOrgIds.includes(project.organizationId); }),
+        objects: data.objects.filter(function (object) { return allowedOrgIds.includes(object.organizationId); }),
+        members: data.memberships.filter(function (member) { return allowedOrgIds.includes(member.organizationId) && member.status === 'active'; }),
+        requests: getAllRequests().filter(function (request) { return allowedOrgIds.includes(request.organizationId); })
+      };
+    }
+    var response = await fetch(api('/api/requests/list?scope=curator'), { credentials: 'include', cache: 'no-store' });
+    var result = await response.json().catch(function () { return {}; });
+    if (!response.ok) throw new Error(result.error || 'CURATOR_DASHBOARD_FAILED');
+    return result;
+  }
+
+  async function uploadObservationPhotos(treeFile, leafFiles) {
+    var leaves = Array.from(leafFiles || []);
+    var descriptors = [{ clientId: 'tree', kind: 'tree', file: treeFile }].concat(leaves.map(function (file, index) {
+      return { clientId: 'leaf-' + index, kind: 'leaf', file: file };
+    }));
+    if (backendUnavailableHere()) {
+      var local = descriptors.map(function (item) {
+        return { clientId: item.clientId, kind: item.kind, path: 'local-preview/' + item.file.name,
+          url: URL.createObjectURL(item.file), name: item.file.name, size: item.file.size, type: item.file.type };
+      });
+      return {
+        treePhoto: local[0],
+        files: local.slice(1).map(function (item, index) {
+          item.bgLight = leaves[index]._bgLight !== undefined ? leaves[index]._bgLight : null;
+          return item;
+        })
+      };
+    }
+
+    var preparedResponse = await participationAction('prepare_uploads', {
+      files: descriptors.map(function (item) {
+        return { clientId: item.clientId, kind: item.kind, size: item.file.size, type: item.file.type };
+      })
+    });
+    var prepared = Array.isArray(preparedResponse.uploads) ? preparedResponse.uploads : [];
+    if (prepared.length !== descriptors.length) throw new Error('UPLOAD_PREPARATION_FAILED');
+
+    var cursor = 0;
+    async function worker() {
+      while (cursor < prepared.length) {
+        var index = cursor++;
+        var target = prepared[index];
+        var source = descriptors.find(function (item) { return item.clientId === target.clientId; });
+        if (!source) throw new Error('UPLOAD_PREPARATION_FAILED');
+        var formData = new FormData();
+        formData.append('cacheControl', '3600');
+        formData.append('', source.file);
+        var upload = await fetch(target.signedUrl, { method: 'PUT', headers: { 'x-upsert': 'false' }, body: formData });
+        if (!upload.ok) throw new Error('PHOTO_UPLOAD_FAILED');
+      }
+    }
+    await Promise.all([worker(), worker(), worker()]);
+
+    function metadata(item) {
+      var source = descriptors.find(function (descriptor) { return descriptor.clientId === item.clientId; });
+      return { name: source.file.name, size: source.file.size, type: source.file.type,
+        path: item.path, url: item.publicUrl, bgLight: source.file._bgLight !== undefined ? source.file._bgLight : null };
+    }
+    return {
+      treePhoto: metadata(prepared.find(function (item) { return item.clientId === 'tree'; })),
+      files: prepared.filter(function (item) { return item.kind === 'leaf'; }).map(metadata)
+    };
+  }
+
   async function setUserRole(email, role, options) {
     options = options || {};
     if (backendUnavailableHere()) throw new Error('BACKEND_NOT_CONFIGURED');
@@ -723,6 +964,16 @@
     saveRequestUpdate: saveRequestUpdate,
     openVolunteerCertificate: openVolunteerCertificate,
     openModeratorCertificate: openModeratorCertificate,
+    getParticipationContext: getParticipationContext,
+    getCuratorDashboard: getCuratorDashboard,
+    saveProfileCity: function (city) { return participationAction('save_profile', { city: city }); },
+    joinOrganization: function (code) { return participationAction('join_organization', { code: code }); },
+    leaveOrganization: function (organizationId) { return participationAction('leave_organization', { organizationId: organizationId }); },
+    createOrganization: function (data) { return participationAction('create_organization', data); },
+    createMonitoringProject: function (data) { return participationAction('create_project', data); },
+    createMonitoringObject: function (data) { return participationAction('create_object', data); },
+    assignMonitoringObject: function (data) { return participationAction('assign_object', data); },
+    uploadObservationPhotos: uploadObservationPhotos,
     setUserRole: setUserRole,
     saveFeedback: saveFeedback,
     requireAuthAsync: requireAuthAsync,

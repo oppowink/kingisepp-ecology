@@ -26,6 +26,14 @@
     var myRequestsLink = document.getElementById('ssylkaMoiZayavki');
     var feedbackLink = document.getElementById('ssylkaFeedback');
     var moderatorLink = document.getElementById('ssylkaModerator');
+    var curatorLink = document.getElementById('ssylkaKurator');
+    var profileSection = document.getElementById('kabinetProfil');
+    var cityForm = document.getElementById('profilGorodForma');
+    var cityInput = document.getElementById('profilGorod');
+    var organizationForm = document.getElementById('profilOrganizaciyaForma');
+    var organizationCode = document.getElementById('profilKodOrganizacii');
+    var organizationList = document.getElementById('profilOrganizaciiSpisok');
+    var profileMessage = document.getElementById('profilSoobshchenie');
     var certificateSection = document.querySelector('.kabinet-sertifikat');
     var certificateText = document.getElementById('sertifikatTekst');
     var certificateButton = document.getElementById('sertifikatVolonteraKnopka');
@@ -80,6 +88,54 @@
       certificateMessage.hidden = !text;
     }
 
+    function showProfileMessage(text, state) {
+      if (!profileMessage) return;
+      profileMessage.textContent = text || '';
+      profileMessage.dataset.state = state || '';
+      profileMessage.hidden = !text;
+    }
+
+    function renderOrganizations(context) {
+      if (!organizationList) return;
+      organizationList.replaceChildren();
+      var memberships = Array.isArray(context?.memberships) ? context.memberships : [];
+      if (!memberships.length) {
+        var empty = document.createElement('p');
+        empty.className = 'kabinet-organizacii__pusto';
+        empty.textContent = 'Вы пока не прикреплены к организации. Код можно получить у куратора.';
+        organizationList.appendChild(empty);
+        return;
+      }
+      memberships.forEach(function (membership) {
+        var row = document.createElement('div');
+        row.className = 'kabinet-organizaciya';
+        var text = document.createElement('p');
+        var organization = membership.organization || {};
+        text.textContent = organization.name || 'Организация';
+        var meta = document.createElement('small');
+        meta.textContent = [organization.city, membership.memberRole === 'curator' ? 'куратор' : 'участник'].filter(Boolean).join(' · ');
+        text.appendChild(meta);
+        var leave = document.createElement('button');
+        leave.className = 'knopka-tekst';
+        leave.type = 'button';
+        leave.textContent = 'Открепиться';
+        leave.dataset.leaveOrganization = membership.organizationId;
+        row.append(text, leave);
+        organizationList.appendChild(row);
+      });
+    }
+
+    async function loadParticipationProfile(user) {
+      if (!user || !profileSection || !['participant', 'curator'].includes(user.role)) return;
+      try {
+        var context = await EcoAuth.getParticipationContext();
+        if (cityInput) cityInput.value = context?.profile?.city || user.city || '';
+        renderOrganizations(context);
+      } catch (_) {
+        showProfileMessage('Не удалось загрузить организации. Проверьте миграцию 005 в Supabase.', 'error');
+      }
+    }
+
     function render(user) {
       loginBlock.hidden = Boolean(user);
       cabinetBlock.hidden = !user;
@@ -98,6 +154,7 @@
       if (userInfo) userInfo.hidden = chooseRole;
       if (cabinetNav) cabinetNav.hidden = chooseRole;
       if (certificateSection) certificateSection.hidden = chooseRole || role !== 'participant';
+      if (profileSection) profileSection.hidden = chooseRole || !['participant', 'curator'].includes(role);
       if (roleTestBlock) roleTestBlock.hidden = !chooseRole;
       if (chooseRole) return;
 
@@ -110,7 +167,9 @@
           educationStatus.dataset.state = educationDone ? 'success' : 'warning';
           educationStatus.hidden = false;
         } else {
-          educationStatus.textContent = role === 'admin' ? 'Режим администратора' : 'Режим модератора';
+          educationStatus.textContent = role === 'admin'
+            ? 'Режим администратора'
+            : role === 'moderator' ? 'Режим модератора' : 'Режим куратора';
           educationStatus.dataset.state = 'success';
           educationStatus.hidden = false;
         }
@@ -123,6 +182,7 @@
         moderatorLink.hidden = !['moderator', 'admin'].includes(role);
         moderatorLink.textContent = role === 'admin' ? 'Админка' : 'Проверка заявок';
       }
+      if (curatorLink) curatorLink.hidden = role !== 'curator';
       if (submitLink) {
         submitLink.classList.toggle('kabinet-navigaciya__ssylka--disabled', !educationDone);
         submitLink.setAttribute('aria-disabled', String(!educationDone));
@@ -136,6 +196,7 @@
         var requestCount = EcoAuth.getMyRequests().length;
         countEl.textContent = requestCount ? String(requestCount) : '';
       }
+      loadParticipationProfile(user);
       var next = nextPage();
       if (next) location.replace(next);
     }
@@ -263,6 +324,58 @@
         authForm.reset();
         setMode('login');
         render(null);
+      });
+    }
+
+    if (cityForm) {
+      cityForm.addEventListener('submit', async function (event) {
+        event.preventDefault();
+        var city = cityInput ? cityInput.value.trim() : '';
+        if (!city) {
+          showProfileMessage('Укажите город.', 'error');
+          return;
+        }
+        try {
+          await EcoAuth.saveProfileCity(city);
+          await EcoAuth.refreshUser();
+          showProfileMessage('Город сохранён.', 'success');
+        } catch (_) {
+          showProfileMessage('Не удалось сохранить город.', 'error');
+        }
+      });
+    }
+
+    if (organizationForm) {
+      organizationForm.addEventListener('submit', async function (event) {
+        event.preventDefault();
+        var code = organizationCode ? organizationCode.value.trim() : '';
+        if (!code) return;
+        try {
+          await EcoAuth.joinOrganization(code);
+          organizationForm.reset();
+          showProfileMessage('Вы прикреплены к организации.', 'success');
+          await loadParticipationProfile(EcoAuth.getUser());
+        } catch (error) {
+          showProfileMessage(error.message === 'ORGANIZATION_NOT_FOUND'
+            ? 'Организация с таким кодом не найдена.'
+            : 'Не удалось прикрепиться к организации.', 'error');
+        }
+      });
+    }
+
+    if (organizationList) {
+      organizationList.addEventListener('click', async function (event) {
+        var button = event.target.closest('[data-leave-organization]');
+        if (!button) return;
+        button.disabled = true;
+        try {
+          await EcoAuth.leaveOrganization(button.dataset.leaveOrganization);
+          showProfileMessage('Вы открепились от организации.', 'success');
+          await loadParticipationProfile(EcoAuth.getUser());
+        } catch (_) {
+          button.disabled = false;
+          showProfileMessage('Не удалось открепиться от организации.', 'error');
+        }
       });
     }
 

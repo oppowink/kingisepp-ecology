@@ -1,81 +1,61 @@
-// education.js — обучение волонтёра и тест
+// education.js — лёгкое обучение волонтёра и пробный тест
 (function () {
   'use strict';
 
   var QUESTIONS = [
     {
       id: 'q1',
-      text: 'Сколько фотографий листьев нужно загрузить для одной точки?',
+      text: 'Что помогает оценить ФА листа?',
       options: [
-        { value: '10', label: '10 фотографий' },
-        { value: '30', label: '30 фотографий' },
-        { value: '60', label: '60 фотографий' }
+        { value: 'color', label: 'Только цвет листа' },
+        { value: 'symmetry', label: 'Различия между левой и правой стороной' },
+        { value: 'weather', label: 'Погоду в день съёмки' }
       ],
-      correct: '30'
+      correct: 'symmetry'
     },
     {
       id: 'q2',
-      text: 'Какой вид дерева используется в основной методике проекта?',
+      text: 'Что должно быть в одной заявке волонтёра?',
       options: [
-        { value: 'maple', label: 'Клён остролистный' },
-        { value: 'betula', label: 'Берёза повислая' },
-        { value: 'oak', label: 'Дуб черешчатый' }
+        { value: 'one_tree', label: 'Одна точка, одно дерево и 30 листьев' },
+        { value: 'many_trees', label: 'Несколько деревьев в одной заявке' },
+        { value: 'any_count', label: 'Любое число фото' }
       ],
-      correct: 'betula'
+      correct: 'one_tree'
     },
     {
       id: 'q3',
-      text: 'Какие листья подходят для основной точки мониторинга?',
+      text: 'Какой лист лучше переснять или заменить?',
       options: [
-        { value: 'any', label: 'Любые листья, если их много' },
-        { value: 'no_damage', label: 'Неповреждённые листья без дырок и пятен' },
-        { value: 'dry', label: 'Только сухие листья с земли' }
+        { value: 'clean', label: 'Целый лист без пятен и дырок' },
+        { value: 'damaged', label: 'Лист с дырками, пятнами или сильным подсыханием' },
+        { value: 'visible', label: 'Лист, полностью видимый в кадре' }
       ],
-      correct: 'no_damage'
+      correct: 'damaged'
     },
     {
       id: 'q4',
-      text: 'Как правильно фотографировать лист?',
+      text: 'Какое фото подходит для дальнейшей проверки?',
       options: [
-        { value: 'top_light', label: 'Сверху, на светлом фоне, без сильной тени' },
-        { value: 'side_dark', label: 'Сбоку, на любом фоне' },
-        { value: 'many_leaves', label: 'Все листья сразу одним кадром' }
+        { value: 'top', label: 'Лист снят сверху, на светлом фоне, целиком' },
+        { value: 'hand', label: 'Лист держат пальцами в воздухе' },
+        { value: 'dark', label: 'Лист лежит на тёмном пёстром фоне' }
       ],
-      correct: 'top_light'
+      correct: 'top'
     },
     {
       id: 'q5',
-      text: 'Где нужно фиксировать координаты?',
+      text: 'Когда точка может стать видимой на карте?',
       options: [
-        { value: 'city_center', label: 'В центре города' },
-        { value: 'tree_coords', label: 'Рядом с выбранным деревом' },
-        { value: 'home', label: 'Дома после сбора' }
-      ],
-      correct: 'tree_coords'
-    },
-    {
-      id: 'q6',
-      text: 'Что происходит после отправки точки?',
-      options: [
-        { value: 'map_now', label: 'Она сразу появляется на карте' },
-        { value: 'moderation', label: 'Она отправляется на модерацию' },
-        { value: 'delete', label: 'Фотографии удаляются' }
-      ],
-      correct: 'moderation'
-    },
-    {
-      id: 'q7',
-      text: 'Когда точка становится публичной на карте?',
-      options: [
-        { value: 'after_checks', label: 'После проверки модератором и нейросетью' },
-        { value: 'after_upload', label: 'Сразу после загрузки фото' },
-        { value: 'never', label: 'Точки не показываются на карте' }
+        { value: 'after_upload', label: 'Сразу после загрузки' },
+        { value: 'after_checks', label: 'После модератора и автоматической проверки' },
+        { value: 'after_photo', label: 'После одной фотографии дерева' }
       ],
       correct: 'after_checks'
     }
   ];
 
-  var PASS_SCORE = 6;
+  var PASS_SCORE = 4;
   var SLIDE_DELAY_MS = 5000;
 
   function escapeHtml(value) {
@@ -87,8 +67,6 @@
   document.addEventListener('DOMContentLoaded', async function () {
     var user = await EcoAuth.requireAuthAsync();
     if (!user) return;
-
-    await EcoAuth.refreshEducationStatus();
 
     var slides = Array.from(document.querySelectorAll('[data-obuchenie-slajd]'));
     var counter = document.getElementById('obuchenieSchetchik');
@@ -127,7 +105,7 @@
       var action = current === slides.length - 1 ? toTest : next;
       if (!action || action.hidden) return;
 
-      var defaultText = current === slides.length - 1 ? 'Перейти к тесту' : 'Дальше';
+      var defaultText = current === slides.length - 1 ? 'Перейти к пробному тесту' : 'Дальше';
       var lockedText = current === slides.length - 1 ? 'К тесту через ' : 'Дальше через ';
       var availableAt = Date.now() + SLIDE_DELAY_MS;
 
@@ -159,7 +137,7 @@
       next.disabled = false;
       toTest.disabled = false;
       next.textContent = 'Дальше';
-      toTest.textContent = 'Перейти к тесту';
+      toTest.textContent = 'Перейти к пробному тесту';
       startSlideDelay();
     }
 
@@ -200,11 +178,6 @@
       if (done) done.hidden = false;
     }
 
-    if (EcoAuth.isEducationCompleted(user.email)) {
-      showDone();
-      return;
-    }
-
     renderQuestions();
 
     back.addEventListener('click', function () {
@@ -235,22 +208,13 @@
 
       var score = localScore(answers);
       var passed = score >= PASS_SCORE;
-      var saved = await EcoAuth.completeEducation({
-        answers: answers,
-        score: score,
-        total: QUESTIONS.length,
-        completed: passed
-      });
-      var finalScore = Number(saved.score || score);
-      var finalTotal = Number(saved.total || QUESTIONS.length);
-      var completed = Boolean(saved.completed);
 
-      if (!completed) {
-        showMessage('Пока не зачёт: ' + finalScore + '/' + finalTotal + '. Нужно минимум ' + PASS_SCORE + '. Исправьте ответы и попробуйте ещё раз.', 'error');
+      if (!passed) {
+        showMessage('Пока не зачёт: ' + score + '/' + QUESTIONS.length + '. Нужно минимум ' + PASS_SCORE + '. Перечитайте блоки и попробуйте ещё раз.', 'error');
         return;
       }
 
-      showMessage('Зачёт: ' + finalScore + '/' + finalTotal + '. Обучение сохранено.', 'success');
+      showMessage('Пробный тест пройден: ' + score + '/' + QUESTIONS.length + '.', 'success');
       showDone();
     });
 

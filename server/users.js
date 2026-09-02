@@ -67,6 +67,7 @@ function toSessionUser(row) {
     email: row.email,
     name: row.name || '',
     role: row.role || 'participant',
+    city: row.city || '',
     blocked: Boolean(row.blocked),
     educationCompleted: Boolean(row.education_completed),
     educationScore: Number(row.education_score || 0),

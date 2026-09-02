@@ -121,12 +121,18 @@
 
   function preparePoint(point) {
     var files = Array.isArray(point.files) ? point.files : [];
+    var treePhoto = point.treePhoto && (point.treePhoto.url || point.treePhoto.data);
+    var passport = [
+      point.territoryType ? 'Территория: ' + point.territoryType : '',
+      point.treeCondition ? 'Состояние дерева: ' + point.treeCondition : '',
+      Number.isFinite(Number(point.roadDistanceM)) ? 'До дороги: ' + Number(point.roadDistanceM) + ' м' : ''
+    ].filter(Boolean).join('. ');
     return {
       date: point.collectionDate || point.date || '',
       level: point.level || point.title || 'Подтверждённая точка',
       address: point.address || point.location || '',
-      explanation: point.explanation || 'Точка добавлена участником и прошла модерацию человека и автоматическую проверку.',
-      photos: files.map(function (file) { return file.data; }).filter(Boolean),
+      explanation: point.explanation || ('Точка, одно дерево и 30 листьев прошли модерацию человека и автоматическую проверку.' + (passport ? ' ' + passport + '.' : '')),
+      photos: [treePhoto].concat(files.map(function (file) { return file.url || file.data; })).filter(Boolean),
       excelUrl: point.excelUrl || '',
       pdfUrl: point.pdfUrl || ''
     };

@@ -281,24 +281,37 @@
             '</div>'
           : '<p class="admin-poyasnenie">Режим администратора: просмотр заявки без решения модератора.</p>';
 
-        // Превью фото (если есть base64)
+        // Превью обзорного фото дерева и фотографий листьев
         var photosHtml = '';
-        if (item.files && item.files.length) {
-          photosHtml = item.files.map(function (f) {
-            if (f.data) {
-              return '<img src="' + f.data + '" alt="' + escapeHtml(f.name) + '" style="max-width:100px; max-height:100px; margin:4px; object-fit:cover;">';
+        var allPhotos = [];
+        if (item.treePhoto) allPhotos.push(Object.assign({ photoKind: 'tree' }, item.treePhoto));
+        if (item.files && item.files.length) allPhotos = allPhotos.concat(item.files);
+        if (allPhotos.length) {
+          photosHtml = allPhotos.map(function (f, photoIndex) {
+            var src = f.url || f.data;
+            var alt = f.photoKind === 'tree' ? 'Обзорная фотография дерева' : 'Фотография листа ' + photoIndex;
+            if (src) {
+              return '<img src="' + escapeHtml(src) + '" alt="' + escapeHtml(alt) + '">';
             } else {
               return '<span style="font-size:0.75rem; color:var(--text-muted); margin-right:6px;">' + escapeHtml(f.name) + '</span>';
             }
           }).join('');
         }
+        var passportHtml = '<dl class="moderaciya-pasport">' +
+          '<dt>Координаты</dt><dd>' + escapeHtml(item.coordinates || 'не указаны') + '</dd>' +
+          '<dt>Территория</dt><dd>' + escapeHtml(item.territoryType || 'не указана') + '</dd>' +
+          '<dt>До дороги</dt><dd>' + escapeHtml(item.roadDistanceM === null || item.roadDistanceM === undefined ? 'не указано' : item.roadDistanceM + ' м') + '</dd>' +
+          '<dt>Транспорт</dt><dd>' + escapeHtml(item.trafficIntensity || 'не определён') + '</dd>' +
+          '<dt>Дерево</dt><dd>' + escapeHtml((item.treeSpecies || 'Берёза повислая') + (item.treeCondition ? ', ' + item.treeCondition : '')) + '</dd>' +
+          '</dl>';
 
         return '<article class="moderaciya-zayavka" data-zayavka-id="' + escapeHtml(item.id) + '">' +
           '<h2>' + escapeHtml(item.title) + '</h2>' +
           '<p class="moderaciya-meta">' + escapeHtml(item.userName) + ', ' + escapeHtml(item.userEmail) + '</p>' +
           '<p class="moderaciya-dannye">' + escapeHtml(item.location) + (item.collectionDate ? ', ' + escapeHtml(item.collectionDate) : '') + '</p>' +
           '<p class="moderaciya-status">Статус: ' + escapeHtml(statusLabel(item)) + '</p>' +
-          '<div class="moderaciya-foto" style="display:flex; flex-wrap:wrap; gap:6px; margin:10px 0;">' + photosHtml + '</div>' +
+          passportHtml +
+          '<div class="moderaciya-foto">' + photosHtml + '</div>' +
           moderationControls +
           '</article>';
       }).join('');
