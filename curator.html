@@ -1,0 +1,89 @@
+<!doctype html>
+<!-- curator.html — кабинет куратора организации, проектов и объектов -->
+<html lang="ru">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<meta content="noindex,nofollow" name="robots"/>
+<title>Кабинет куратора | ЭкоБиоМониторинг</title>
+<link href="img/favicon.ico" rel="icon"/>
+<link href="css/variables.css" rel="stylesheet"/>
+<link href="css/components.css" rel="stylesheet"/>
+<link href="css/curator.css" rel="stylesheet"/>
+<script src="js/theme.js"></script>
+</head>
+<body>
+<div aria-hidden="true" class="kursor" data-component="kursor"></div>
+<div aria-hidden="true" class="nastroiki-fon" id="nastroikiFon"></div>
+
+<header class="shapka" data-component="shapka">
+<a aria-label="ЭкоБиоМониторинг, на главную" class="shapka-logo" href="index.html">
+<span class="shapka-logo__nazvanie"><span class="shapka-logo__bukva">Э</span><span class="shapka-logo__bukva">к</span><img alt="" aria-hidden="true" class="shapka-logo__list shapka-logo__list--1" src="img/leaf1.png"/><span class="shapka-logo__bukva">Б</span><span class="shapka-logo__bukva">и</span><img alt="" aria-hidden="true" class="shapka-logo__list shapka-logo__list--2" src="img/leaf2.png"/><span class="shapka-logo__bukva">М</span><span class="shapka-logo__bukva">о</span><span class="shapka-logo__bukva">н</span><span class="shapka-logo__bukva">и</span><span class="shapka-logo__bukva">т</span><span class="shapka-logo__bukva">о</span><span class="shapka-logo__bukva">р</span><span class="shapka-logo__bukva">и</span><span class="shapka-logo__bukva">н</span><span class="shapka-logo__bukva">г</span></span>
+</a>
+<div class="shapka-deystviya">
+<a class="shapka-ssylka" href="account.html"><img alt="" aria-hidden="true" class="shapka-ssylka__ikona" src="img/icons/user.png"/><span>Личный кабинет</span></a>
+<button aria-controls="nastroikiPanel" aria-expanded="false" aria-label="Открыть настройки" class="nastroiki-knopka" id="nastroikiKnopka" type="button"><img alt="" aria-hidden="true" class="nastroiki-knopka__ikona" src="img/icons/gear.png"/><span class="nastroiki-knopka__tekst">Настройки</span></button>
+</div>
+</header>
+
+<aside aria-hidden="true" aria-label="Настройки" class="nastroiki-panel" id="nastroikiPanel">
+<button aria-label="Закрыть настройки" class="nastroiki-zakryt" id="nastroikiZakryt" type="button"><img alt="" aria-hidden="true" src="img/icons/close.png"/><span class="sr-only">Закрыть</span></button>
+<div class="tema-vybor-blok"><p class="tema-podpis">Тема</p><div class="tema-vybor"><button class="tema-knopka" id="temaSvetlaya" type="button"><img alt="" aria-hidden="true" src="img/icons/sun.png"/><span>Светлая</span></button><button class="tema-knopka" id="temaTemnaya" type="button"><img alt="" aria-hidden="true" src="img/icons/moon.png"/><span>Тёмная</span></button></div></div>
+<div class="nastroiki-akkaunt"><a class="nastroiki-ssylka nastroiki-ssylka--akcent" href="account.html"><img alt="" aria-hidden="true" src="img/icons/user.png"/><span>Личный кабинет</span></a></div>
+<nav aria-label="Навигация" class="nastroiki-navigaciya"><a class="nastroiki-ssylka" href="index.html">Главная</a><a class="nastroiki-ssylka" href="map.html">Карта и умный поиск</a><a class="nastroiki-ssylka" href="feedback.html">Обратная связь</a></nav>
+</aside>
+
+<main class="kurator-stranica vnutrennyaya-stranica">
+<nav aria-label="Навигация страницы" class="stranica-deystviya"><a class="stranica-knopka" href="account.html">Назад в кабинет</a><a class="stranica-knopka" href="index.html">В меню</a></nav>
+<header class="kurator-vvedenie"><p class="kurator-metka">Организация полевых работ</p><h1>Кабинет куратора</h1><p>Создайте организацию и проект, определите объекты мониторинга, передайте участникам код и отслеживайте заявки. Куратор организует сбор, но не заменяет научную модерацию.</p><div class="kurator-metodichka"><a class="knopka-vtorichnaya" download href="docs/curator-method-guide.pdf">Скачать методичку, PDF</a><a class="kurator-metodichka__word" download href="docs/curator-method-guide.docx">Версия для Word</a></div></header>
+
+<section class="dostup-soobshchenie" hidden="" id="kuratorNetDostupa"><p>Раздел доступен только пользователю с ролью «Куратор».</p><a href="account.html">Вернуться в кабинет</a></section>
+
+<div class="kurator-rabochaya-oblast" hidden="" id="kuratorRabochayaOblast">
+<section class="kurator-blok" aria-labelledby="organizaciiZagolovok">
+<div><p class="kurator-shag">Шаг 1</p><h2 id="organizaciiZagolovok">Организация</h2><p>После создания передайте участникам код подключения.</p></div>
+<form class="kurator-forma" id="organizaciyaForma">
+<div class="pole-gruppa"><label class="pole-podpis" for="organizaciyaNazvanie">Название</label><input class="pole-vvod" id="organizaciyaNazvanie" maxlength="160" required=""/></div>
+<div class="kurator-dve-kolonki"><div class="pole-gruppa"><label class="pole-podpis" for="organizaciyaTip">Тип</label><select class="pole-vybor" id="organizaciyaTip"><option value="school">Школа</option><option value="college">Колледж</option><option value="university">Вуз</option><option value="volunteer_center">Волонтёрский центр</option><option value="ngo">Общественная организация</option><option value="other">Другое</option></select></div><div class="pole-gruppa"><label class="pole-podpis" for="organizaciyaGorod">Город</label><input class="pole-vvod" id="organizaciyaGorod" maxlength="100" required=""/></div></div>
+<div class="pole-gruppa"><label class="pole-podpis" for="organizaciyaOpisanie">Краткое описание</label><textarea class="pole-tekst" id="organizaciyaOpisanie" maxlength="1000"></textarea></div>
+<button class="knopka-osnovnaya" type="submit">Создать организацию</button>
+</form>
+<div class="kurator-kartochki" id="organizaciiSpisok"></div>
+</section>
+
+<section class="kurator-blok" aria-labelledby="proektyZagolovok">
+<div><p class="kurator-shag">Шаг 2</p><h2 id="proektyZagolovok">Проект</h2><p>Проект объединяет несколько территорий или объектов одной кампании.</p></div>
+<form class="kurator-forma" id="proektForma">
+<div class="kurator-dve-kolonki"><div class="pole-gruppa"><label class="pole-podpis" for="proektOrganizaciya">Организация</label><select class="pole-vybor" id="proektOrganizaciya" required=""></select></div><div class="pole-gruppa"><label class="pole-podpis" for="proektGorod">Город</label><input class="pole-vvod" id="proektGorod" maxlength="100" required=""/></div></div>
+<div class="pole-gruppa"><label class="pole-podpis" for="proektNazvanie">Название проекта</label><input class="pole-vvod" id="proektNazvanie" maxlength="180" required=""/></div>
+<div class="pole-gruppa"><label class="pole-podpis" for="proektOpisanie">Задача для участников</label><textarea class="pole-tekst" id="proektOpisanie" maxlength="1500"></textarea></div>
+<div class="kurator-tri-kolonki"><div class="pole-gruppa"><label class="pole-podpis" for="proektVidimost">Доступ</label><select class="pole-vybor" id="proektVidimost"><option value="organization">Только организация</option><option value="public">Открыт всем</option></select></div><div class="pole-gruppa"><label class="pole-podpis" for="proektNachalo">Начало</label><input class="pole-vvod" id="proektNachalo" type="date"/></div><div class="pole-gruppa"><label class="pole-podpis" for="proektKonec">Окончание</label><input class="pole-vvod" id="proektKonec" type="date"/></div></div>
+<button class="knopka-osnovnaya" type="submit">Создать проект</button>
+</form>
+</section>
+
+<section class="kurator-blok" aria-labelledby="obektyZagolovok">
+<div><p class="kurator-shag">Шаг 3</p><h2 id="obektyZagolovok">Объект или территория</h2><p>Внутри объекта участник выбирает точное дерево на карте и отправляет одну заявку.</p></div>
+<form class="kurator-forma" id="obektForma">
+<div class="kurator-dve-kolonki"><div class="pole-gruppa"><label class="pole-podpis" for="obektOrganizaciya">Организация</label><select class="pole-vybor" id="obektOrganizaciya" required=""></select></div><div class="pole-gruppa"><label class="pole-podpis" for="obektProekt">Проект</label><select class="pole-vybor" id="obektProekt" required=""></select></div></div>
+<div class="kurator-dve-kolonki"><div class="pole-gruppa"><label class="pole-podpis" for="obektNazvanie">Название объекта</label><input class="pole-vvod" id="obektNazvanie" maxlength="180" required=""/></div><div class="pole-gruppa"><label class="pole-podpis" for="obektGorod">Город</label><input class="pole-vvod" id="obektGorod" maxlength="100" required=""/></div></div>
+<div class="pole-gruppa"><label class="pole-podpis" for="obektAdres">Ориентир или границы</label><input class="pole-vvod" id="obektAdres" maxlength="500" required=""/></div>
+<div class="pole-gruppa"><label class="pole-podpis" for="obektOpisanie">Инструкция участнику</label><textarea class="pole-tekst" id="obektOpisanie" maxlength="1500"></textarea></div>
+<div class="kurator-tri-kolonki"><div class="pole-gruppa"><label class="pole-podpis" for="obektRadius">Радиус, м</label><input class="pole-vvod" id="obektRadius" max="50000" min="10" type="number"/></div><div class="pole-gruppa"><label class="pole-podpis" for="obektTochki">Нужно точек</label><input class="pole-vvod" id="obektTochki" max="500" min="1" type="number" value="1"/></div><div class="pole-gruppa"><label class="pole-podpis" for="obektSrok">Срок</label><input class="pole-vvod" id="obektSrok" type="date"/></div></div>
+<div class="kurator-tri-kolonki"><div class="pole-gruppa"><label class="pole-podpis" for="obektShirota">Центр: широта</label><input class="pole-vvod" id="obektShirota" max="90" min="-90" step="0.000001" type="number"/></div><div class="pole-gruppa"><label class="pole-podpis" for="obektDolgota">Центр: долгота</label><input class="pole-vvod" id="obektDolgota" max="180" min="-180" step="0.000001" type="number"/></div><div class="pole-gruppa"><label class="pole-podpis" for="obektVidimost">Доступ</label><select class="pole-vybor" id="obektVidimost"><option value="organization">Только организация</option><option value="public">Открыт всем</option></select></div></div>
+<button class="knopka-osnovnaya" type="submit">Создать объект</button>
+</form>
+<div class="kurator-kartochki" id="obektySpisok"></div>
+</section>
+
+<section class="kurator-blok" aria-labelledby="uchastnikiZagolovok"><div><p class="kurator-shag">Контроль</p><h2 id="uchastnikiZagolovok">Участники и назначения</h2></div><form class="kurator-forma kurator-naznachenie" id="naznachenieForma"><div class="kurator-dve-kolonki"><div class="pole-gruppa"><label class="pole-podpis" for="naznachenieUchastnik">Участник</label><select class="pole-vybor" id="naznachenieUchastnik" required=""></select></div><div class="pole-gruppa"><label class="pole-podpis" for="naznachenieObekt">Объект</label><select class="pole-vybor" id="naznachenieObekt" required=""></select></div></div><button class="knopka-vtorichnaya" type="submit">Назначить объект</button></form><div class="kurator-tablica-obertka"><table class="kurator-tablica"><thead><tr><th>Участник</th><th>Город</th><th>Организация</th><th>Заявки</th></tr></thead><tbody id="uchastnikiSpisok"></tbody></table></div></section>
+
+<section class="kurator-blok" aria-labelledby="statusyZagolovok"><div><p class="kurator-shag">Наблюдение</p><h2 id="statusyZagolovok">Статусы заявок участников</h2></div><div class="kurator-kartochki" id="statusySpisok"></div></section>
+<p aria-live="polite" class="soobshchenie" hidden="" id="kuratorSoobshchenie"></p>
+</div>
+</main>
+
+<footer aria-label="Подвал сайта" class="podval" data-component="podval"><div class="podval-vnutri"><span class="podval-nazvanie">ЭкоБиоМониторинг</span><span>Кингисепп</span><span>2025-2026</span></div></footer>
+<script src="js/auth.js"></script><script defer src="js/header.js"></script><script defer src="js/cursor.js"></script><script defer src="js/curator.js"></script>
+</body>
+</html>

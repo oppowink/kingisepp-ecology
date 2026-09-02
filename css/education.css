@@ -154,20 +154,24 @@
   text-decoration: none;
 }
 
+.obuchenie-osnovnoy-test,
 .obuchenie-foto-spisok {
   width: min(780px, 100%);
   margin-top: 36px;
   padding-top: 24px;
   border-top: 1px solid var(--line);
 }
+.obuchenie-osnovnoy-test h2,
 .obuchenie-foto-spisok h2 {
   margin-bottom: 10px;
 }
+.obuchenie-osnovnoy-test p,
 .obuchenie-foto-spisok p,
 .obuchenie-foto-spisok li {
   color: var(--text-muted);
   font-size: .86rem;
 }
+.obuchenie-osnovnoy-test p,
 .obuchenie-foto-spisok p {
   margin: 0 0 12px;
 }

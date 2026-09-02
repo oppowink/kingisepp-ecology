@@ -26,6 +26,32 @@
   font-weight: 300;
 }
 
+/* три места под короткие агитационно-просветительские ролики */
+.glavnaya-video {
+  position: relative;
+  z-index: 2;
+  width: min(1180px, calc(100% - 58px));
+  margin: 0 auto clamp(95px, 13vh, 150px);
+}
+.glavnaya-video__vvedenie { max-width: 760px; margin-bottom: 28px; }
+.glavnaya-video__vvedenie h2 { margin: 0 0 13px; font-family: var(--font-heading); font-size: clamp(1.35rem, 2.6vw, 2.05rem); font-weight: 400; line-height: 1.22; }
+.glavnaya-video__vvedenie > p:last-child { color: var(--text-muted); }
+.glavnaya-video__metka { margin: 0 0 9px; color: var(--accent); font-size: .75rem; letter-spacing: .08em; text-transform: uppercase; }
+.glavnaya-video__setka { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin-bottom: 16px; }
+.video-zaglushka {
+  position: relative;
+  min-height: 245px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 25px;
+  background: var(--surface-soft);
+}
+.video-zaglushka::before { content: '▶'; position: absolute; inset: 28px auto auto 25px; color: var(--accent); font-size: 1.45rem; }
+.video-zaglushka__nomer { position: absolute; inset: 25px 25px auto auto; color: var(--text-muted); font-size: .78rem; }
+.video-zaglushka h3 { margin: 0 0 8px; font-family: var(--font-heading); font-size: 1rem; font-weight: 500; }
+.video-zaglushka p { margin: 0; color: var(--text-muted); font-size: .76rem; overflow-wrap: anywhere; }
+
 /* каждая сцена — контейнер с липким блоком внутри */
 .glavnaya-scena { position: relative; height: 122vh; }
 .glavnaya-scena--poslednyaya { height: 114vh; }
@@ -118,6 +144,7 @@
 .glavnaya-perehod--karta .glavnaya-perehod__list { transform: rotate(-10deg); }
 .glavnaya-perehod--uchastie .glavnaya-perehod__list { transform: rotate(9deg); }
 .glavnaya-perehod--obuchenie .glavnaya-perehod__list { transform: rotate(-5deg); }
+.glavnaya-perehod--igra .glavnaya-perehod__list { transform: rotate(5deg); }
 .glavnaya-perehod--svyaz .glavnaya-perehod__list { transform: rotate(8deg); }
 
 /* hover-эффекты для ссылок */
@@ -391,6 +418,9 @@ html.dark .glavnaya-blok .glavnaya-prizyv { color: var(--acid); }
 
 /* мобильная адаптивность (до 760px) */
 @media (max-width: 760px) {
+  .glavnaya-video { width: calc(100% - 38px); margin-bottom: 90px; }
+  .glavnaya-video__setka { grid-template-columns: 1fr; }
+  .video-zaglushka { min-height: 190px; }
   .glavnaya-vvodnaya { min-height: auto; padding: 72px 19px 92px; }
   .glavnaya-scena,
   .glavnaya-scena--poslednyaya { height: auto; padding: 0 19px 92px; }

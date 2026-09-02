@@ -28,6 +28,53 @@
   gap: 23px;
 }
 
+/* смысловые блоки паспорта и выбора источника задания */
+.forma-sekciya {
+  min-width: 0;
+  margin: 0;
+  padding: 24px;
+  border: 0;
+  background: var(--surface-soft);
+}
+.forma-sekciya legend,
+.forma-sekciya > h2 {
+  margin: 0 0 14px;
+  padding: 0;
+  font-family: var(--font-heading);
+  font-size: 1.05rem;
+  font-weight: 500;
+}
+.forma-sekciya > p { margin: -5px 0 16px; color: var(--text-muted); font-size: .84rem; }
+.pasport-territorii,
+.pasport-dereva { display: grid; gap: 18px; }
+
+/* выбор собственной точки или объекта куратора */
+.istochnik-zayavki__varianty { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.istochnik-variant { position: relative; display: block; cursor: pointer; }
+.istochnik-variant input { position: absolute; inline-size: 1px; block-size: 1px; opacity: 0; }
+.istochnik-variant span {
+  min-height: 86px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+  padding: 15px 16px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  transition: border-color var(--transition-fast), background-color var(--transition-fast);
+}
+.istochnik-variant strong { font-family: var(--font-heading); font-size: .88rem; font-weight: 500; }
+.istochnik-variant small { color: var(--text-muted); font-size: .75rem; line-height: 1.4; }
+.istochnik-variant input:checked + span { border-color: var(--accent); background: var(--surface-soft); }
+.istochnik-variant input:focus-visible + span { outline: 2px solid var(--accent); outline-offset: 3px; }
+.istochnik-zayavki > .pole-gruppa { margin-top: 18px; }
+.pole-podskazka { margin: 7px 0 0; color: var(--text-muted); font-size: .78rem; }
+
+/* интерактивная карта выбора координат */
+#kartaVyborKoordinat { width: 100%; height: 360px; background: var(--surface); }
+.karta-vybor__status { margin: 11px 0 0 !important; color: var(--text-muted); }
+.karta-vybor__status[data-state='selected'] { color: var(--success); }
+
 /* ряд из двух полей (координаты + дата) */
 .forma-nablyudeniya__ryad {
   display: grid;
@@ -66,6 +113,7 @@
   color: var(--text-muted);
   font-size: .8rem;
 }
+.zagruzka-foto--derevo { min-height: 112px; }
 
 /* блок предварительного анализа */
 .predvaritelnyy-analiz {
@@ -123,4 +171,7 @@
   .forma-nablyudeniya__ryad {
     grid-template-columns: 1fr;
   }
+  .forma-sekciya { padding: 20px 18px; }
+  .istochnik-zayavki__varianty { grid-template-columns: 1fr; }
+  #kartaVyborKoordinat { height: 310px; }
 }

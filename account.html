@@ -149,6 +149,30 @@
 <p class="kabinet-status" id="kabinetObuchenie"></p>
 <button class="knopka-tekst" id="vyhodKnopka" type="button">Выйти</button>
 </div>
+
+<!-- профиль участника: город и привязка к организации -->
+<section aria-labelledby="profilNastroikiZagolovok" class="kabinet-profil" id="kabinetProfil">
+<h2 id="profilNastroikiZagolovok">Профиль и организация</h2>
+<form class="kabinet-profil__forma" id="profilGorodForma">
+<div class="pole-gruppa">
+<label class="pole-podpis" for="profilGorod">Город</label>
+<input autocomplete="address-level2" class="pole-vvod" id="profilGorod" maxlength="100" placeholder="Например, Кингисепп"/>
+</div>
+<button class="knopka-vtorichnaya" type="submit">Сохранить город</button>
+</form>
+<div class="kabinet-organizacii">
+<h3>Мои организации</h3>
+<div aria-live="polite" class="kabinet-organizacii__spisok" id="profilOrganizaciiSpisok"></div>
+<form class="kabinet-prisoedinenie" id="profilOrganizaciyaForma">
+<label class="pole-podpis" for="profilKodOrganizacii">Код организации</label>
+<div class="kabinet-prisoedinenie__stroka">
+<input autocapitalize="characters" autocomplete="off" class="pole-vvod" id="profilKodOrganizacii" maxlength="32" placeholder="Введите код куратора" required=""/>
+<button class="knopka-vtorichnaya" type="submit">Прикрепиться</button>
+</div>
+</form>
+</div>
+<p aria-live="polite" class="soobshchenie" hidden="" id="profilSoobshchenie"></p>
+</section>
 <section aria-label="Тестовый вход под ролью" class="kabinet-roli-test" hidden="" id="kabinetRoliTest">
 <div aria-label="Тестовый вход под ролью" class="kabinet-roli-test__knopki" role="group">
 <button class="knopka-vtorichnaya" data-test-role="participant" type="button">Войти как волонтёр</button>
@@ -163,6 +187,7 @@
 <a href="my-requests.html" id="ssylkaMoiZayavki">Мои заявки <span class="kabinet-navigaciya__schetchik" id="kolichestvoZayavok"></span></a>
 <a href="feedback.html" id="ssylkaFeedback">Обратная связь</a>
 <a hidden="" href="moderator.html" id="ssylkaModerator">Модерация</a>
+<a hidden="" href="curator.html" id="ssylkaKurator">Кабинет куратора</a>
 </nav>
 <section aria-labelledby="sertifikatZagolovok" class="kabinet-sertifikat">
 <h2 id="sertifikatZagolovok">Сертификат</h2>

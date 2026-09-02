@@ -19,6 +19,10 @@
 <link href="css/components.css" rel="stylesheet"/>
 <link href="css/submit.css" rel="stylesheet"/>
 
+<!-- Та же карта, что используется на публичной странице проекта -->
+<link href="https://api-maps.yandex.ru" rel="preconnect"/>
+<script src="https://api-maps.yandex.ru/2.1/?apikey=188ac128-4a13-4cd1-b53a-cdf0eb730641&amp;lang=ru_RU"></script>
+
 <!-- тема — подключаем до body чтобы не мигало -->
 <script src="js/theme.js"></script>
 </head>
@@ -98,13 +102,36 @@
 
 <!-- блок, если обучение не пройдено -->
 <section class="dostup-soobshchenie" hidden="" id="podachaBlokirovka">
-<p>Сначала нужно пройти обучение волонтёра и тест.</p>
+<p>Добавление точки откроется после основного подтверждающего теста.</p>
 <a href="education.html">Перейти к обучению</a>
 </section>
 
 <!-- форма подачи наблюдения -->
 <form class="forma-nablyudeniya" hidden="" id="formaNablyudeniya" novalidate="">
 <p class="forma-nablyudeniya__poyasnenie">Одна заявка = одна точка, одно дерево и 30 фотографий листьев.</p>
+
+<!-- источник задания: собственная точка или объект, открытый куратором -->
+<fieldset class="forma-sekciya istochnik-zayavki">
+<legend>Откуда берётся точка</legend>
+<div class="istochnik-zayavki__varianty">
+<label class="istochnik-variant">
+<input checked="" name="sourceMode" type="radio" value="own"/>
+<span><strong>Своя точка</strong><small>Выберите любое подходящее место на карте</small></span>
+</label>
+<label class="istochnik-variant">
+<input name="sourceMode" type="radio" value="object"/>
+<span><strong>Задание куратора</strong><small>Открытый или назначенный вам объект</small></span>
+</label>
+</div>
+<div class="pole-gruppa" hidden="" id="obektNablyudeniyaGruppa">
+<label class="pole-podpis" for="obektNablyudeniya">Объект мониторинга</label>
+<select class="pole-vybor" id="obektNablyudeniya">
+<option value="">Выберите объект</option>
+</select>
+<p class="pole-podskazka" id="obektNablyudeniyaOpisanie"></p>
+</div>
+</fieldset>
+
 <!-- поле "Название наблюдения" -->
 <div class="pole-gruppa">
 <label class="pole-podpis" for="nazvanieNablyudeniya">Название точки</label>
@@ -117,11 +144,19 @@
 <input autocomplete="street-address" class="pole-vvod" id="mestoNablyudeniya" name="location" required=""/>
 </div>
 
-<!-- блок с координатами и датой -->
+<!-- координаты выбираются на карте: ручной ввод исключён -->
+<section aria-labelledby="vyborKoordinatZagolovok" class="forma-sekciya karta-vybor">
+<h2 id="vyborKoordinatZagolovok">Выберите дерево на карте</h2>
+<p>Нажмите на место, где находится исследуемая берёза. Маркер можно переставить повторным нажатием.</p>
+<div aria-label="Карта для выбора координат дерева" id="kartaVyborKoordinat"></div>
+<p aria-live="polite" class="karta-vybor__status" id="kartaVyborStatus">Точка ещё не выбрана</p>
+</section>
+
+<!-- блок с выбранными координатами и датой -->
 <div class="forma-nablyudeniya__ryad">
 <div class="pole-gruppa">
-<label class="pole-podpis" for="koordinatyNablyudeniya">Координаты</label>
-<input class="pole-vvod" id="koordinatyNablyudeniya" name="coordinates" placeholder="59.378, 28.612" required=""/>
+<label class="pole-podpis" for="koordinatyNablyudeniya">Выбранные координаты</label>
+<input class="pole-vvod" id="koordinatyNablyudeniya" name="coordinates" placeholder="Выберите точку на карте" readonly="" required=""/>
 </div>
 <div class="pole-gruppa">
 <label class="pole-podpis" for="dataSbora">Дата сбора</label>
@@ -129,9 +164,106 @@
 </div>
 </div>
 
-<!-- загрузка фотографий (drag & drop) -->
+<!-- паспорт территории: контекст помогает сравнивать точки между собой -->
+<fieldset class="forma-sekciya pasport-territorii">
+<legend>Паспорт территории</legend>
+<div class="forma-nablyudeniya__ryad">
 <div class="pole-gruppa">
-<span class="pole-podpis">Фотографии</span>
+<label class="pole-podpis" for="tipTerritorii">Тип территории</label>
+<select class="pole-vybor" id="tipTerritorii" required="">
+<option value="">Выберите</option>
+<option>Жилая застройка</option>
+<option>Школьная территория</option>
+<option>Парк или сквер</option>
+<option>Промышленная зона</option>
+<option>Придорожная территория</option>
+<option>Другое</option>
+</select>
+</div>
+<div class="pole-gruppa">
+<label class="pole-podpis" for="tipPokrytiya">Преобладающее покрытие</label>
+<select class="pole-vybor" id="tipPokrytiya" required="">
+<option value="">Выберите</option>
+<option>Почва и растительность</option>
+<option>Газон</option>
+<option>Асфальт</option>
+<option>Смешанное</option>
+</select>
+</div>
+</div>
+<div class="forma-nablyudeniya__ryad">
+<div class="pole-gruppa">
+<label class="pole-podpis" for="rasstoyanieDoroga">Расстояние до ближайшей дороги, м</label>
+<input class="pole-vvod" id="rasstoyanieDoroga" max="10000" min="0" required="" step="1" type="number"/>
+</div>
+<div class="pole-gruppa">
+<label class="pole-podpis" for="intensivnostDvizheniya">Транспортная нагрузка</label>
+<select class="pole-vybor" id="intensivnostDvizheniya" required="">
+<option value="">Выберите</option>
+<option value="low">Низкая</option>
+<option value="medium">Средняя</option>
+<option value="high">Высокая</option>
+<option value="unknown">Не определялась</option>
+</select>
+</div>
+</div>
+<div class="pole-gruppa">
+<label class="pole-podpis" for="istochnikiVozdeystviya">Ближайшие возможные источники воздействия</label>
+<input class="pole-vvod" id="istochnikiVozdeystviya" maxlength="500" placeholder="Например: дорога, парковка, котельная; если нет — укажите «не отмечены»" required=""/>
+</div>
+<div class="pole-gruppa">
+<label class="pole-podpis" for="pogodaNablyudeniya">Условия во время сбора</label>
+<input class="pole-vvod" id="pogodaNablyudeniya" maxlength="300" placeholder="Сухо/после дождя, облачность, сильный ветер" required=""/>
+</div>
+</fieldset>
+
+<!-- паспорт дерева и обязательная обзорная фотография берёзы -->
+<fieldset class="forma-sekciya pasport-dereva">
+<legend>Паспорт дерева</legend>
+<div class="forma-nablyudeniya__ryad">
+<div class="pole-gruppa">
+<label class="pole-podpis" for="vidDereva">Вид дерева</label>
+<input class="pole-vvod" id="vidDereva" readonly="" value="Берёза повислая"/>
+</div>
+<div class="pole-gruppa">
+<label class="pole-podpis" for="sostoyanieDereva">Состояние кроны</label>
+<select class="pole-vybor" id="sostoyanieDereva" required="">
+<option value="">Выберите</option>
+<option>Без заметных нарушений</option>
+<option>Есть сухие ветви</option>
+<option>Крона разрежена</option>
+<option>Есть выраженные повреждения</option>
+</select>
+</div>
+</div>
+<div class="forma-nablyudeniya__ryad">
+<div class="pole-gruppa">
+<label class="pole-podpis" for="diametrStvola">Диаметр ствола на высоте груди, см</label>
+<input class="pole-vvod" id="diametrStvola" max="300" min="1" required="" step="0.1" type="number"/>
+</div>
+<div class="pole-gruppa">
+<label class="pole-podpis" for="vysotaDereva">Примерная высота дерева, м</label>
+<input class="pole-vvod" id="vysotaDereva" max="80" min="1" required="" step="0.1" type="number"/>
+</div>
+</div>
+<div class="pole-gruppa">
+<label class="pole-podpis" for="povrezhdeniyaDereva">Повреждения ствола и кроны</label>
+<input class="pole-vvod" id="povrezhdeniyaDereva" maxlength="500" placeholder="Если не обнаружены — укажите «не обнаружены»" required=""/>
+</div>
+<div class="pole-gruppa">
+<span class="pole-podpis">Обзорная фотография берёзы</span>
+<label class="zagruzka-foto zagruzka-foto--derevo" for="fotoDereva" id="zagruzkaFotoDereva">
+<img alt="" aria-hidden="true" src="img/icons/upload.png"/>
+<span>Добавьте одну фотографию дерева целиком</span>
+<input accept="image/*" hidden="" id="fotoDereva" name="treePhoto" required="" type="file"/>
+</label>
+<p class="zagruzka-foto__schetchik" id="schetchikFotoDereva">Файл не выбран</p>
+</div>
+</fieldset>
+
+<!-- загрузка 30 фотографий листьев (drag & drop) -->
+<div class="pole-gruppa">
+<span class="pole-podpis">Фотографии 30 листьев</span>
 <label class="zagruzka-foto" for="faylyNablyudeniya" id="zagruzkaFoto">
 <img alt="" aria-hidden="true" src="img/icons/upload.png"/>
 <span>Перетащите фотографии сюда или выберите файлы</span>
@@ -179,7 +311,7 @@
     </label>
     <label class="checklist-item">
       <input type="checkbox" class="checklist-input" data-check="5">
-      Указаны координаты и дата сбора
+      Координаты выбраны на карте и указана дата сбора
     </label>
   </div>
   <p class="checklist-error" id="checklistError" hidden>Отметьте все пункты перед отправкой</p>

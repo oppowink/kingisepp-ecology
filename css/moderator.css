@@ -243,6 +243,11 @@
   color: var(--accent);
   font-size: .84rem;
 }
+.moderaciya-pasport { display: grid; grid-template-columns: minmax(110px, .38fr) 1fr; gap: 6px 14px; margin: 16px 0; padding: 15px; background: var(--surface-soft); font-size: .8rem; }
+.moderaciya-pasport dt { color: var(--text-muted); }
+.moderaciya-pasport dd { margin: 0; overflow-wrap: anywhere; }
+.moderaciya-foto { display: flex; flex-wrap: wrap; gap: 7px; margin: 12px 0; }
+.moderaciya-foto img { width: 104px; height: 104px; object-fit: cover; background: var(--surface-soft); }
 
 /* блок с результатом предварительного AI-анализа */
 .moderaciya-ai {

@@ -79,7 +79,7 @@ module.exports = async function handler(req, res) {
       res.statusCode = 400;
       return res.end(JSON.stringify({ error: 'INVALID_EMAIL' }));
     }
-    if (hasRole && !['participant', 'moderator', 'admin'].includes(role)) {
+    if (hasRole && !['participant', 'curator', 'moderator', 'admin'].includes(role)) {
       res.statusCode = 400;
       return res.end(JSON.stringify({ error: 'INVALID_ROLE' }));
     }

@@ -1,0 +1,35 @@
+/* curator.css — рабочий кабинет куратора без декоративных разделителей */
+.kurator-stranica { width: min(1080px, calc(100% - 46px)); }
+.kurator-vvedenie { max-width: 780px; margin-bottom: 38px; }
+.kurator-vvedenie > p:last-child { color: var(--text-muted); }
+.kurator-metodichka { display: flex; align-items: center; flex-wrap: wrap; gap: 14px; margin-top: 20px; }
+.kurator-metodichka__word { color: var(--accent); font-size: .84rem; text-underline-offset: 4px; }
+.kurator-metka,
+.kurator-shag { margin: 0 0 8px; color: var(--accent); font-size: .76rem; letter-spacing: .08em; text-transform: uppercase; }
+.kurator-rabochaya-oblast { display: grid; gap: 28px; }
+.kurator-blok { display: grid; gap: 22px; padding: clamp(23px, 4vw, 38px); background: var(--surface-soft); }
+.kurator-blok h2 { margin-bottom: 7px; }
+.kurator-blok > div > p:last-child { margin: 0; color: var(--text-muted); font-size: .86rem; }
+.kurator-forma { display: grid; gap: 17px; }
+.kurator-forma > .knopka-osnovnaya,
+.kurator-forma > .knopka-vtorichnaya { justify-self: start; }
+.kurator-dve-kolonki { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.kurator-tri-kolonki { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.kurator-kartochki { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.kurator-kartochka { min-width: 0; padding: 18px; background: var(--surface); }
+.kurator-kartochka h3 { margin: 0 0 7px; font-family: var(--font-heading); font-size: .96rem; font-weight: 500; }
+.kurator-kartochka p { margin: 5px 0 0; color: var(--text-muted); font-size: .8rem; overflow-wrap: anywhere; }
+.kurator-kod { display: inline-block; margin-top: 10px; padding: 5px 8px; background: var(--bg); color: var(--accent); font-family: ui-monospace, monospace; letter-spacing: .08em; }
+.kurator-tablica-obertka { overflow-x: auto; }
+.kurator-tablica { width: 100%; border-collapse: collapse; min-width: 650px; }
+.kurator-tablica th,
+.kurator-tablica td { padding: 12px 10px; text-align: left; vertical-align: top; }
+.kurator-tablica th { color: var(--text-muted); font-size: .75rem; font-weight: 500; }
+.kurator-tablica td { background: var(--surface); font-size: .83rem; }
+.kurator-pusto { margin: 0; color: var(--text-muted); font-size: .84rem; }
+@media (max-width: 760px) {
+  .kurator-dve-kolonki,
+  .kurator-tri-kolonki,
+  .kurator-kartochki { grid-template-columns: 1fr; }
+  .kurator-blok { padding: 22px 18px; }
+}
