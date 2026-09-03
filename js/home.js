@@ -125,9 +125,28 @@
     observer.observe(stage);
   }
 
+  // запускаем анимацию призыва только при появлении фразы в окне
+  function initJumpIn() {
+    var items = document.querySelectorAll('.jump-in');
+    if (!items.length) return;
+    if (reduceMotion || typeof IntersectionObserver === 'undefined') {
+      items.forEach(function (item) { item.classList.add('jump-in--visible'); });
+      return;
+    }
+    var observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add('jump-in--visible');
+        observer.unobserve(entry.target);
+      });
+    }, { threshold: .55 });
+    items.forEach(function (item) { observer.observe(item); });
+  }
+
   // запуск при загрузке DOM
   document.addEventListener('DOMContentLoaded', function () {
     initScrollScenes();
     initActualitySequence();
+    initJumpIn();
   });
 })();

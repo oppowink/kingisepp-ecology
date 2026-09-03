@@ -28,6 +28,7 @@
 <link href="css/variables.css" rel="stylesheet"/>
 <link href="css/components.css" rel="stylesheet"/>
 <link href="css/home.css" rel="stylesheet"/>
+<link href="css/faq.css" rel="stylesheet"/>
 
 <!-- тема — подключаем до body чтобы не мигало -->
 <script src="js/theme.js"></script>
@@ -92,7 +93,10 @@
 <!-- навигация в панели -->
 <nav aria-label="Навигация" class="nastroiki-navigaciya">
 <a class="nastroiki-ssylka" href="index.html">Главная</a>
-<a class="nastroiki-ssylka" href="map.html">Карта и умный поиск</a>
+<a class="nastroiki-ssylka" href="map.html">Карта</a>
+<a class="nastroiki-ssylka" href="faq.html">Вопросы и ответы</a>
+<a class="nastroiki-ssylka" href="games.html">Игры</a>
+<a class="nastroiki-ssylka" href="about.html">О проекте и авторе</a>
 <a class="nastroiki-ssylka" href="feedback.html">Обратная связь</a>
 </nav>
 </aside>
@@ -104,7 +108,7 @@
 <section aria-labelledby="glavnayaZagolovok" class="glavnaya-vvodnaya">
 <div class="glavnaya-vvodnaya__tekst">
 <h1 id="glavnayaZagolovok">ЭкоБиоМониторинг малых городов</h1>
-<p>Платформа гражданского экологического мониторинга для стандартизированного сбора, верификации и анализа биоиндикационных данных о состоянии городской среды.</p>
+<p>Платформа гражданского экологического скрининга и мониторинга для стандартизированного сбора, проверки и анализа биоиндикационных данных о городской среде.</p>
 </div>
 </section>
 
@@ -165,7 +169,7 @@
 <div class="glavnaya-scena__lipkaya">
 <div class="glavnaya-blok glavnaya-blok-uchastie">
 <h2>Участие в мониторинге</h2>
-<p class="glavnaya-prizyv">Ваше наблюдение может стать частью мониторинга!</p>
+<p class="glavnaya-prizyv jump-in">Ваше наблюдение может стать частью мониторинга!</p>
 <p>Участники собирают стандартизированные наблюдения по единой методике. Система проверяет полноту данных, выполняет предварительный анализ фотографий и передаёт материалы на модерацию. Только подтверждённые наблюдения включаются в общую базу и используются для анализа городской среды.</p>
 </div>
 <!-- ссылка на личный кабинет -->
@@ -200,18 +204,38 @@
 <div class="glavnaya-scena__lipkaya">
 <div class="glavnaya-blok glavnaya-blok-igra">
 <h2>Передохни и присоединись к игре</h2>
-<p>Разберите пять коротких экологических ситуаций: где заканчивается наблюдение, начинается гипотеза и какие данные нужны для честного вывода. Здесь нет рейтинга, только объяснение каждого решения.</p>
+<p>Попробуйте три спокойные игры: проведите полевое расследование, рассортируйте листья и примите решения как модератор. После каждого ответа появится объяснение.</p>
 </div>
 <div class="glavnaya-illyustraciya">
-<a aria-label="Открыть игру с экологическими кейсами" class="glavnaya-perehod glavnaya-perehod--igra" href="game.html">
-<span class="glavnaya-perehod__nazvanie">Открыть экокейсы</span>
+<a aria-label="Открыть экологические игры" class="glavnaya-perehod glavnaya-perehod--igra" href="games.html">
+<span class="glavnaya-perehod__nazvanie">Открыть игры</span>
 <img alt="" class="glavnaya-perehod__list" src="img/leaf3.png"/>
 </a>
 </div>
 </div>
 </section>
 
-<!-- сцена 6: обратная связь (последняя) -->
+<!-- сцена 6: локальный поиск по вопросам проекта -->
+<section class="glavnaya-scena" data-scena="umnyy-poisk">
+<div class="glavnaya-scena__lipkaya">
+<div class="glavnaya-blok glavnaya-blok-poisk">
+<h2>Умный поиск по проекту</h2>
+<p>Спросите о листьях, сборе, ФА или проверке заявки. Ответ ищется только в подготовленной базе проекта и не отправляется во внешние сервисы.</p>
+<div class="glavnaya-poisk">
+<div class="glavnaya-poisk__stroka"><input aria-label="Вопрос о проекте" autocomplete="off" class="pole-vvod" id="smartSearchInput" placeholder="Например: сколько нужно листьев?" type="search"/><button class="knopka-osnovnaya" id="smartSearchButton" type="button">Найти</button></div>
+<div aria-live="polite" class="glavnaya-poisk__rezultaty" id="smartSearchResults"></div>
+</div>
+</div>
+<div class="glavnaya-illyustraciya">
+<a aria-label="Открыть все вопросы и ответы" class="glavnaya-perehod glavnaya-perehod--poisk" href="faq.html">
+<span class="glavnaya-perehod__nazvanie">Все вопросы и ответы</span>
+<img alt="" class="glavnaya-perehod__list" src="img/icons/stars.png"/>
+</a>
+</div>
+</div>
+</section>
+
+<!-- сцена 7: обратная связь (последняя) -->
 <section class="glavnaya-scena glavnaya-scena--poslednyaya" data-scena="obratnaya-svyaz">
 <div class="glavnaya-scena__lipkaya">
 <div class="glavnaya-blok glavnaya-blok-obratnaya-svyaz">
@@ -242,6 +266,8 @@
 <script defer src="js/header.js"></script>
 <script defer src="js/cursor.js"></script>
 <script defer src="js/glossary.js"></script>
+<script defer src="js/faq-data.js"></script>
+<script defer src="js/smart-search.js"></script>
 <script defer src="js/home.js"></script>
 </body>
 </html>

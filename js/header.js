@@ -14,18 +14,20 @@
     var currentPage = (location.pathname.split('/').pop() || 'index.html').toLowerCase();
     var nav = panel.querySelector('.nastroiki-navigaciya');
 
-    // Общедоступные страницы добавляются единообразно на всех экранах.
-    function appendNavLink(href, text, dataName) {
+    // Общедоступные страницы добавляются перед двумя завершающими ссылками.
+    function insertNavLink(href, text, dataName, beforeSelector) {
       if (!nav || nav.querySelector('[href="' + href + '"]')) return;
       var link = document.createElement('a');
       link.href = href;
       link.className = 'nastroiki-ssylka';
       link.textContent = text;
       if (dataName) link.dataset[dataName] = '';
-      nav.appendChild(link);
+      var before = nav.querySelector(beforeSelector || '[href="feedback.html"]');
+      nav.insertBefore(link, before || null);
     }
-    appendNavLink('about.html', 'О проекте и авторе');
-    appendNavLink('game.html', 'Передохни: экокейсы');
+    insertNavLink('faq.html', 'Вопросы и ответы', '', '[href="about.html"], [href="feedback.html"]');
+    insertNavLink('games.html', 'Игры', '', '[href="about.html"], [href="feedback.html"]');
+    insertNavLink('about.html', 'О проекте и авторе');
 
     // подсветка текущей страницы в навигации
     panel.querySelectorAll('.nastroiki-navigaciya a').forEach(function (link) {
@@ -90,23 +92,20 @@
     try {
       var cached = JSON.parse(sessionStorage.getItem('eco-preview-user-v1') || sessionStorage.getItem('eco-session-user-v1') || 'null');
       if (cached && ['moderator', 'admin'].includes(cached.role) && nav && !nav.querySelector('[data-moderator-link]')) {
-        var link = document.createElement('a');
-        link.href = 'moderator.html';
-        link.className = 'nastroiki-ssylka' + (currentPage === 'moderator.html' ? ' nastroiki-ssylka--aktivna' : '');
-        link.dataset.moderatorLink = '';
-        link.textContent = 'Модерация';
-        if (currentPage === 'moderator.html') link.setAttribute('aria-current', 'page');
-        nav.appendChild(link);
+        insertNavLink('moderator.html', 'Модерация', 'moderatorLink', '[href="about.html"]');
       }
       if (cached && cached.role === 'curator' && nav && !nav.querySelector('[data-curator-link]')) {
-        var curatorLink = document.createElement('a');
-        curatorLink.href = 'curator.html';
-        curatorLink.className = 'nastroiki-ssylka' + (currentPage === 'curator.html' ? ' nastroiki-ssylka--aktivna' : '');
-        curatorLink.dataset.curatorLink = '';
-        curatorLink.textContent = 'Кабинет куратора';
-        if (currentPage === 'curator.html') curatorLink.setAttribute('aria-current', 'page');
-        nav.appendChild(curatorLink);
+        insertNavLink('education-curator.html', 'Обучение куратора', 'curatorEducationLink', '[href="about.html"]');
+        insertNavLink('curator.html', 'Кабинет куратора', 'curatorLink', '[href="about.html"]');
       }
+      // Повторяем подсветку после добавления ссылок, зависящих от роли.
+      panel.querySelectorAll('.nastroiki-navigaciya a').forEach(function (link) {
+        var target = (link.getAttribute('href') || '').split('?')[0].toLowerCase();
+        var active = target === currentPage;
+        link.classList.toggle('nastroiki-ssylka--aktivna', active);
+        if (active) link.setAttribute('aria-current', 'page');
+        else link.removeAttribute('aria-current');
+      });
     } catch (_) {}
   });
 })();

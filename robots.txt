@@ -3,6 +3,7 @@ Allow: /
 
 Disallow: /account.html
 Disallow: /education.html
+Disallow: /education-curator.html
 Disallow: /submit.html
 Disallow: /my-requests.html
 Disallow: /moderator.html

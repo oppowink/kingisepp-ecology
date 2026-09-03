@@ -4,6 +4,8 @@
 .kurator-vvedenie > p:last-child { color: var(--text-muted); }
 .kurator-metodichka { display: flex; align-items: center; flex-wrap: wrap; gap: 14px; margin-top: 20px; }
 .kurator-metodichka__word { color: var(--accent); font-size: .84rem; text-underline-offset: 4px; }
+.kurator-obuchenie-zaglushka { max-width: 680px; padding: 28px; background: var(--surface-soft); }
+.kurator-obuchenie-zaglushka p { margin: 0 0 18px; color: var(--text-muted); }
 .kurator-metka,
 .kurator-shag { margin: 0 0 8px; color: var(--accent); font-size: .76rem; letter-spacing: .08em; text-transform: uppercase; }
 .kurator-rabochaya-oblast { display: grid; gap: 28px; }

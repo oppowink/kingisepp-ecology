@@ -1,0 +1,37 @@
+Изменённые файлы
+
+about.html
+account.html
+curator.html
+education.html
+feedback.html
+index.html
+map.html
+moderator-test.html
+moderator.html
+my-requests.html
+robots.txt
+sitemap.xml
+submit.html
+css/curator.css
+css/education.css
+css/home.css
+css/info.css
+css/map.css
+js/account.js
+js/auth.js
+js/curator.js
+js/header.js
+js/home.js
+
+Новые файлы
+
+education-curator.html
+faq.html
+games.html
+css/faq.css
+css/games.css
+js/education-curator.js
+js/faq-data.js
+js/games.js
+js/smart-search.js

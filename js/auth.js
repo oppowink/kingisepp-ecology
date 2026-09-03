@@ -44,11 +44,23 @@
 
   // установка режима предпросмотра (для разработки)
   function setPreview(role) {
-    if (!['participant', 'moderator', 'admin'].includes(role)) return null;
+    if (!['participant', 'curator', 'moderator', 'admin'].includes(role)) return null;
+    var previewEmails = {
+      participant: 'participant-preview@example.invalid',
+      curator: 'dev-curator@kingisepp.ru',
+      moderator: 'moderator-preview@example.invalid',
+      admin: 'admin-preview@example.invalid'
+    };
+    var previewNames = {
+      participant: 'Участник предпросмотра',
+      curator: 'Куратор предпросмотра',
+      moderator: 'Модератор предпросмотра',
+      admin: 'Администратор предпросмотра'
+    };
     var user = {
       id: 'preview-' + role,
-      email: role === 'participant' ? 'participant-preview@example.invalid' : 'moderator-preview@example.invalid',
-      name: role === 'participant' ? 'Участник предпросмотра' : 'Модератор предпросмотра',
+      email: previewEmails[role],
+      name: previewNames[role],
       role: role,
       preview: true
     };
@@ -59,6 +71,7 @@
   function roleTitle(role) {
     if (role === 'admin') return 'админ';
     if (role === 'moderator') return 'модератор';
+    if (role === 'curator') return 'куратор';
     return 'волонтёр';
   }
 
@@ -66,12 +79,13 @@
     if (!user?.email) return user;
     var original = read(sessionStorage, ROLE_TEST_ORIGINAL, null);
     var cached = read(sessionStorage, SESSION_CACHE, null);
-    var testRole = cached && ['participant', 'moderator', 'admin'].includes(cached.testRole)
+    var testRole = cached && ['participant', 'curator', 'moderator', 'admin'].includes(cached.testRole)
       ? cached.testRole
       : '';
     if (!original || original.role !== 'admin' || !testRole) return user;
     if (String(original.email || '').toLowerCase() !== String(user.email || '').toLowerCase()) return user;
     return Object.assign({}, user, {
+      email: testRole === 'curator' ? 'dev-curator@kingisepp.ru' : user.email,
       role: testRole,
       testRole: testRole,
       originalRole: 'admin',
@@ -85,12 +99,13 @@
   }
 
   function switchRoleForTesting(role) {
-    if (!['participant', 'moderator', 'admin'].includes(role)) return null;
+    if (!['participant', 'curator', 'moderator', 'admin'].includes(role)) return null;
     var current = getUser();
     var original = read(sessionStorage, ROLE_TEST_ORIGINAL, null) || current;
     if (!original || original.role !== 'admin') return null;
     write(sessionStorage, ROLE_TEST_ORIGINAL, original);
     var switched = Object.assign({}, original, {
+      email: role === 'curator' ? 'dev-curator@kingisepp.ru' : original.email,
       role: role,
       testRole: role,
       originalRole: 'admin',
@@ -104,7 +119,7 @@
   function previewFromUrl() {
     if (!previewAvailable()) return;
     var role = new URLSearchParams(location.search).get('preview');
-    if (['participant', 'moderator', 'admin'].includes(role)) setPreview(role);
+    if (['participant', 'curator', 'moderator', 'admin'].includes(role)) setPreview(role);
   }
   previewFromUrl();
 

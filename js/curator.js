@@ -6,6 +6,7 @@
     var user = await EcoAuth.requireAuthAsync();
     if (!user) return;
     var denied = document.getElementById('kuratorNetDostupa');
+    var educationRequired = document.getElementById('kuratorNuzhnoObuchenie');
     var workspace = document.getElementById('kuratorRabochayaOblast');
     var message = document.getElementById('kuratorSoobshchenie');
     if (!['curator', 'admin'].includes(user.role)) {
@@ -13,7 +14,14 @@
       workspace.hidden = true;
       return;
     }
+    if (user.role === 'curator' && localStorage.getItem('curatorEducationCompleted') !== 'true') {
+      denied.hidden = true;
+      educationRequired.hidden = false;
+      workspace.hidden = true;
+      return;
+    }
     denied.hidden = true;
+    educationRequired.hidden = true;
     workspace.hidden = false;
 
     var dashboard = { organizations: [], projects: [], objects: [], members: [], requests: [] };

@@ -1,0 +1,14 @@
+Удалить из репозитория
+
+game.html
+js/game.js
+js/map-search.js
+js/work-summary.js
+
+Можно удалить как неиспользуемые тяжёлые изображения
+
+img/home/aktualnost/fa.png
+img/icons/strelka.png
+
+Перед удалением необязательных изображений в своей актуальной ветке можно проверить ссылки командой:
+rg -n "fa\\.png|strelka\\.png" . --glob '!node_modules/**'

@@ -1,20 +1,20 @@
 <!doctype html>
-<!-- map.html - Интерактивная карта подтверждённых наблюдений и умный поиск -->
+<!-- map.html - Интерактивная карта подтверждённых наблюдений -->
 <html lang="ru">
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1" name="viewport"/>
 
 <!-- SEO для страницы карты -->
-<meta content="Интерактивная карта подтверждённых экологических наблюдений и умный поиск по методике и данным проекта ЭкоБиоМониторинг" name="description"/>
-<meta content="карта экологического мониторинга, экологическая карта Кингисеппа, умный поиск, биоиндикация, флуктуирующая асимметрия, ЭкоБиоМониторинг" name="keywords"/>
+<meta content="Интерактивная карта подтверждённых экологических наблюдений проекта ЭкоБиоМониторинг" name="description"/>
+<meta content="карта экологического мониторинга, экологическая карта Кингисеппа, биоиндикация, флуктуирующая асимметрия, ЭкоБиоМониторинг" name="keywords"/>
 
 <!-- Open Graph для карты -->
 <meta content="ru_RU" property="og:locale"/>
 <meta content="website" property="og:type"/>
 <meta content="ЭкоБиоМониторинг" property="og:site_name"/>
-<meta content="Карта и умный поиск - ЭкоБиоМониторинг" property="og:title"/>
-<meta content="Карта подтверждённых наблюдений и поиск по методике и данным экологического проекта" property="og:description"/>
+<meta content="Карта - ЭкоБиоМониторинг" property="og:title"/>
+<meta content="Карта подтверждённых наблюдений экологического проекта" property="og:description"/>
 <meta content="img/leaf1.png" property="og:image"/>
 <meta content="Фирменный лист проекта ЭкоБиоМониторинг" property="og:image:alt"/>
 
@@ -26,7 +26,7 @@
 <meta property="og:type" content="website" />
 <meta property="og:locale" content="ru_RU" />
 
-<title>Карта и умный поиск - ЭкоБиоМониторинг</title>
+<title>Карта экологического мониторинга | ЭкоБиоМониторинг</title>
 
 <!-- фавиконка -->
 <link href="img/favicon.ico" rel="icon"/>
@@ -103,7 +103,10 @@
 <!-- навигация в панели -->
 <nav aria-label="Навигация" class="nastroiki-navigaciya">
 <a class="nastroiki-ssylka" href="index.html">Главная</a>
-<a class="nastroiki-ssylka" href="map.html">Карта и умный поиск</a>
+<a class="nastroiki-ssylka" href="map.html">Карта</a>
+<a class="nastroiki-ssylka" href="faq.html">Вопросы и ответы</a>
+<a class="nastroiki-ssylka" href="games.html">Игры</a>
+<a class="nastroiki-ssylka" href="about.html">О проекте и авторе</a>
 <a class="nastroiki-ssylka" href="feedback.html">Обратная связь</a>
 </nav>
 </aside>
@@ -136,30 +139,6 @@
 </div>
 </section>
 
-<!-- умный поиск -->
-<section aria-labelledby="umniyPoiskZagolovok" class="umniy-poisk" id="umniyPoisk">
-<div class="umniy-poisk__shapka">
-<img alt="" aria-hidden="true" height="42" src="img/icons/stars.png" width="42"/>
-<h2 id="umniyPoiskZagolovok">Умный поиск</h2>
-</div>
-<!-- поле ввода и кнопка -->
-<div class="umniy-poisk__stroka">
-<input aria-label="Вопрос для умного поиска" autocomplete="off" class="pole-vvod" id="poiskVopros" placeholder="Например: как принять участие в мониторинге?" type="text"/>
-<button class="knopka-osnovnaya" id="poiskKnopka" type="button">Спросить</button>
-</div>
-<!-- примеры вопросов для быстрого старта -->
-<div aria-label="Примеры вопросов" class="umniy-poisk__primery">
-<button data-vopros="Как принять участие в мониторинге?" type="button">Как принять участие в мониторинге?</button>
-<button data-vopros="Что такое флуктуирующая асимметрия?" type="button">Что такое флуктуирующая асимметрия?</button>
-<button data-vopros="Как выбрать берёзу для наблюдения?" type="button">Как выбрать берёзу для наблюдения?</button>
-<button data-vopros="Что происходит после отправки наблюдения?" type="button">Что происходит после отправки наблюдения?</button>
-</div>
-<!-- блок с ответом (скрыт по умолчанию) -->
-<div class="umniy-poisk__otvet" hidden="" id="poiskOtvet">
-<div id="poiskOtvetTekst"></div>
-<p id="poiskOtvetIstochnik"></p>
-</div>
-</section>
 </main>
 
 <!-- подвал -->
@@ -176,7 +155,5 @@
 <script defer src="js/header.js"></script>
 <script defer src="js/cursor.js"></script>
 <script defer src="js/map.js"></script>
-<script defer src="js/work-summary.js"></script>
-<script defer src="js/map-search.js"></script>
 </body>
 </html>

@@ -1,4 +1,4 @@
-/* map.css — карта и панель умного поиска */
+/* map.css — интерактивная карта подтверждённых наблюдений */
 
 /* обёртка страницы карты */
 .karta-stranica {
@@ -71,71 +71,6 @@
   text-decoration: none;
 }
 
-/* блок умного поиска */
-.umniy-poisk {
-  width: min(840px, 100%);
-  margin-top: 84px;
-}
-.umniy-poisk__shapka {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  margin-bottom: 23px;
-}
-.umniy-poisk__shapka img {
-  width: 48px;
-  height: 48px;
-  object-fit: contain;
-  transform-origin: center;
-  transition: transform var(--transition-base);
-}
-.umniy-poisk__shapka:hover img {
-  transform: rotate(-5deg) scale(1.04);
-}
-
-/* строка ввода и кнопка */
-.umniy-poisk__stroka {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 10px;
-}
-
-/* примеры вопросов */
-.umniy-poisk__primery {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px 18px;
-  margin-top: 14px;
-}
-.umniy-poisk__primery button {
-  padding: 3px 0;
-  border: 0;
-  border-radius: 0;
-  background: transparent;
-  color: var(--text-muted);
-  text-align: left;
-  font-size: .8rem;
-  cursor: pointer;
-  transition: color var(--transition-fast);
-}
-.umniy-poisk__primery button:hover {
-  color: var(--text);
-}
-
-/* блок с ответом */
-.umniy-poisk__otvet {
-  margin-top: 26px;
-  max-width: 770px;
-}
-.umniy-poisk__otvet > div {
-  white-space: normal;
-}
-.umniy-poisk__otvet > p {
-  margin: 10px 0 0;
-  color: var(--text-soft);
-  font-size: .75rem;
-}
-
 /* мобильная адаптивность */
 @media (max-width: 680px) {
   .karta-stranica {
@@ -145,14 +80,5 @@
   .karta-obertka {
     min-height: 350px;
     height: 54vh;
-  }
-  .umniy-poisk {
-    margin-top: 64px;
-  }
-  .umniy-poisk__stroka {
-    grid-template-columns: 1fr;
-  }
-  .umniy-poisk__stroka .knopka-osnovnaya {
-    justify-self: start;
   }
 }

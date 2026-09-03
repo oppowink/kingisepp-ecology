@@ -26,6 +26,7 @@
     var myRequestsLink = document.getElementById('ssylkaMoiZayavki');
     var feedbackLink = document.getElementById('ssylkaFeedback');
     var moderatorLink = document.getElementById('ssylkaModerator');
+    var curatorEducationLink = document.getElementById('ssylkaObuchenieKuratora');
     var curatorLink = document.getElementById('ssylkaKurator');
     var profileSection = document.getElementById('kabinetProfil');
     var cityForm = document.getElementById('profilGorodForma');
@@ -182,6 +183,7 @@
         moderatorLink.hidden = !['moderator', 'admin'].includes(role);
         moderatorLink.textContent = role === 'admin' ? 'Админка' : 'Проверка заявок';
       }
+      if (curatorEducationLink) curatorEducationLink.hidden = role !== 'curator';
       if (curatorLink) curatorLink.hidden = role !== 'curator';
       if (submitLink) {
         submitLink.classList.toggle('kabinet-navigaciya__ssylka--disabled', !educationDone);
@@ -416,6 +418,12 @@
         }
         if (role === 'moderator' || role === 'admin') {
           location.href = 'moderator.html';
+          return;
+        }
+        if (role === 'curator') {
+          location.href = localStorage.getItem('curatorEducationCompleted') === 'true'
+            ? 'curator.html'
+            : 'education-curator.html';
           return;
         }
         render(user);

@@ -1,28 +1,110 @@
 <!doctype html>
-<!-- about.html — автор, замысел и границы проекта -->
+<!-- about.html — страница о проекте, авторе и участии -->
 <html lang="ru">
 <head>
-<meta charset="utf-8"/><meta content="width=device-width, initial-scale=1" name="viewport"/>
-<meta content="История проекта ЭкоБиоМониторинг и его автор — Панина Полина Ивановна." name="description"/>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<meta content="Автор и устройство проекта ЭкоБиоМониторинг — платформы экологического скрининга малых городов." name="description"/>
 <title>О проекте и авторе | ЭкоБиоМониторинг</title>
-<link href="img/favicon.ico" rel="icon"/><link href="css/variables.css" rel="stylesheet"/><link href="css/components.css" rel="stylesheet"/><link href="css/info.css" rel="stylesheet"/><script src="js/theme.js"></script>
+<link href="img/favicon.ico" rel="icon"/>
+<link href="css/variables.css" rel="stylesheet"/>
+<link href="css/components.css" rel="stylesheet"/>
+<link href="css/info.css" rel="stylesheet"/>
+<script src="js/theme.js"></script>
 </head>
 <body>
-<div aria-hidden="true" class="kursor" data-component="kursor"></div><div aria-hidden="true" class="nastroiki-fon" id="nastroikiFon"></div>
-<header class="shapka" data-component="shapka"><a aria-label="ЭкоБиоМониторинг, на главную" class="shapka-logo" href="index.html"><span class="shapka-logo__nazvanie"><span class="shapka-logo__bukva">Э</span><span class="shapka-logo__bukva">к</span><img alt="" aria-hidden="true" class="shapka-logo__list shapka-logo__list--1" src="img/leaf1.png"/><span class="shapka-logo__bukva">Б</span><span class="shapka-logo__bukva">и</span><img alt="" aria-hidden="true" class="shapka-logo__list shapka-logo__list--2" src="img/leaf2.png"/><span class="shapka-logo__bukva">М</span><span class="shapka-logo__bukva">о</span><span class="shapka-logo__bukva">н</span><span class="shapka-logo__bukva">и</span><span class="shapka-logo__bukva">т</span><span class="shapka-logo__bukva">о</span><span class="shapka-logo__bukva">р</span><span class="shapka-logo__bukva">и</span><span class="shapka-logo__bukva">н</span><span class="shapka-logo__bukva">г</span></span></a><div class="shapka-deystviya"><a class="shapka-ssylka" href="account.html"><img alt="" aria-hidden="true" class="shapka-ssylka__ikona" src="img/icons/user.png"/><span>Личный кабинет</span></a><button aria-controls="nastroikiPanel" aria-expanded="false" aria-label="Открыть настройки" class="nastroiki-knopka" id="nastroikiKnopka" type="button"><img alt="" aria-hidden="true" class="nastroiki-knopka__ikona" src="img/icons/gear.png"/><span class="nastroiki-knopka__tekst">Настройки</span></button></div></header>
-<aside aria-hidden="true" aria-label="Настройки" class="nastroiki-panel" id="nastroikiPanel"><button aria-label="Закрыть настройки" class="nastroiki-zakryt" id="nastroikiZakryt" type="button"><img alt="" aria-hidden="true" src="img/icons/close.png"/><span class="sr-only">Закрыть</span></button><div class="tema-vybor-blok"><p class="tema-podpis">Тема</p><div class="tema-vybor"><button class="tema-knopka" id="temaSvetlaya" type="button"><img alt="" aria-hidden="true" src="img/icons/sun.png"/><span>Светлая</span></button><button class="tema-knopka" id="temaTemnaya" type="button"><img alt="" aria-hidden="true" src="img/icons/moon.png"/><span>Тёмная</span></button></div></div><div class="nastroiki-akkaunt"><a class="nastroiki-ssylka nastroiki-ssylka--akcent" href="account.html"><img alt="" aria-hidden="true" src="img/icons/user.png"/><span>Личный кабинет</span></a></div><nav aria-label="Навигация" class="nastroiki-navigaciya"><a class="nastroiki-ssylka" href="index.html">Главная</a><a class="nastroiki-ssylka" href="map.html">Карта и умный поиск</a><a class="nastroiki-ssylka" href="feedback.html">Обратная связь</a></nav></aside>
+<div aria-hidden="true" class="kursor" data-component="kursor"></div>
+<div aria-hidden="true" class="nastroiki-fon" id="nastroikiFon"></div>
+
+<!-- шапка -->
+<header class="shapka" data-component="shapka">
+<a aria-label="ЭкоБиоМониторинг, на главную" class="shapka-logo" href="index.html">
+<span class="shapka-logo__nazvanie"><span class="shapka-logo__bukva">Э</span><span class="shapka-logo__bukva">к</span><img alt="" aria-hidden="true" class="shapka-logo__list shapka-logo__list--1" src="img/leaf1.png"/><span class="shapka-logo__bukva">Б</span><span class="shapka-logo__bukva">и</span><img alt="" aria-hidden="true" class="shapka-logo__list shapka-logo__list--2" src="img/leaf2.png"/><span class="shapka-logo__bukva">М</span><span class="shapka-logo__bukva">о</span><span class="shapka-logo__bukva">н</span><span class="shapka-logo__bukva">и</span><span class="shapka-logo__bukva">т</span><span class="shapka-logo__bukva">о</span><span class="shapka-logo__bukva">р</span><span class="shapka-logo__bukva">и</span><span class="shapka-logo__bukva">н</span><span class="shapka-logo__bukva">г</span></span>
+</a>
+<div class="shapka-deystviya">
+<a class="shapka-ssylka" href="account.html"><img alt="" aria-hidden="true" class="shapka-ssylka__ikona" src="img/icons/user.png"/><span>Личный кабинет</span></a>
+<button aria-controls="nastroikiPanel" aria-expanded="false" aria-label="Открыть настройки" class="nastroiki-knopka" id="nastroikiKnopka" type="button"><img alt="" aria-hidden="true" class="nastroiki-knopka__ikona" src="img/icons/gear.png"/><span class="nastroiki-knopka__tekst">Настройки</span></button>
+</div>
+</header>
+
+<!-- панель настроек -->
+<aside aria-hidden="true" aria-label="Настройки" class="nastroiki-panel" id="nastroikiPanel">
+<button aria-label="Закрыть настройки" class="nastroiki-zakryt" id="nastroikiZakryt" type="button"><img alt="" aria-hidden="true" src="img/icons/close.png"/><span class="sr-only">Закрыть</span></button>
+<div class="tema-vybor-blok"><p class="tema-podpis">Тема</p><div class="tema-vybor"><button class="tema-knopka" id="temaSvetlaya" type="button"><img alt="" aria-hidden="true" src="img/icons/sun.png"/><span>Светлая</span></button><button class="tema-knopka" id="temaTemnaya" type="button"><img alt="" aria-hidden="true" src="img/icons/moon.png"/><span>Тёмная</span></button></div></div>
+<div class="nastroiki-akkaunt"><a class="nastroiki-ssylka nastroiki-ssylka--akcent" href="account.html"><img alt="" aria-hidden="true" src="img/icons/user.png"/><span>Личный кабинет</span></a></div>
+<nav aria-label="Навигация" class="nastroiki-navigaciya">
+<a class="nastroiki-ssylka" href="index.html">Главная</a>
+<a class="nastroiki-ssylka" href="map.html">Карта</a>
+<a class="nastroiki-ssylka" href="faq.html">Вопросы и ответы</a>
+<a class="nastroiki-ssylka" href="games.html">Игры</a>
+<a class="nastroiki-ssylka" href="about.html">О проекте и авторе</a>
+<a class="nastroiki-ssylka" href="feedback.html">Обратная связь</a>
+</nav>
+</aside>
 
 <main class="info-stranica vnutrennyaya-stranica">
 <nav aria-label="Навигация страницы" class="stranica-deystviya"><a class="stranica-knopka" href="index.html">В меню</a></nav>
-<section class="info-geroy"><div><p class="info-metka">Авторский школьный проект</p><h1>О проекте и обо мне</h1><p>Меня зовут Панина Полина Ивановна. Я создала «ЭкоБиоМониторинг», чтобы превратить отдельное школьное исследование в понятный инструмент гражданской науки: участники собирают данные по одной методике, а система сохраняет происхождение каждого наблюдения и показывает только проверенные точки.</p><p>Проект развивается поэтапно. На сайте отдельно обозначаются работающие функции, проверяемые прототипы и планы — без подмены будущих результатов уже выполненными.</p></div><div class="info-foto-zaglushka"><!-- ФОТО: polina_panina_portrait.jpg --><span>Здесь будет фотография автора<br/>polina_panina_portrait.jpg</span></div></section>
-<section class="info-setka">
-<article class="info-kartochka"><h2>Какую проблему решает проект</h2><p>В малых городах школьники и волонтёры готовы участвовать в экологических наблюдениях, но их данные трудно сопоставлять без общей инструкции, структуры хранения и прозрачной проверки. Платформа объединяет эти этапы в один воспроизводимый маршрут.</p></article>
-<article class="info-kartochka"><h2>Почему «мониторинг»</h2><p>Научная задача проекта связана с экологическим скринингом. Для названия платформы выбрано слово «мониторинг», потому что оно понятнее описывает регулярное наблюдение для широкой аудитории. Это решение будет проверено отдельным опросом восприятия названия.</p></article>
-<article class="info-kartochka"><h2>Что делает участник</h2><ul><li>проходит обучение;</li><li>выбирает собственную точку или объект куратора;</li><li>фиксирует дерево и паспорт территории;</li><li>загружает фото дерева и 30 листьев;</li><li>видит статус проверки своей заявки.</li></ul></article>
-<article class="info-kartochka"><h2>Как можно помочь</h2><p>Можно стать участником наблюдений, организовать школьную или волонтёрскую группу как куратор, проверить понятность методики либо сообщить о неточности. Для полевой работы требуется только смартфон и соблюдение инструкции.</p><p class="info-cta"><a class="knopka-osnovnaya" href="account.html">Принять участие</a></p></article>
+
+<!-- 1. Автор проекта -->
+<section class="info-geroy" aria-labelledby="authorTitle">
+<div>
+<p class="info-metka">Авторский школьный проект</p>
+<h1 id="authorTitle">Кто за этим стоит?</h1>
+<p>Меня зовут Панина Полина. Я учусь в школе № 1 города Кингисеппа и занимаюсь проектом в детском технопарке «Кванториум».</p>
+<p>«ЭкоБиоМониторинг» вырос из моего исследования листьев берёзы. Мне хотелось сделать так, чтобы наблюдения школьников и волонтёров не оставались отдельными фотографиями и таблицами, а становились понятными, проверяемыми данными о городе.</p>
+</div>
+<!-- TODO: фото автора; файл img/about/author.jpg -->
+<div class="info-foto-zaglushka" role="img" aria-label="Место для портрета автора"><span>Фото автора<br/>img/about/author.jpg</span></div>
+</section>
+
+<!-- 2. Короткий призыв -->
+<section class="info-prizyv" aria-labelledby="helpCityTitle">
+<div><p class="info-metka">Гражданская наука</p><h2 id="helpCityTitle">Ты можешь помочь своему городу — просто листом берёзы</h2><p>Одно наблюдение кажется маленьким. Но если разные люди собирают материалы по одинаковым правилам, из отдельных точек складывается карта состояния городской среды.</p></div>
+<a class="knopka-osnovnaya" href="account.html">Хочу помочь</a>
+</section>
+
+<!-- 3. Экологический скрининг -->
+<section class="info-razdel info-razdel--image" aria-labelledby="screeningTitle">
+<div><p class="info-metka">Сначала заметить, затем исследовать</p><h2 id="screeningTitle">Что такое экологический скрининг?</h2><p>Скрининг похож на профилактический медосмотр. Он не ставит окончательный «диагноз» территории, а помогает вовремя заметить участки, которым требуется более подробное исследование.</p><p>Платформа собирает наблюдения по единым правилам, проверяет их и показывает общую картину. Полученный результат нельзя считать лабораторным измерением загрязнения, но его можно использовать для поиска зон внимания и формирования новых исследовательских вопросов.</p></div>
+<!-- TODO: иллюстрация экологического скрининга; файл img/about/screening-checkup.jpg -->
+<div class="info-illyustraciya-zaglushka" role="img" aria-label="Место для иллюстрации экологического скрининга"><span>Иллюстрация<br/>img/about/screening-checkup.jpg</span></div>
+</section>
+
+<!-- 4. Почему берёза -->
+<section class="info-razdel info-razdel--image info-razdel--reverse" aria-labelledby="birchTitle">
+<div><p class="info-metka">Биоиндикация</p><h2 id="birchTitle">Почему берёза?</h2><p>Берёза повислая широко встречается в городе, её листья имеют выраженную левую и правую стороны, поэтому их удобно сравнивать. Небольшие случайные различия между сторонами называют флуктуирующей асимметрией, или ФА.</p><p>ФА отражает стабильность развития растения и может меняться под воздействием совокупности факторов среды. Поэтому мы рассматриваем её как показатель для первичного экологического скрининга, а не как прямое измерение конкретного загрязняющего вещества.</p></div>
+<!-- TODO: иллюстрация листа берёзы и ФА; файл img/about/birch-fa.jpg -->
+<div class="info-illyustraciya-zaglushka" role="img" aria-label="Место для иллюстрации листа берёзы"><span>Иллюстрация<br/>img/about/birch-fa.jpg</span></div>
+</section>
+
+<!-- 5. Три шага участия -->
+<section class="info-razdel" aria-labelledby="stepsTitle">
+<p class="info-metka">Участие</p>
+<h2 id="stepsTitle">Как ты можешь помочь?</h2>
+<div class="info-shagi">
+<article><span>01</span><h3>Изучи правила</h3><p>Пройди короткое обучение и разберись, какое дерево и листья подходят для наблюдения.</p></article>
+<article><span>02</span><h3>Собери данные</h3><p>Выбери точку, сфотографируй дерево и подготовь 30 листьев по единой методике.</p></article>
+<article><span>03</span><h3>Отправь заявку</h3><p>Отметь дерево на карте, заполни паспорт территории и загрузи фотографии.</p></article>
+</div>
+<a class="knopka-vtorichnaya" href="education.html">Посмотреть инструкцию</a>
+</section>
+
+<!-- 6. Результат для участника -->
+<section class="info-razdel info-polza" aria-labelledby="resultTitle">
+<div><p class="info-metka">Результат участия</p><h2 id="resultTitle">Что ты получишь?</h2></div>
+<p>После обучения и подтверждения первой точки участник сможет получить сертификат волонтёра-исследователя экологического мониторинга. Ещё важнее — увидеть, как собранное наблюдение прошло проверку и стало частью общей карты.</p>
+</section>
+
+<!-- 7. Финальный призыв -->
+<section class="info-final" aria-labelledby="finalTitle">
+<h2 id="finalTitle">Начни с одной точки своего города</h2>
+<p>Можно сразу создать аккаунт или сначала посмотреть, как выглядят уже подтверждённые наблюдения.</p>
+<div class="info-final__deystviya"><a class="knopka-osnovnaya" href="account.html">Зарегистрироваться</a><a class="knopka-vtorichnaya" href="map.html">Смотреть карту</a></div>
 </section>
 </main>
-<footer aria-label="Подвал сайта" class="podval" data-component="podval"><div class="podval-vnutri"><span class="podval-nazvanie">ЭкоБиоМониторинг</span><span>Кингисепп</span><span>2025-2026</span></div></footer>
-<script defer src="js/header.js"></script><script defer src="js/cursor.js"></script>
+
+<footer aria-label="Подвал сайта" class="podval" data-component="podval"><div class="podval-vnutri"><span class="podval-nazvanie">ЭкоБиоМониторинг</span><span>Кингисепп</span><span>2025–2026</span></div></footer>
+<script defer src="js/header.js"></script>
+<script defer src="js/cursor.js"></script>
 </body>
 </html>

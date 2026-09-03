@@ -36,7 +36,7 @@
 .glavnaya-video__vvedenie { max-width: 760px; margin-bottom: 28px; }
 .glavnaya-video__vvedenie h2 { margin: 0 0 13px; font-family: var(--font-heading); font-size: clamp(1.35rem, 2.6vw, 2.05rem); font-weight: 400; line-height: 1.22; }
 .glavnaya-video__vvedenie > p:last-child { color: var(--text-muted); }
-.glavnaya-video__metka { margin: 0 0 9px; color: var(--accent); font-size: .75rem; letter-spacing: .08em; text-transform: uppercase; }
+.glavnaya-video__metka { margin: 0 0 9px; color: var(--accent); font-size: .75rem; letter-spacing: .035em; }
 .glavnaya-video__setka { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin-bottom: 16px; }
 .video-zaglushka {
   position: relative;
@@ -51,6 +51,19 @@
 .video-zaglushka__nomer { position: absolute; inset: 25px 25px auto auto; color: var(--text-muted); font-size: .78rem; }
 .video-zaglushka h3 { margin: 0 0 8px; font-family: var(--font-heading); font-size: 1rem; font-weight: 500; }
 .video-zaglushka p { margin: 0; color: var(--text-muted); font-size: .76rem; overflow-wrap: anywhere; }
+
+/* фраза участия появляется, когда пользователь доходит до соответствующей сцены */
+.jump-in {
+  transform-origin: left center;
+  animation: jump-in 680ms cubic-bezier(.22, 1, .36, 1) both;
+  animation-play-state: paused;
+}
+.jump-in.jump-in--visible { animation-play-state: running; }
+@keyframes jump-in {
+  0% { opacity: 0; transform: translateY(24px) scale(.97); }
+  58% { opacity: 1; transform: translateY(-5px) scale(1.01); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
 
 /* каждая сцена — контейнер с липким блоком внутри */
 .glavnaya-scena { position: relative; height: 122vh; }
@@ -97,6 +110,12 @@
   font-size: clamp(1rem, 1.18vw, 1.1rem);
   font-weight: 300;
 }
+
+/* локальный поиск на главной */
+.glavnaya-blok-poisk { justify-content: center; }
+.glavnaya-blok-poisk > p { margin-bottom: 18px; }
+.glavnaya-blok-poisk .glavnaya-poisk__rezultaty { max-height: 235px; overflow-y: auto; padding-right: 4px; }
+.glavnaya-perehod--poisk .glavnaya-perehod__list { width: min(135px, 34%); height: min(135px, 34%); object-fit: contain; opacity: .82; }
 
 /* иллюстрация справа — картинка или ссылка-переход */
 .glavnaya-illyustraciya {
@@ -484,6 +503,7 @@ html.dark .glavnaya-blok .glavnaya-prizyv { color: var(--acid); }
   .termin-tooltip,
   .termin-demo-tochka,
   .termin-demo-podpis { transition: none; }
+  .jump-in { opacity: 1 !important; transform: none !important; animation: none !important; }
 }
 
 /* на мобильных скрываем элементы актуальности (они всё равно не влезают) */

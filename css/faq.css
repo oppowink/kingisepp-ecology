@@ -1,0 +1,34 @@
+/* faq.css — аккордеон FAQ и локальный поиск на главной */
+.faq-stranica { width: min(900px, calc(100% - 46px)); }
+.faq-vvedenie { max-width: 740px; margin-bottom: 37px; }
+.faq-metka { margin: 0 0 10px; color: var(--accent); font-size: .78rem; letter-spacing: .035em; }
+.faq-vvedenie h1 { margin-bottom: 14px; }
+.faq-vvedenie > p:last-child { color: var(--text-muted); }
+.faq-spisok { display: grid; gap: 9px; }
+.faq-element { background: var(--surface-soft); }
+.faq-vopros { width: 100%; min-height: 72px; display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 20px; padding: 17px 20px; border: 0; background: transparent; color: var(--text); text-align: left; cursor: pointer; }
+.faq-vopros::after { content: '+'; color: var(--accent); font-size: 1.35rem; font-weight: 300; transition: transform var(--transition-fast); }
+.faq-vopros[aria-expanded="true"]::after { transform: rotate(45deg); }
+.faq-otvet { padding: 0 20px 21px; color: var(--text-muted); }
+.faq-otvet p { max-width: 760px; margin: 0; }
+.faq-ne-nashli { margin-top: 54px; padding: 29px; background: var(--surface-soft); }
+.faq-ne-nashli h2 { margin-bottom: 10px; }
+.faq-ne-nashli p { margin: 0 0 18px; color: var(--text-muted); }
+
+/* поиск на главной использует те же данные, но не требует отдельного сервера */
+.glavnaya-poisk { display: grid; gap: 15px; }
+.glavnaya-poisk__stroka { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px; }
+.glavnaya-poisk__rezultaty { display: grid; gap: 8px; margin-top: 5px; }
+.glavnaya-poisk__rezultat { padding: 14px 16px; background: var(--surface-soft); }
+.glavnaya-poisk__rezultat h3 { margin: 0 0 7px; font-family: var(--font-heading); font-size: .94rem; font-weight: 500; }
+.glavnaya-poisk__rezultat p { margin: 0; color: var(--text-muted); font-size: .82rem; }
+.glavnaya-poisk__net { margin: 0; color: var(--text-muted); }
+.glavnaya-poisk__net a { color: var(--accent); }
+
+@media (max-width: 680px) {
+  .faq-stranica { width: calc(100% - 34px); padding-top: 42px; }
+  .faq-vopros { min-height: 66px; padding: 15px 17px; }
+  .faq-otvet { padding: 0 17px 18px; }
+  .glavnaya-poisk__stroka { grid-template-columns: 1fr; }
+  .glavnaya-poisk__stroka .knopka-osnovnaya { justify-self: start; }
+}

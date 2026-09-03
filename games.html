@@ -1,0 +1,61 @@
+<!doctype html>
+<!-- games.html — три интерактивные игры экологического детектива -->
+<html lang="ru">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<meta content="Три спокойные интерактивные игры о полевых наблюдениях, листьях берёзы и модерации экологических данных." name="description"/>
+<title>Экологический детектив | ЭкоБиоМониторинг</title>
+<link href="img/favicon.ico" rel="icon"/>
+<link href="css/variables.css" rel="stylesheet"/>
+<link href="css/components.css" rel="stylesheet"/>
+<link href="css/games.css" rel="stylesheet"/>
+<script src="js/theme.js"></script>
+</head>
+<body>
+<div aria-hidden="true" class="kursor" data-component="kursor"></div>
+<div aria-hidden="true" class="nastroiki-fon" id="nastroikiFon"></div>
+
+<header class="shapka" data-component="shapka">
+<a aria-label="ЭкоБиоМониторинг, на главную" class="shapka-logo" href="index.html"><span class="shapka-logo__nazvanie"><span class="shapka-logo__bukva">Э</span><span class="shapka-logo__bukva">к</span><img alt="" aria-hidden="true" class="shapka-logo__list shapka-logo__list--1" src="img/leaf1.png"/><span class="shapka-logo__bukva">Б</span><span class="shapka-logo__bukva">и</span><img alt="" aria-hidden="true" class="shapka-logo__list shapka-logo__list--2" src="img/leaf2.png"/><span class="shapka-logo__bukva">М</span><span class="shapka-logo__bukva">о</span><span class="shapka-logo__bukva">н</span><span class="shapka-logo__bukva">и</span><span class="shapka-logo__bukva">т</span><span class="shapka-logo__bukva">о</span><span class="shapka-logo__bukva">р</span><span class="shapka-logo__bukva">и</span><span class="shapka-logo__bukva">н</span><span class="shapka-logo__bukva">г</span></span></a>
+<div class="shapka-deystviya"><a class="shapka-ssylka" href="account.html"><img alt="" aria-hidden="true" class="shapka-ssylka__ikona" src="img/icons/user.png"/><span>Личный кабинет</span></a><button aria-controls="nastroikiPanel" aria-expanded="false" aria-label="Открыть настройки" class="nastroiki-knopka" id="nastroikiKnopka" type="button"><img alt="" aria-hidden="true" class="nastroiki-knopka__ikona" src="img/icons/gear.png"/><span class="nastroiki-knopka__tekst">Настройки</span></button></div>
+</header>
+
+<aside aria-hidden="true" aria-label="Настройки" class="nastroiki-panel" id="nastroikiPanel">
+<button aria-label="Закрыть настройки" class="nastroiki-zakryt" id="nastroikiZakryt" type="button"><img alt="" aria-hidden="true" src="img/icons/close.png"/><span class="sr-only">Закрыть</span></button>
+<div class="tema-vybor-blok"><p class="tema-podpis">Тема</p><div class="tema-vybor"><button class="tema-knopka" id="temaSvetlaya" type="button"><img alt="" aria-hidden="true" src="img/icons/sun.png"/><span>Светлая</span></button><button class="tema-knopka" id="temaTemnaya" type="button"><img alt="" aria-hidden="true" src="img/icons/moon.png"/><span>Тёмная</span></button></div></div>
+<div class="nastroiki-akkaunt"><a class="nastroiki-ssylka nastroiki-ssylka--akcent" href="account.html"><img alt="" aria-hidden="true" src="img/icons/user.png"/><span>Личный кабинет</span></a></div>
+<nav aria-label="Навигация" class="nastroiki-navigaciya"><a class="nastroiki-ssylka" href="index.html">Главная</a><a class="nastroiki-ssylka" href="map.html">Карта</a><a class="nastroiki-ssylka" href="faq.html">Вопросы и ответы</a><a class="nastroiki-ssylka" href="games.html">Игры</a><a class="nastroiki-ssylka" href="about.html">О проекте и авторе</a><a class="nastroiki-ssylka" href="feedback.html">Обратная связь</a></nav>
+</aside>
+
+<main class="games-stranica vnutrennyaya-stranica">
+<nav aria-label="Навигация страницы" class="stranica-deystviya"><a class="stranica-knopka" href="index.html">В меню</a></nav>
+
+<header class="games-vvedenie">
+<p class="games-metka">Наблюдай, сравнивай, проверяй</p>
+<h1>Экологический детектив</h1>
+<p>Три короткие игры показывают, как отличить наблюдение от предположения, выбрать подходящий лист и проверить заявку. Ошибаться можно: после каждого решения появится объяснение.</p>
+<div class="games-vvedenie__deystviya"><button class="knopka-osnovnaya" id="gamesStartAll" type="button">Пройти все три</button><button class="knopka-vtorichnaya" id="gamesChoose" type="button">Выбрать игру</button></div>
+</header>
+
+<!-- выбор игры -->
+<section aria-labelledby="gamesCatalogTitle" class="games-katalog" id="gamesCatalog">
+<h2 class="sr-only" id="gamesCatalogTitle">Выбор игры</h2>
+<article class="games-kartochka"><span>01 · 7 ситуаций</span><h2>Детектив у дороги</h2><p>Соберите доказательства и разберитесь, что действительно можно сказать о дереве возле дороги.</p><button class="knopka-vtorichnaya" data-game-start="road" type="button">Начать</button></article>
+<article class="games-kartochka"><span>02 · 9 листьев</span><h2>Сортировщик листьев</h2><p>Разделите листья на нормальные, повреждённые и асимметричные, не смешивая разные признаки.</p><button class="knopka-vtorichnaya" data-game-start="leaves" type="button">Начать</button></article>
+<article class="games-kartochka"><span>03 · 3 заявки</span><h2>Модератор на час</h2><p>Проверьте комплектность материалов и решите, можно ли передавать заявку дальше.</p><button class="knopka-vtorichnaya" data-game-start="moderator" type="button">Начать</button></article>
+</section>
+
+<!-- общий игровой экран; содержимое создаёт games.js -->
+<section aria-live="polite" class="games-ekran" hidden id="gamesScreen">
+<div class="games-ekran__shapka"><button class="knopka-tekst" id="gamesBackToCatalog" type="button">К выбору игр</button><p id="gamesProgress"></p></div>
+<div id="gamesContent"></div>
+</section>
+</main>
+
+<footer aria-label="Подвал сайта" class="podval" data-component="podval"><div class="podval-vnutri"><span class="podval-nazvanie">ЭкоБиоМониторинг</span><span>Кингисепп</span><span>2025–2026</span></div></footer>
+<script defer src="js/header.js"></script>
+<script defer src="js/cursor.js"></script>
+<script defer src="js/games.js"></script>
+</body>
+</html>
