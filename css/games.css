@@ -1,79 +1,227 @@
-/* games.css — три интерактивные игры без соревновательного тона */
-.games-stranica { width: min(1060px, calc(100% - 46px)); }
-.games-vvedenie { max-width: 820px; margin-bottom: 42px; }
-.games-metka { margin: 0 0 10px; color: var(--accent); font-size: .78rem; letter-spacing: .035em; }
-.games-vvedenie h1 { margin-bottom: 15px; }
-.games-vvedenie > p:last-of-type { max-width: 760px; color: var(--text-muted); }
-.games-vvedenie__deystviya { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 24px; }
-
-.games-katalog { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 13px; }
-.games-kartochka { min-width: 0; min-height: 320px; display: flex; flex-direction: column; align-items: flex-start; padding: 28px; background: var(--surface-soft); }
-.games-kartochka > span { color: var(--accent); font-size: .76rem; }
-.games-kartochka h2 { margin: 62px 0 12px; font-size: 1.18rem; }
-.games-kartochka p { flex: 1; margin: 0 0 24px; color: var(--text-muted); font-size: .88rem; }
-
-.games-ekran { margin-top: 20px; padding: clamp(24px, 5vw, 48px); background: var(--surface-soft); }
-.games-ekran__shapka { display: flex; justify-content: space-between; gap: 20px; align-items: center; margin-bottom: 29px; }
-.games-ekran__shapka p { margin: 0; color: var(--text-muted); font-size: .8rem; text-align: right; }
-.games-zadanie { max-width: 850px; }
-.games-zadanie h2 { margin-bottom: 15px; font-size: clamp(1.25rem, 2.4vw, 1.8rem); }
-.games-zadanie__tekst { margin: 0 0 23px; color: var(--text-muted); }
-.games-zadanie__meta { margin: 0 0 9px; color: var(--accent); font-size: .78rem; }
-.games-varianty { display: grid; gap: 10px; }
-.games-variant {
-  width: 100%;
-  min-height: 58px;
-  display: grid;
-  grid-template-columns: 32px minmax(0, 1fr);
-  align-items: center;
-  gap: 10px;
-  padding: 13px 16px;
-  border: 0;
-  background: var(--surface);
+/* games.css — плоские игровые поверхности. Все цвета берутся из variables.css. */
+.arcade {
+  --game-accent: var(--color-super, var(--color-accent-3, var(--accent)));
+  box-sizing: border-box;
+  margin: 0;
+  height: 100vh;
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+  background: var(--bg);
   color: var(--text);
-  text-align: left;
-  cursor: pointer;
-  transition: color var(--transition-fast), background-color var(--transition-fast), transform var(--transition-fast);
+  font: 16px/1.45 Arial, sans-serif;
 }
-.games-variant:hover:not(:disabled),
-.games-variant:focus-visible { color: var(--accent); transform: translateX(3px); }
-.games-variant__bukva { color: var(--accent); font-family: var(--font-heading); }
-.games-variant[data-selected="true"] { background: var(--accent); color: var(--bg); }
-.games-variant[data-selected="true"] .games-variant__bukva { color: inherit; }
-.games-obyasnenie { margin: 22px 0 0; padding: 18px; background: var(--surface); color: var(--text-muted); }
-.games-obyasnenie strong { color: var(--text); font-weight: 500; }
-.games-next { margin-top: 19px; }
+.arcade *, .arcade *::before, .arcade *::after { box-sizing: border-box; border-radius: 0; }
+.arcade [hidden] { display: none !important; }
+.arcade h1, .arcade h2, .arcade h3, .arcade p, .arcade figure { margin: 0; }
+.arcade h1 { font-size: clamp(18px, 2.5vw, 24px); line-height: 1.4; }
+.arcade h2 { font-size: 22px; line-height: 1.4; }
+.arcade h3 { font-size: 18px; line-height: 1.4; }
+.arcade a { color: inherit; text-underline-offset: 4px; }
+.arcade button { font: inherit; color: inherit; cursor: pointer; border: 0; background: var(--surface); padding: 10px 16px; }
+.arcade button:disabled { cursor: default; color: var(--text-muted); }
+.arcade :focus-visible { outline: 3px solid var(--game-accent); outline-offset: 3px; }
+.arcade button, .arcade a { -webkit-tap-highlight-color: var(--surface-soft); }
+.arcade-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 24px; flex-shrink: 0; }
+.arcade-brand { font-weight: 700; text-decoration: none; }
+.arcade-nav { display: flex; gap: 20px; align-items: center; font-size: 14px; }
+.arcade .text-button { background: var(--bg); padding: 6px 0; text-decoration: underline; text-underline-offset: 4px; }
+.arcade-main { width: min(1160px, 100%); flex: 1; min-height: 0; margin: 0 auto; padding: 8px 24px 12px; display: flex; flex-direction: column; gap: 12px; }
+.session-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-shrink: 0; }
+.eyebrow, .caption { color: var(--text-muted); font-size: 14px; }
+.session-heading { min-width: 0; }
+.arcade .button { border: 1px solid var(--text-muted); min-height: 44px; text-decoration: none; display: inline-flex; justify-content: center; align-items: center; padding: 9px 16px; gap: 8px; }
+.arcade .button-primary { background: var(--game-accent); color: var(--bg); border-color: var(--game-accent); }
+.arcade .button:hover:not(:disabled) { background: var(--text); color: var(--bg); }
+.game-stage { flex: 1; min-height: 0; display: flex; flex-direction: column; }
+.game-notice { min-height: 2.9em; flex-shrink: 0; font-size: 14px; color: var(--text); }
+.game-notice[data-tone="error"] { color: var(--danger); }
+.game-notice[data-tone="success"] { color: var(--success); }
+.actions { display: flex; gap: 10px; flex-wrap: wrap; }
+.arcade .selected { outline: 3px solid var(--game-accent); outline-offset: -3px; }
 
-.games-foto-zaglushka { min-height: 250px; display: grid; place-items: center; margin-bottom: 22px; padding: 24px; background: var(--surface); color: var(--text-muted); text-align: center; font-size: .8rem; }
-.games-foto-zaglushka--road { min-height: 280px; }
-.games-leaf-layout { display: grid; grid-template-columns: minmax(230px, .62fr) minmax(0, 1fr); gap: 28px; align-items: start; }
-.games-leaf-layout .games-foto-zaglushka { min-height: 340px; margin: 0; }
-.games-categories { display: grid; gap: 10px; }
-.games-category { min-height: 62px; padding: 13px 16px; border: 0; background: var(--surface); color: var(--text); text-align: left; cursor: pointer; }
-.games-category:hover:not(:disabled),
-.games-category:focus-visible { color: var(--accent); }
-.games-category[data-selected="true"] { background: var(--accent); color: var(--bg); }
+/* Каталог является стартовым экраном, а не длинной посадочной страницей. */
+.lobby { display: flex; flex-direction: column; justify-content: center; gap: 18px; flex: 1; }
+.game-catalog { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.arcade .game-choice { display: flex; flex-direction: column; gap: 14px; text-align: left; padding: 26px; min-height: 230px; background: var(--surface); }
+.game-choice .choice-number { font-size: 22px; color: var(--game-accent); }
+.game-choice .choice-title { font-size: 20px; font-weight: 700; }
+.game-choice .choice-action { margin-top: auto; color: var(--game-accent); }
+.game-choice:hover { outline: 2px solid var(--game-accent); outline-offset: -2px; }
+.lobby-links { display: flex; gap: 18px; flex-wrap: wrap; font-size: 14px; }
 
-.games-zayavka { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin: 20px 0; }
-.games-zayavka div { padding: 15px; background: var(--surface); }
-.games-zayavka dt { color: var(--text-muted); font-size: .76rem; }
-.games-zayavka dd { margin: 5px 0 0; }
-.games-reshenie { display: flex; flex-wrap: wrap; gap: 10px; }
-.games-reshenie [data-selected="true"] { background: var(--accent); color: var(--bg); border-color: var(--accent); }
+/* Изображение подменяет заглушку только после успешной загрузки файла. */
+.asset { position: relative; display: grid; place-items: center; width: 100%; height: 100%; min-height: 0; overflow: hidden; background: var(--input); }
+.asset img { width: 100%; height: 100%; object-fit: contain; display: block; min-height: 0; }
+.asset-fallback { display: grid; gap: 8px; place-content: center; padding: 12px; font-size: 14px; text-align: center; max-width: 32ch; }
+.asset-fallback .asset-label { color: var(--text-muted); }
+.asset.asset-loaded .asset-fallback { display: none; }
+.asset-icon { width: 30px; height: 30px; flex-shrink: 0; background: var(--surface-soft); }
+.asset-icon .asset-fallback { padding: 0; font-size: 14px; }
 
-.games-itog { max-width: 820px; }
-.games-itog h2 { margin-bottom: 15px; }
-.games-itog > p { color: var(--text-muted); }
-.games-vyvody { display: grid; gap: 9px; margin: 24px 0; padding: 0; list-style: none; }
-.games-vyvody li { padding: 16px 18px; background: var(--surface); }
-.games-itog__deystviya { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 24px; }
+/* Полевая игра: схема двух мест сбора и отдельная зона переноса образца. */
+.road-scene, .sorter-scene, .moderator-scene { display: flex; flex-direction: column; gap: 10px; flex: 1; min-height: 0; }
+.scene-toolbar { display: flex; justify-content: space-between; align-items: center; gap: 12px; font-size: 14px; flex-shrink: 0; }
+.map-board { display: grid; grid-template-columns: minmax(0, 1fr) 70px minmax(0, 1fr); gap: 14px; flex: 1; min-height: 130px; }
+.map-area { min-height: 0; display: flex; flex-direction: column; gap: 8px; background: var(--surface); padding: 14px; }
+.map-area > p { font-size: 14px; }
+.map-road { background: var(--text); color: var(--bg); display: grid; place-items: center; writing-mode: vertical-rl; font-size: 14px; }
+.arcade .tree-button { padding: 0; display: flex; flex-direction: column; flex: 1; min-height: 0; gap: 8px; width: 100%; background: var(--surface); }
+.tree-button .asset { flex: 1; min-height: 40px; }
+.tree-button .tree-title { font-weight: 700; font-size: 16px; }
+.tree-button:disabled { cursor: default; }
+.tree-button:disabled .tree-title { color: var(--success); }
+.tree-meta { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.arcade .passport-link { padding: 4px 0; background: var(--surface); font-size: 14px; text-decoration: underline; }
+.collection-dock { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; min-height: 105px; height: 120px; flex-shrink: 0; }
+.sample-bay { display: grid; place-items: center; background: var(--surface-soft); min-height: 0; }
+.arcade .leaf-token { position: relative; display: flex; gap: 10px; align-items: center; padding: 8px; height: 100%; max-height: 120px; width: min(100%, 260px); background: var(--input); font-size: 14px; }
+.leaf-token .asset { width: 90px; flex-shrink: 0; }
+.leaf-token .asset-fallback { padding: 4px; font-size: 14px; }
+.arcade .drop-zone { border: 2px solid var(--text-muted); background: var(--surface); min-height: 64px; text-align: center; padding: 12px; display: flex; flex-direction: column; gap: 4px; justify-content: center; align-items: center; }
+.drop-zone.drop-hover { border-color: var(--game-accent); background: var(--surface-soft); }
+.drop-zone.drop-correct { border-color: var(--success); color: var(--success); }
+.drop-zone.drop-wrong { border-color: var(--danger); color: var(--danger); }
+.drag-item { touch-action: none; user-select: none; -webkit-user-select: none; cursor: grab !important; }
+.drag-item img { pointer-events: none; -webkit-user-drag: none; }
+.drag-item.dragging { z-index: 10; cursor: grabbing !important; }
+.drag-item.returning { transition: transform 160ms ease; }
+.drag-item.transferring { z-index: 10; transition: transform 160ms ease; }
+.drag-item.deposited .asset { visibility: hidden; }
+.drag-item.arrived { animation: accepted-sample 160ms ease; }
+@keyframes accepted-sample { from { transform: scale(.96); } to { transform: scale(1); } }
+.passport { display: flex; flex-direction: column; gap: 12px; justify-content: center; flex: 1; }
+.passport-field { border: 0; padding: 0; margin: 0; }
+.passport-field legend { padding: 0 0 6px; font-size: 16px; font-weight: 700; }
+.passport-options { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.arcade .passport-option { display: flex; align-items: center; gap: 10px; text-align: left; min-height: 48px; padding: 8px 12px; }
+.passport-option[aria-pressed="true"] { outline: 2px solid var(--game-accent); outline-offset: -2px; background: var(--surface-soft); }
+.comparison, .result-scene { display: flex; flex-direction: column; justify-content: center; gap: 18px; min-height: 0; flex: 1; }
+.comparison-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.comparison-grid > div { padding: 20px; background: var(--surface); display: grid; gap: 10px; }
+.result-facts { display: grid; gap: 10px; }
+.result-facts p { padding: 12px 16px; background: var(--surface); }
 
-@media (max-width: 780px) {
-  .games-stranica { width: min(100% - 34px, 680px); padding-top: 42px; }
-  .games-katalog { grid-template-columns: 1fr; }
-  .games-kartochka { min-height: 250px; }
-  .games-kartochka h2 { margin-top: 36px; }
-  .games-leaf-layout { grid-template-columns: 1fr; }
-  .games-leaf-layout .games-foto-zaglushka { min-height: 280px; }
-  .games-zayavka { grid-template-columns: 1fr; }
+/* Лист перемещается в контейнер. После ошибки он остаётся на столе. */
+.progress-track { height: 6px; background: var(--surface); flex-shrink: 0; }
+.progress-value { height: 100%; width: 0; background: var(--game-accent); transition: width 160ms ease; }
+.sorting-table { flex: 1; min-height: 100px; display: flex; justify-content: center; align-items: stretch; padding: 12px; background: var(--surface-soft); }
+.arcade .sorting-leaf { display: flex; flex-direction: column; width: min(100%, 400px); min-height: 0; padding: 12px; gap: 8px; background: var(--input); }
+.sorting-leaf .asset { flex: 1; }
+.sorting-leaf .asset-fallback { max-width: 30ch; }
+.leaf-caption { font-size: 14px; }
+.sorting-zones { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; flex-shrink: 0; }
+.sorting-zones .drop-zone { min-height: 85px; }
+.sorting-zones .drop-zone > span:last-child { font-size: 14px; }
+.sort-footer { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-shrink: 0; min-height: 44px; }
+.sort-footer p { font-size: 14px; max-width: 60ch; }
+
+/* Стол модератора: решение перемещает заявку в выбранную стопку. */
+.moderation-stacks { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; font-size: 14px; }
+.paper-stack { display: flex; justify-content: space-between; padding: 10px 16px; background: var(--surface); }
+.application-desk { flex: 1; min-height: 0; background: var(--surface-soft); padding: 14px; display: flex; overflow: hidden; }
+.application-card { background: var(--input); padding: 18px; min-width: 0; flex: 1; display: flex; flex-direction: column; gap: 10px; }
+.application-body { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; flex: 1; min-height: 0; }
+.application-photos { display: flex; flex-direction: column; min-height: 0; gap: 8px; }
+.application-photos > .asset { flex: 1; min-height: 75px; }
+.photo-tabs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.arcade .photo-tab { padding: 5px; min-height: 44px; font-size: 14px; }
+.photo-tab[aria-pressed="true"] { outline: 2px solid var(--game-accent); outline-offset: -2px; }
+.photo-tab .asset { height: 35px; }
+.photo-tab .asset-fallback { display: none; }
+.photo-tab .asset:not(.asset-loaded) { display: none; }
+.application-fields { margin: 0; display: grid; gap: 8px; align-content: start; }
+.application-fields div { background: var(--surface); padding: 8px 12px; }
+.application-fields dt { font-size: 14px; color: var(--text-muted); }
+.application-fields dd { margin: 0; font-size: 16px; }
+.decision-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; flex-shrink: 0; }
+.decision-actions .decision-reject { color: var(--danger); }
+.application-card.to-accepted { animation: to-accepted 160ms ease forwards; }
+.application-card.to-rejected { animation: to-rejected 160ms ease forwards; }
+@keyframes to-accepted { to { transform: translate(-80px, -18px); } }
+@keyframes to-rejected { to { transform: translate(80px, -18px); } }
+.application-card.reviewed { background: var(--surface); }
+.review-message { display: flex; flex-direction: column; justify-content: center; gap: 18px; flex: 1; }
+.review-message[data-correct="true"] h3 { color: var(--success); }
+.review-message[data-correct="false"] h3 { color: var(--danger); }
+
+@media (max-width: 700px) {
+  .arcade-header { padding: 8px 12px; flex-wrap: wrap; gap: 4px 12px; }
+  .arcade-brand { font-size: 14px; }
+  .arcade-nav { gap: 14px; }
+  .account-link { display: none; }
+  .arcade-main { padding: 4px 12px 8px; gap: 8px; }
+  .session-header { gap: 8px; }
+  .arcade .button { padding: 8px 12px; font-size: 14px; }
+  .game-catalog { grid-template-columns: 1fr; gap: 8px; }
+  .lobby { gap: 12px; }
+  .arcade .game-choice { display: grid; grid-template-columns: 24px 1fr; gap: 4px 12px; min-height: 0; padding: 12px; }
+  .choice-number { grid-row: span 3; }
+  .game-choice .choice-title { font-size: 18px; }
+  .game-choice .choice-description, .game-choice .choice-action { font-size: 14px; }
+  .map-board { grid-template-columns: minmax(0, 1fr) 28px minmax(0, 1fr); gap: 6px; min-height: 140px; }
+  .map-area { padding: 8px; gap: 4px; }
+  .tree-button .asset-fallback { padding: 6px; gap: 4px; }
+  .tree-button .tree-title { font-size: 14px; }
+  .tree-meta { align-items: flex-start; flex-direction: column; gap: 0; font-size: 14px; }
+  .collection-dock { height: 100px; min-height: 100px; gap: 8px; }
+  .arcade .leaf-token { gap: 4px; padding: 4px; }
+  .leaf-token .asset { width: 64px; }
+  .arcade .drop-zone { padding: 6px; font-size: 14px; }
+  .scene-toolbar { gap: 8px; }
+  .sorting-table { padding: 6px; }
+  .sorting-zones { gap: 6px; }
+  .sorting-zones .drop-zone { min-height: 76px; overflow-wrap: anywhere; }
+  .sorting-zones .drop-zone > span:last-child { display: none; }
+  .sort-footer { align-items: flex-start; }
+  .passport { gap: 10px; }
+  .passport-field legend { font-size: 14px; }
+  .arcade .passport-option { font-size: 14px; padding: 6px 8px; }
+  .comparison-grid > div { padding: 12px; gap: 8px; }
+  .comparison, .result-scene { gap: 12px; font-size: 14px; }
+  .result-facts p { padding: 8px 10px; }
+  .moderation-stacks { gap: 8px; }
+  .paper-stack { padding: 6px 10px; }
+  .application-desk { padding: 6px; }
+  .application-card { padding: 8px; gap: 8px; }
+  .application-body { gap: 8px; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .application-fields { gap: 6px; }
+  .application-fields div { padding: 6px; }
+  .application-fields dd { font-size: 14px; }
+  .application-photos .asset-fallback { padding: 6px; gap: 4px; }
+  .arcade .photo-tab { padding: 4px 2px; }
+  .review-message { gap: 10px; }
+  .review-message p { font-size: 14px; }
+}
+/* На низком экране поле уплотняется. При увеличении текста доступность
+   важнее запрета прокрутки: элементы остаются достижимыми, а не обрезаются. */
+@media (max-height: 760px) and (max-width: 700px) {
+  .game-choice .choice-description { display: none; }
+  .lobby { gap: 8px; }
+  .lobby-links { gap: 8px 16px; }
+}
+@media (max-height: 620px) and (min-width: 701px) {
+  .arcade-header { padding-top: 6px; padding-bottom: 6px; }
+  .arcade-main { gap: 6px; }
+  .eyebrow { display: none; }
+  .collection-dock { height: 85px; min-height: 85px; }
+  .game-notice { min-height: 1.45em; }
+  .map-area { padding: 8px; }
+  .passport { gap: 6px; }
+  .passport-options { gap: 8px; }
+  .arcade .passport-option { min-height: 40px; padding: 4px 8px; }
+  .sorting-zones .drop-zone { min-height: 60px; }
+  .comparison, .result-scene { gap: 10px; }
+  .result-facts { gap: 6px; }
+  .result-facts p { padding: 6px 12px; }
+}
+@media (max-height: 570px) and (max-width: 700px), (max-height: 440px) {
+  .arcade { height: auto; min-height: 100dvh; }
+  .arcade-main { min-height: 450px; }
+  .game-stage { min-height: 370px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .drag-item.returning, .drag-item.transferring, .progress-value { transition: none; }
+  .drag-item.arrived, .application-card.to-accepted, .application-card.to-rejected { animation: none; }
 }
