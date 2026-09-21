@@ -1,14 +1,8 @@
-Удалить из репозитория
+GAMES_ASSETS.txt
+GAMES_INSTALL.txt
+js/education.js
+js/education-curator.js
+moderator-test.html
+js/moderator-test.js
 
-game.html
-js/game.js
-js/map-search.js
-js/work-summary.js
-
-Можно удалить как неиспользуемые тяжёлые изображения
-
-img/home/aktualnost/fa.png
-img/icons/strelka.png
-
-Перед удалением необязательных изображений в своей актуальной ветке можно проверить ссылки командой:
-rg -n "fa\\.png|strelka\\.png" . --glob '!node_modules/**'
+Эти файлы больше не используются. Старые курсы и тест модератора заменены общим ролевым модулем course.js. Отдельные инструкции по отсутствующим игровым изображениям не нужны: игры используют существующие ресурсы проекта.

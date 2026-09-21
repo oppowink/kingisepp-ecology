@@ -1,4 +1,4 @@
-// submit.js — карта выбора координат, паспорт территории, фотографии и отправка заявки
+// submit.js, карта выбора координат, паспорт территории, фотографии и отправка заявки
 (function () {
   'use strict';
 
@@ -38,6 +38,19 @@
     var submitButton = form.querySelector('button[type="submit"]');
     var selectedFiles = [];
     var selectedTreeFile = null;
+    var landmarkSets = [];
+    var landmarkPhoto = 0;
+    var landmarkNames = ['apex','base','left_v1_base','left_v1_end','right_v1_base','right_v1_end','left_v2_base','left_v2_end','right_v2_base','right_v2_end','width_left','width_right'];
+    var landmarkLabels = ['верхушка','основание','левая жилка 1: начало','левая жилка 1: конец','правая жилка 1: начало','правая жилка 1: конец','левая жилка 2: начало','левая жилка 2: конец','правая жилка 2: начало','правая жилка 2: конец','край ширины слева','край ширины справа'];
+    var landmarkCanvas = document.getElementById('landmarkCanvas');
+    var landmarkImage = document.getElementById('landmarkImage');
+    var landmarkOverlay = document.getElementById('landmarkOverlay');
+    var landmarkNumber = document.getElementById('landmarkPhotoNumber');
+    var landmarkPointName = document.getElementById('landmarkPointName');
+    var integrityCode = Array.from(crypto.getRandomValues(new Uint8Array(6))).map(function(v){return 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'[v%32];}).join('');
+    document.getElementById('integrityCode').textContent = integrityCode;
+    var devicePosition = {};
+    if (navigator.geolocation) navigator.geolocation.getCurrentPosition(function(pos){devicePosition={deviceLatitude:pos.coords.latitude,deviceLongitude:pos.coords.longitude,gpsAccuracyM:pos.coords.accuracy};},function(){}, {enableHighAccuracy:true,timeout:8000});
     var participationContext = { memberships: [], projects: [], objects: [] };
     var pickerMap = null;
     var pickerMarker = null;
@@ -128,14 +141,38 @@
                 count += 1;
               }
             });
-            resolve(total / count > 200);
-          } catch (_) { resolve(null); }
+            resolve({ light: total / count > 200, width: img.naturalWidth, height: img.naturalHeight });
+          } catch (_) { resolve({ light: null, width: img.naturalWidth, height: img.naturalHeight }); }
           URL.revokeObjectURL(objectUrl);
         };
-        img.onerror = function () { URL.revokeObjectURL(objectUrl); resolve(null); };
+        img.onerror = function () { URL.revokeObjectURL(objectUrl); resolve({ light: null, width: 0, height: 0 }); };
         img.src = objectUrl;
       });
     }
+
+    async function prepareMeta(file) {
+      var buffer = await file.arrayBuffer();
+      var digest = await crypto.subtle.digest('SHA-256', buffer);
+      var hash = Array.from(new Uint8Array(digest)).map(function(b){return b.toString(16).padStart(2,'0');}).join('');
+      var image = await checkBackground(file);
+      file._ecoMeta = { sha256: hash, imageWidth: image.width, imageHeight: image.height, bgLight: image.light, precheck: { backgroundLight: image.light, readable: image.width >= 500 && image.height >= 500, birchCandidate: true } };
+      return file._ecoMeta;
+    }
+
+    function renderLandmarks() {
+      if (!selectedFiles.length) { landmarkCanvas.style.display='none'; landmarkNumber.textContent='Фото не выбраны'; landmarkPointName.textContent=''; return; }
+      landmarkCanvas.style.display='block';
+      var set=landmarkSets[landmarkPhoto]||(landmarkSets[landmarkPhoto]={});
+      landmarkNumber.textContent='Лист '+(landmarkPhoto+1)+' из '+selectedFiles.length;
+      var count=Object.keys(set).length;
+      landmarkPointName.textContent=count<landmarkNames.length?'Сейчас: '+landmarkLabels[count]:'Все 12 точек отмечены';
+      landmarkOverlay.replaceChildren();
+      landmarkNames.forEach(function(name,index){if(!set[name])return;var dot=document.createElement('span');dot.className='landmark-dot';dot.style.left=(set[name].x*100)+'%';dot.style.top=(set[name].y*100)+'%';dot.title=landmarkLabels[index];landmarkOverlay.appendChild(dot);});
+      document.getElementById('landmarkNext').disabled=count<landmarkNames.length;
+      document.getElementById('landmarkNext').textContent=landmarkPhoto===selectedFiles.length-1?'Разметка готова':'Следующий лист';
+    }
+
+    function showLandmarkPhoto(){if(!selectedFiles[landmarkPhoto])return;var old=landmarkImage.dataset.url;if(old)URL.revokeObjectURL(old);var url=URL.createObjectURL(selectedFiles[landmarkPhoto]);landmarkImage.dataset.url=url;landmarkImage.src=url;renderLandmarks();}
 
     function setFiles(files) {
       selectedFiles = Array.from(files || []).filter(function (file) {
@@ -143,10 +180,14 @@
       }).slice(0, MAX_PHOTOS);
       photoCounter.textContent = selectedFiles.length + ' / ' + MAX_PHOTOS + ' фотографий';
       photoError.hidden = true;
-      selectedFiles.forEach(function (file) {
-        checkBackground(file).then(function (isLight) { file._bgLight = isLight; });
-      });
+      landmarkSets = selectedFiles.map(function(){return {};}); landmarkPhoto=0;
+      Promise.all(selectedFiles.map(prepareMeta)).catch(function(){showError('Не удалось проверить фотографии.');});
+      showLandmarkPhoto();
     }
+
+    landmarkOverlay.addEventListener('click',function(event){var set=landmarkSets[landmarkPhoto];var index=Object.keys(set).length;if(index>=landmarkNames.length)return;var rect=landmarkOverlay.getBoundingClientRect();set[landmarkNames[index]]={x:Math.max(0,Math.min(1,(event.clientX-rect.left)/rect.width)),y:Math.max(0,Math.min(1,(event.clientY-rect.top)/rect.height)),visible:true};renderLandmarks();});
+    document.getElementById('landmarkUndo').addEventListener('click',function(){var set=landmarkSets[landmarkPhoto],keys=Object.keys(set);if(keys.length)delete set[keys[keys.length-1]];renderLandmarks();});
+    document.getElementById('landmarkNext').addEventListener('click',function(){if(Object.keys(landmarkSets[landmarkPhoto]||{}).length!==12)return;if(landmarkPhoto<selectedFiles.length-1){landmarkPhoto+=1;showLandmarkPhoto();}else showError('Разметка всех 30 листьев готова. Теперь можно отправить заявку.');});
 
     function selectedSourceMode() {
       return form.querySelector('input[name="sourceMode"]:checked')?.value || 'own';
@@ -266,6 +307,9 @@
         photoError.hidden = false;
         return;
       }
+      if (landmarkSets.length !== MAX_PHOTOS || landmarkSets.some(function(set){return Object.keys(set).length!==12;})) { showError('Поставьте 12 контрольных точек на каждом из 30 листьев.'); document.getElementById('landmarkStep').scrollIntoView({behavior:'smooth'}); return; }
+      await Promise.all([selectedTreeFile].concat(selectedFiles).map(prepareMeta));
+      if (selectedFiles.some(function(file){return !file._ecoMeta.precheck.backgroundLight||!file._ecoMeta.precheck.readable;})) { showError('Часть фотографий не прошла проверку фона или разрешения. Замените их перед отправкой.'); return; }
 
       try {
         setBusy(true, 'Загружаем 31 фотографию…');
@@ -301,6 +345,14 @@
           treeCondition: document.getElementById('sostoyanieDereva').value,
           treeDamageNotes: document.getElementById('povrezhdeniyaDereva').value.trim(),
           backgroundFlags: uploaded.files.map(function (file) { return file.bgLight; })
+          ,participantChecklist: Array.from(checks).map(function(box){return box.checked;})
+          ,landmarks: landmarkSets.map(function(points,index){var meta=selectedFiles[index]._ecoMeta||{};return {points:points,fileHash:meta.sha256||'',fileName:selectedFiles[index].name,imageWidth:meta.imageWidth||1,imageHeight:meta.imageHeight||1};})
+          ,photoPrecheck: { passed: true, checked: selectedFiles.length, method: 'background-and-resolution-v1' }
+          ,integrityCode: integrityCode
+          ,capturedAt: new Date().toISOString()
+          ,deviceLatitude: devicePosition.deviceLatitude
+          ,deviceLongitude: devicePosition.deviceLongitude
+          ,gpsAccuracyM: devicePosition.gpsAccuracyM
         });
         sessionStorage.setItem('eco-last-request-id', request.id);
         location.href = 'my-requests.html';

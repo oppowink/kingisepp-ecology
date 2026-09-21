@@ -68,6 +68,7 @@ function publicObject(row) {
     centerLng: row.center_lng === null ? null : Number(row.center_lng),
     radiusM: row.radius_m === null ? null : Number(row.radius_m),
     requiredPoints: Number(row.required_points || 1),
+    requiredTrees: Number(row.required_points || 1),
     visibility: row.visibility,
     status: row.status,
     dueDate: row.due_date || null
@@ -179,7 +180,7 @@ async function curatorDashboard(admin, user) {
   }
 
   const orgIds = organizations.map(function (row) { return row.id; });
-  if (!orgIds.length) return { organizations: [], projects: [], objects: [], members: [], requests: [] };
+  if (!orgIds.length) return { organizations: [], projects: [], objects: [], members: [], assignments: [], requests: [] };
 
   const projectQuery = await inList(admin.from('monitoring_projects').select('*').order('created_at', { ascending: false }), 'organization_id', orgIds);
   if (projectQuery.error) throw projectQuery.error;
@@ -199,6 +200,13 @@ async function curatorDashboard(admin, user) {
 
   const requestQuery = await inList(admin.from('monitoring_requests').select('*').order('created_at', { ascending: false }), 'organization_id', orgIds);
   if (requestQuery.error) throw requestQuery.error;
+  const objectIds = (objectQuery.data || []).map(function (row) { return row.id; });
+  let assignmentRows = [];
+  if (objectIds.length) {
+    const assignmentQuery = await inList(admin.from('object_assignments').select('*'), 'object_id', objectIds);
+    if (assignmentQuery.error) throw assignmentQuery.error;
+    assignmentRows = assignmentQuery.data || [];
+  }
 
   return {
     organizations: organizations.map(publicOrganization),
@@ -213,6 +221,12 @@ async function curatorDashboard(admin, user) {
         status: membership.status,
         profile: publicProfile(memberProfiles.find(function (profile) { return profile.id === membership.user_id; }))
       };
+    }),
+    assignments: assignmentRows.map(function (assignment) {
+      const relatedRequests = (requestQuery.data || []).filter(function (request) { return request.object_id === assignment.object_id && request.user_id === assignment.user_id; });
+      return { id: assignment.id, objectId: assignment.object_id, userId: assignment.user_id, status: assignment.status,
+        submittedTrees: relatedRequests.length,
+        publishedTrees: relatedRequests.filter(function (request) { return request.status === 'published'; }).length };
     }),
     requests: requestQuery.data || []
   };
@@ -320,8 +334,8 @@ async function createObject(admin, user, input) {
     address_hint: asText(input.addressHint, 500),
     center_lat: Number.isFinite(Number(input.centerLat)) ? Number(input.centerLat) : null,
     center_lng: Number.isFinite(Number(input.centerLng)) ? Number(input.centerLng) : null,
-    radius_m: Number.isFinite(Number(input.radiusM)) ? Number(input.radiusM) : null,
-    required_points: Math.max(1, Number(input.requiredPoints || 1)),
+    radius_m: Number.isFinite(Number(input.radiusM)) ? Number(input.radiusM) : 100,
+    required_points: Math.min(30, Math.max(1, Number(input.requiredTrees || input.requiredPoints || 5))),
     visibility: input.visibility === 'public' ? 'public' : 'organization',
     status: 'open',
     due_date: input.dueDate || null

@@ -1,4 +1,4 @@
-// header.js — шапка, настройки и навигация
+// header.js, шапка, настройки и навигация
 (function () {
   'use strict';
 
@@ -88,7 +88,7 @@
       }
     });
 
-    // если в sessionStorage есть пользователь с ролью модератора — добавляем ссылку на модерацию
+    // если в sessionStorage есть пользователь с ролью модератора, добавляем ссылку на модерацию
     try {
       var cached = JSON.parse(sessionStorage.getItem('eco-preview-user-v1') || sessionStorage.getItem('eco-session-user-v1') || 'null');
       if (cached && ['moderator', 'admin'].includes(cached.role) && nav && !nav.querySelector('[data-moderator-link]')) {

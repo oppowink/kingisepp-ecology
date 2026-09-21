@@ -1,4 +1,4 @@
-// requests.js — список заявок текущего пользователя
+// requests.js, список заявок текущего пользователя
 (function () {
   'use strict';
 
@@ -30,7 +30,7 @@
     };
     var items = EcoAuth.getMyRequests();
 
-    // если только что отправили заявку — показываем сообщение
+    // если только что отправили заявку, показываем сообщение
     var lastId = sessionStorage.getItem('eco-last-request-id');
     if (notice && lastId) {
       notice.textContent = 'Заявка отправлена';

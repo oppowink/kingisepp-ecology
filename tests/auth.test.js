@@ -209,6 +209,9 @@ test('education complete scores volunteer test and stores progress', async funct
     from(table) {
       if (table === 'education_progress') {
         return {
+          select() {
+            return { eq() { return { eq() { return { async maybeSingle() { return { data: { lessons_completed: true, attempts: 0 }, error: null }; } }; } }; } };
+          },
           async upsert(value) {
             saved.progress = value;
             return { data: value, error: null };
@@ -217,6 +220,7 @@ test('education complete scores volunteer test and stores progress', async funct
       }
       if (table === 'profiles') {
         return {
+          select() { return { eq() { return { async maybeSingle() { return { data: { id: 'profile-1', role: 'participant', blocked: false }, error: null }; } }; } }; },
           update(value) {
             saved.user = value;
             return {
@@ -238,14 +242,15 @@ test('education complete scores volunteer test and stores progress', async funct
     method: 'POST',
     headers: { cookie: cookie },
     body: {
+      course: 'participant',
+      stage: 'test',
       answers: {
-        q1: '30',
-        q2: 'betula',
-        q3: 'no_damage',
-        q4: 'top_light',
-        q5: 'tree_coords',
-        q6: 'moderation',
-        q7: 'after_checks'
+        q1: 'betula',
+        q2: 'one_tree',
+        q3: 'light_background',
+        q4: 'whole_leaf',
+        q5: 'mark_tree',
+        q6: 'moderation'
       }
     }
   }, res);
@@ -253,7 +258,7 @@ test('education complete scores volunteer test and stores progress', async funct
   const body = JSON.parse(res.body);
   assert.equal(res.statusCode, 200);
   assert.equal(body.completed, true);
-  assert.equal(body.score, 7);
+  assert.equal(body.score, 6);
   assert.equal(saved.progress.passed, true);
   assert.equal(saved.user.education_completed, true);
 });

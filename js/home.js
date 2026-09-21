@@ -1,4 +1,4 @@
-// home.js — scroll-сцены главной и анимация актуальности
+// home.js, scroll-сцены главной и анимация актуальности
 (function () {
   'use strict';
 
@@ -102,7 +102,7 @@
     updateTargets();
   }
 
-  // анимация актуальности — включается при появлении блока
+  // анимация актуальности, включается при появлении блока
   function initActualitySequence() {
     var stage = document.querySelector('[data-aktualnost-scena]');
     if (!stage) return;

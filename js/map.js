@@ -1,4 +1,4 @@
-// map.js — Яндекс.Карта и отображение подтверждённых точек
+// map.js, Яндекс.Карта и отображение подтверждённых точек
 (function () {
   'use strict';
 
@@ -131,7 +131,7 @@
       date: point.collectionDate || point.date || '',
       level: point.level || point.title || 'Подтверждённая точка',
       address: point.address || point.location || '',
-      explanation: point.explanation || ('Точка, одно дерево и 30 листьев прошли модерацию человека и автоматическую проверку.' + (passport ? ' ' + passport + '.' : '')),
+      explanation: point.explanation || ('Точка, одно дерево и 30 листьев прошли проверку. Автоматический расчёт ФА: ' + (point.aiResult && Number.isFinite(Number(point.aiResult.meanFa)) ? Number(point.aiResult.meanFa).toFixed(4) : 'значение не указано') + '.' + (passport ? ' ' + passport + '.' : '')),
       photos: [treePhoto].concat(files.map(function (file) { return file.url || file.data; })).filter(Boolean),
       excelUrl: point.excelUrl || '',
       pdfUrl: point.pdfUrl || ''
@@ -171,6 +171,9 @@
       zoom: 13,
       controls: ['zoomControl', 'typeSelector', 'fullscreenControl']
     });
+    function applyTheme(){container.classList.toggle('karta--temnaya',document.documentElement.dataset.theme==='dark'||document.body.dataset.theme==='dark');}
+    applyTheme();
+    new MutationObserver(applyTheme).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme','class']});
 
     window.EcoKarta = {
       getMap: function () { return mapInstance; },

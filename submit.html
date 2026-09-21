@@ -23,7 +23,7 @@
 <link href="https://api-maps.yandex.ru" rel="preconnect"/>
 <script src="https://api-maps.yandex.ru/2.1/?apikey=188ac128-4a13-4cd1-b53a-cdf0eb730641&amp;lang=ru_RU"></script>
 
-<!-- тема — подключаем до body чтобы не мигало -->
+<!-- тема, подключаем до body чтобы не мигало -->
 <script src="js/theme.js"></script>
 </head>
 <body>
@@ -212,7 +212,7 @@
 </div>
 <div class="pole-gruppa">
 <label class="pole-podpis" for="istochnikiVozdeystviya">Ближайшие возможные источники воздействия</label>
-<input class="pole-vvod" id="istochnikiVozdeystviya" maxlength="500" placeholder="Например: дорога, парковка, котельная; если нет — укажите «не отмечены»" required=""/>
+<input class="pole-vvod" id="istochnikiVozdeystviya" maxlength="500" placeholder="Например: дорога, парковка, котельная; если нет, укажите «не отмечены»" required=""/>
 </div>
 <div class="pole-gruppa">
 <label class="pole-podpis" for="pogodaNablyudeniya">Условия во время сбора</label>
@@ -251,7 +251,7 @@
 </div>
 <div class="pole-gruppa">
 <label class="pole-podpis" for="povrezhdeniyaDereva">Повреждения ствола и кроны</label>
-<input class="pole-vvod" id="povrezhdeniyaDereva" maxlength="500" placeholder="Если не обнаружены — укажите «не обнаружены»" required=""/>
+<input class="pole-vvod" id="povrezhdeniyaDereva" maxlength="500" placeholder="Если не обнаружены, укажите «не обнаружены»" required=""/>
 </div>
 <div class="pole-gruppa">
 <span class="pole-podpis">Обзорная фотография берёзы</span>
@@ -298,7 +298,7 @@
   <div class="checklist">
     <label class="checklist-item">
       <input type="checkbox" class="checklist-input" data-check="1">
-      Лист собран с живой ветки на высоте 1,5–2 м
+      Лист собран с живой ветки на высоте 1,5-2 м
     </label>
     <label class="checklist-item">
       <input type="checkbox" class="checklist-input" data-check="2">
@@ -317,8 +317,22 @@
       Координаты выбраны на карте и указана дата сбора
     </label>
   </div>
-  <p class="checklist-error" id="checklistError" hidden>Отметьте все пункты перед отправкой</p>
+<p class="checklist-error" id="checklistError" hidden>Отметьте все пункты перед отправкой</p>
 </div>
+
+<section class="forma-sekciya" id="integrityBlock">
+<h2>Код полевого набора</h2>
+<p>Перед съёмкой запишите этот код на листке и положите его рядом с деревом на обзорной фотографии. Код связывает набор с местом и датой сбора.</p>
+<output class="integrity-code" id="integrityCode"></output>
+</section>
+
+<section class="forma-sekciya landmark-step" id="landmarkStep">
+<h2>Контрольные точки листьев</h2>
+<p id="landmarkHelp">После выбора 30 фотографий отметьте точки на каждом листе. Нажимайте по порядку, название текущей точки показано над снимком.</p>
+<div class="landmark-status"><strong id="landmarkPhotoNumber">Фото не выбраны</strong><span id="landmarkPointName"></span></div>
+<div class="landmark-canvas" id="landmarkCanvas"><img id="landmarkImage" alt="Лист для расстановки контрольных точек"><div id="landmarkOverlay"></div></div>
+<div class="landmark-actions"><button class="knopka-vtorichnaya" id="landmarkUndo" type="button">Отменить точку</button><button class="knopka-osnovnaya" id="landmarkNext" type="button">Следующий лист</button></div>
+</section>
 
 
 

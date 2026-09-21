@@ -1,4 +1,4 @@
-// feedback.js — форма обратной связи с отправкой в Supabase
+// feedback.js, форма обратной связи с отправкой в Supabase
 (function () {
   'use strict';
 

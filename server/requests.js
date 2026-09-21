@@ -42,6 +42,16 @@ function toClientRequest(row) {
     treeCondition: row.tree_condition || '',
     treeDamageNotes: row.tree_damage_notes || '',
     backgroundFlags: Array.isArray(row.background_flags) ? row.background_flags : [],
+    participantChecklist: Array.isArray(row.participant_checklist) ? row.participant_checklist : [],
+    landmarks: Array.isArray(row.landmarks) ? row.landmarks : [],
+    leafHashes: Array.isArray(row.leaf_hashes) ? row.leaf_hashes : [],
+    photoPrecheck: row.photo_precheck || {},
+    integrityCode: row.integrity_code || '',
+    capturedAt: row.captured_at || null,
+    gpsAccuracyM: row.gps_accuracy_m === null || row.gps_accuracy_m === undefined ? null : Number(row.gps_accuracy_m),
+    deviceLatitude: row.device_latitude === null || row.device_latitude === undefined ? null : Number(row.device_latitude),
+    deviceLongitude: row.device_longitude === null || row.device_longitude === undefined ? null : Number(row.device_longitude),
+    integrityFlags: Array.isArray(row.integrity_flags) ? row.integrity_flags : [],
     aiResult: row.ai_result || null,
     status: row.status || 'pending_human',
     humanStatus: row.human_status || 'pending',
@@ -50,6 +60,8 @@ function toClientRequest(row) {
     moderationChecklist: Array.isArray(row.moderation_checklist) ? row.moderation_checklist : [],
     moderatedAt: row.moderated_at || null,
     aiCheckedAt: row.ai_checked_at || null,
+    analysisStartedAt: row.analysis_started_at || null,
+    returnedAt: row.returned_at || null,
     approvedAt: row.approved_at || null,
     publishedAt: row.published_at || null,
     createdAt: row.created_at || null,
@@ -92,6 +104,16 @@ function toDbInsert(input, user) {
     tree_condition: input.treeCondition || '',
     tree_damage_notes: input.treeDamageNotes || '',
     background_flags: Array.isArray(input.backgroundFlags) ? input.backgroundFlags : [],
+    participant_checklist: Array.isArray(input.participantChecklist) ? input.participantChecklist : [],
+    landmarks: Array.isArray(input.landmarks) ? input.landmarks : [],
+    leaf_hashes: Array.isArray(input.leafHashes) ? input.leafHashes : [],
+    photo_precheck: input.photoPrecheck || {},
+    integrity_code: input.integrityCode || null,
+    captured_at: input.capturedAt || now,
+    gps_accuracy_m: Number.isFinite(Number(input.gpsAccuracyM)) ? Number(input.gpsAccuracyM) : null,
+    device_latitude: Number.isFinite(Number(input.deviceLatitude)) ? Number(input.deviceLatitude) : null,
+    device_longitude: Number.isFinite(Number(input.deviceLongitude)) ? Number(input.deviceLongitude) : null,
+    integrity_flags: Array.isArray(input.integrityFlags) ? input.integrityFlags : [],
     ai_result: input.aiResult || null,
     status: 'pending_human',
     human_status: 'pending',
@@ -110,9 +132,13 @@ function toDbUpdate(patch) {
   if (patch.aiStatus) out.ai_status = patch.aiStatus;
   if (patch.moderationReason !== undefined) out.moderation_reason = patch.moderationReason || '';
   if (Array.isArray(patch.moderationChecklist)) out.moderation_checklist = patch.moderationChecklist;
+  if (Array.isArray(patch.landmarks)) out.landmarks = patch.landmarks;
+  if (Array.isArray(patch.integrityFlags)) out.integrity_flags = patch.integrityFlags;
   if (patch.aiResult !== undefined) out.ai_result = patch.aiResult;
   if (patch.moderatedAt) out.moderated_at = patch.moderatedAt;
   if (patch.aiCheckedAt) out.ai_checked_at = patch.aiCheckedAt;
+  if (patch.analysisStartedAt) out.analysis_started_at = patch.analysisStartedAt;
+  if (patch.returnedAt) out.returned_at = patch.returnedAt;
   if (patch.approvedAt) out.approved_at = patch.approvedAt;
   if (patch.publishedAt) out.published_at = patch.publishedAt;
   return out;

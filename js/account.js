@@ -1,4 +1,4 @@
-// account.js — регистрация, вход и личный кабинет
+// account.js, регистрация, вход и личный кабинет
 (function () {
   'use strict';
 
@@ -26,6 +26,7 @@
     var myRequestsLink = document.getElementById('ssylkaMoiZayavki');
     var feedbackLink = document.getElementById('ssylkaFeedback');
     var moderatorLink = document.getElementById('ssylkaModerator');
+    var moderatorEducationLink = document.getElementById('ssylkaObuchenieModeratora');
     var curatorEducationLink = document.getElementById('ssylkaObuchenieKuratora');
     var curatorLink = document.getElementById('ssylkaKurator');
     var profileSection = document.getElementById('kabinetProfil');
@@ -137,7 +138,7 @@
       }
     }
 
-    function render(user) {
+    async function render(user) {
       loginBlock.hidden = Boolean(user);
       cabinetBlock.hidden = !user;
       if (!user) return;
@@ -145,35 +146,26 @@
       var nameEl = document.getElementById('kabinetImya');
       var emailEl = document.getElementById('kabinetEmail');
       var countEl = document.getElementById('kolichestvoZayavok');
-      var educationDone = EcoAuth.isEducationCompleted(user.email);
-      var approvedRequest = EcoAuth.getFirstApprovedRequest();
       var role = user.role || 'participant';
+      var courseId = EcoAuth.courseForRole(role);
+      var courseStatus = courseId ? EcoAuth.getCourseStatus(courseId) : { completed: role === 'admin' };
+      try { if (courseId) courseStatus = await EcoAuth.refreshCourseStatus(courseId); } catch (_) {}
+      var educationDone = Boolean(courseStatus && courseStatus.completed);
       var chooseRole = EcoAuth.canSwitchRoleForTesting && EcoAuth.canSwitchRoleForTesting(user);
 
       if (nameEl) nameEl.textContent = user.name || 'Участник';
       if (emailEl) emailEl.textContent = user.email || '';
       if (userInfo) userInfo.hidden = chooseRole;
       if (cabinetNav) cabinetNav.hidden = chooseRole;
-      if (certificateSection) certificateSection.hidden = chooseRole || role !== 'participant';
+      if (certificateSection) certificateSection.hidden = chooseRole || !['participant', 'curator', 'moderator'].includes(role);
       if (profileSection) profileSection.hidden = chooseRole || !['participant', 'curator'].includes(role);
       if (roleTestBlock) roleTestBlock.hidden = !chooseRole;
       if (chooseRole) return;
 
       if (educationStatus) {
-        var record = EcoAuth.getEducationRecord(user.email);
-        if (role === 'participant') {
-          educationStatus.textContent = educationDone
-            ? 'Обучение волонтёра пройдено' + (record?.score ? ': ' + record.score + '/' + record.total : '')
-            : 'Добавление точки откроется после основного подтверждающего теста';
-          educationStatus.dataset.state = educationDone ? 'success' : 'warning';
-          educationStatus.hidden = false;
-        } else {
-          educationStatus.textContent = role === 'admin'
-            ? 'Режим администратора'
-            : role === 'moderator' ? 'Режим модератора' : 'Режим куратора';
-          educationStatus.dataset.state = 'success';
-          educationStatus.hidden = false;
-        }
+        educationStatus.textContent = role === 'admin' ? 'Режим администратора' : educationDone ? 'Обязательное обучение пройдено' : 'Рабочие функции откроются после обучения и теста';
+        educationStatus.dataset.state = educationDone || role === 'admin' ? 'success' : 'warning';
+        educationStatus.hidden = false;
       }
       if (educationLink) educationLink.hidden = role !== 'participant';
       if (submitLink) submitLink.hidden = role !== 'participant';
@@ -183,17 +175,15 @@
         moderatorLink.hidden = !['moderator', 'admin'].includes(role);
         moderatorLink.textContent = role === 'admin' ? 'Админка' : 'Проверка заявок';
       }
+      if (moderatorEducationLink) moderatorEducationLink.hidden = role !== 'moderator';
       if (curatorEducationLink) curatorEducationLink.hidden = role !== 'curator';
       if (curatorLink) curatorLink.hidden = role !== 'curator';
       if (submitLink) {
         submitLink.classList.toggle('kabinet-navigaciya__ssylka--disabled', !educationDone);
         submitLink.setAttribute('aria-disabled', String(!educationDone));
       }
-      if (certificateText) {
-        certificateText.textContent = educationDone && approvedRequest
-          ? 'Можно сформировать сертификат по опубликованной точке: ' + approvedRequest.title + '.'
-          : 'Сертификат доступен после обучения и публикации первой точки.';
-      }
+      if (certificateText) certificateText.textContent = educationDone ? 'Сертификат разблокирован. Макет пока готовится, поэтому скачивание ещё не работает.' : 'Сертификат откроется после обязательного обучения.';
+      if (certificateButton) certificateButton.disabled = !educationDone;
       if (countEl) {
         var requestCount = EcoAuth.getMyRequests().length;
         countEl.textContent = requestCount ? String(requestCount) : '';
@@ -384,7 +374,7 @@
     if (submitLink) {
       submitLink.addEventListener('click', function (event) {
         var user = EcoAuth.getUser();
-        if (user && !EcoAuth.isEducationCompleted(user.email)) {
+        if (user && !EcoAuth.isCourseCompleted('participant')) {
           event.preventDefault();
           showCertificateMessage('Сначала пройдите обучение волонтёра и тест.', 'error');
         }
@@ -394,17 +384,12 @@
     if (certificateButton) {
       certificateButton.addEventListener('click', function () {
         var user = EcoAuth.getUser();
-        var approvedRequest = EcoAuth.getFirstApprovedRequest();
-        if (!user || !EcoAuth.isEducationCompleted(user.email) || !approvedRequest) {
-          showCertificateMessage('Пройдите обучение и получите подтверждение первой точки', 'error');
+        var courseId = user && EcoAuth.courseForRole(user.role);
+        if (!user || !courseId || !EcoAuth.isCourseCompleted(courseId)) {
+          showCertificateMessage('Сначала пройдите обязательное обучение и тест.', 'error');
           return;
         }
-        var opened = EcoAuth.openVolunteerCertificate({
-          user: user,
-          pointTitle: approvedRequest.title,
-          date: new Date().toLocaleDateString('ru-RU')
-        });
-        showCertificateMessage(opened ? 'Сертификат открыт в новой вкладке.' : 'Разрешите открытие новой вкладки для сертификата.', opened ? 'success' : 'error');
+        showCertificateMessage('Сертификат разблокирован. Скачать его пока нельзя: макет ещё готовится.', 'warning');
       });
     }
 
@@ -421,9 +406,7 @@
           return;
         }
         if (role === 'curator') {
-          location.href = localStorage.getItem('curatorEducationCompleted') === 'true'
-            ? 'curator.html'
-            : 'education-curator.html';
+          location.href = 'education-curator.html';
           return;
         }
         render(user);
@@ -437,6 +420,6 @@
       if (EcoAuth.refreshRequests) await EcoAuth.refreshRequests('mine');
       user = EcoAuth.getUser();
     }
-    render(user);
+    await render(user);
   });
 })();

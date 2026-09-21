@@ -5,6 +5,7 @@ const { readSession } = require('../../server/session');
 const { getAdminClient } = require('../../server/supabase');
 const { profiles } = require('../../server/users');
 const { requests, toClientRequest, toDbInsert, toDbUpdate } = require('../../server/requests');
+const { cleanLandmarkSets, isCompleteSet, calculateRequestFa } = require('../../server/fa-analysis');
 const {
   participantContext,
   curatorDashboard,
@@ -16,9 +17,9 @@ const {
   assignObject
 } = require('../../server/participation');
 
-const STATUSES = new Set(['pending_human', 'human_approved', 'published', 'rejected']);
-const HUMAN_STATUSES = new Set(['pending', 'approved', 'rejected']);
-const AI_STATUSES = new Set(['pending', 'checked', 'skipped']);
+const STATUSES = new Set(['pending_human', 'needs_revision', 'human_approved', 'published', 'rejected']);
+const HUMAN_STATUSES = new Set(['pending', 'needs_revision', 'approved', 'rejected']);
+const AI_STATUSES = new Set(['pending', 'processing', 'checked', 'failed', 'skipped']);
 const SOURCE_TYPES = new Set(['own', 'open_object', 'assigned_object']);
 const PHOTO_BUCKET = 'monitoring-photos';
 const PHOTO_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp', 'image/heic', 'image/heif']);
@@ -71,6 +72,9 @@ function cleanFileList(files) {
     return {
       name: safeText(file.name, 180), size: Number(file.size || 0), type: safeText(file.type, 80),
       bgLight: file.bgLight === true ? true : file.bgLight === false ? false : null,
+      sha256: /^[a-f0-9]{64}$/i.test(String(file.sha256 || '')) ? String(file.sha256).toLowerCase() : '',
+      imageWidth: Math.max(0, Number(file.imageWidth || 0)), imageHeight: Math.max(0, Number(file.imageHeight || 0)),
+      precheck: file.precheck && typeof file.precheck === 'object' ? file.precheck : null,
       path: safeText(file.path, 500), url: safeText(file.url, 1200)
     };
   });
@@ -80,8 +84,30 @@ function cleanPhoto(file) {
   if (!file || typeof file !== 'object') return null;
   return {
     name: safeText(file.name, 180), size: Number(file.size || 0), type: safeText(file.type, 80),
+    sha256: /^[a-f0-9]{64}$/i.test(String(file.sha256 || '')) ? String(file.sha256).toLowerCase() : '',
     path: safeText(file.path, 500), url: safeText(file.url, 1200)
   };
+}
+
+function toPublicRequest(row) {
+  const item = toClientRequest(row);
+  return { id: item.id, title: item.title, location: item.location, coordinates: item.coordinates,
+    latitude: item.latitude, longitude: item.longitude, collectionDate: item.collectionDate,
+    treePhoto: item.treePhoto, files: (item.files || []).slice(0, 4), territoryType: item.territoryType,
+    roadDistanceM: item.roadDistanceM, treeCondition: item.treeCondition, aiResult: item.aiResult,
+    status: item.status, publishedAt: item.publishedAt };
+}
+
+async function hasPassedCourse(admin, userId, course) {
+  const result = await admin.from('education_progress').select('passed').eq('user_id', userId).eq('course', course).maybeSingle();
+  if (result.error) throw result.error;
+  return Boolean(result.data && result.data.passed);
+}
+function radians(value) { return Number(value) * Math.PI / 180; }
+function distanceMeters(aLat, aLng, bLat, bLng) {
+  const dLat = radians(bLat - aLat); const dLng = radians(bLng - aLng);
+  const x = Math.sin(dLat / 2) ** 2 + Math.cos(radians(aLat)) * Math.cos(radians(bLat)) * Math.sin(dLng / 2) ** 2;
+  return 12742000 * Math.atan2(Math.sqrt(x), Math.sqrt(1 - x));
 }
 
 function validPatch(patch) {
@@ -113,7 +139,7 @@ async function handleList(req, res, admin) {
     const { data, error } = await requests(admin).select('*').eq('status', 'published').order('published_at', { ascending: false });
     if (error) throw error;
     res.statusCode = 200;
-    return res.end(JSON.stringify({ requests: (data || []).map(toClientRequest) }));
+    return res.end(JSON.stringify({ requests: (data || []).map(toPublicRequest) }));
   }
 
   const currentUser = await requireCurrentUser(req, admin, 'id,email,name,role,city,blocked');
@@ -122,6 +148,7 @@ async function handleList(req, res, admin) {
     return res.end(JSON.stringify(await participantContext(admin, currentUser)));
   }
   if (scope === 'curator') {
+    if (currentUser.role !== 'admin' && !await hasPassedCourse(admin, currentUser.id, 'curator')) throw new Error('EDUCATION_REQUIRED');
     const dashboard = await curatorDashboard(admin, currentUser);
     dashboard.requests = (dashboard.requests || []).map(toClientRequest);
     res.statusCode = 200;
@@ -129,6 +156,7 @@ async function handleList(req, res, admin) {
   }
 
   let query = requests(admin).select('*').order('created_at', { ascending: false });
+  if (scope === 'all' && currentUser.role === 'moderator' && !await hasPassedCourse(admin, currentUser.id, 'moderator')) throw new Error('EDUCATION_REQUIRED');
   if (scope !== 'all' || !['moderator', 'admin'].includes(currentUser.role)) query = query.eq('user_id', currentUser.id);
   const { data, error } = await query;
   if (error) throw error;
@@ -137,21 +165,24 @@ async function handleList(req, res, admin) {
 }
 
 async function handleCreate(req, res, admin, body) {
-  const currentUser = await requireCurrentUser(req, admin, 'id,email,name,role,city,blocked,education_completed');
-  if (!currentUser.education_completed && !['moderator', 'admin'].includes(currentUser.role)) throw new Error('EDUCATION_REQUIRED');
+  const currentUser = await requireCurrentUser(req, admin, 'id,email,name,role,city,blocked');
+  if (currentUser.role !== 'participant') throw new Error('PARTICIPANT_REQUIRED');
+  if (!await hasPassedCourse(admin, currentUser.id, 'participant')) throw new Error('EDUCATION_REQUIRED');
 
   const files = cleanFileList(body.files);
   const treePhoto = cleanPhoto(body.treePhoto);
+  const landmarks = cleanLandmarkSets(body.landmarks, 30);
   const coordinates = safeText(body.coordinates, 80);
   const parsedCoordinates = splitCoordinates(coordinates);
   const sourceType = SOURCE_TYPES.has(body.sourceType) ? body.sourceType : 'own';
   let organizationId = body.organizationId || null;
   let projectId = body.projectId || null;
   let objectId = body.objectId || null;
+  let selectedObject = null;
 
   if (sourceType !== 'own') {
     const context = await participantContext(admin, currentUser);
-    const selectedObject = (context.objects || []).find(function (item) { return item.id === objectId; });
+    selectedObject = (context.objects || []).find(function (item) { return item.id === objectId; });
     if (!selectedObject) throw new Error('OBJECT_NOT_AVAILABLE');
     organizationId = selectedObject.organizationId;
     projectId = selectedObject.projectId;
@@ -159,6 +190,23 @@ async function handleCreate(req, res, admin, body) {
   } else {
     organizationId = null; projectId = null; objectId = null;
   }
+
+  if (selectedObject && Number.isFinite(Number(selectedObject.centerLat)) && Number.isFinite(Number(selectedObject.centerLng)) && Number(selectedObject.radiusM) > 0) {
+    const distance = distanceMeters(parsedCoordinates.latitude, parsedCoordinates.longitude, Number(selectedObject.centerLat), Number(selectedObject.centerLng));
+    if (distance > Number(selectedObject.radiusM)) throw new Error('OUTSIDE_ASSIGNED_TERRITORY');
+  }
+
+  const leafHashes = files.map(function (file) { return file.sha256; });
+  const allHashes = [treePhoto && treePhoto.sha256].concat(leafHashes).filter(Boolean);
+  if (allHashes.length !== 31 || new Set(allHashes).size !== allHashes.length) throw new Error('DUPLICATE_PHOTO');
+  const duplicateQuery = await admin.from('observation_file_hashes').select('sha256,request_id').in('sha256', allHashes);
+  if (duplicateQuery.error) throw duplicateQuery.error;
+  if ((duplicateQuery.data || []).length) throw new Error('DUPLICATE_PHOTO');
+
+  const integrityFlags = [];
+  const deviceLatitude = Number(body.deviceLatitude); const deviceLongitude = Number(body.deviceLongitude);
+  if (!Number.isFinite(deviceLatitude) || !Number.isFinite(deviceLongitude)) integrityFlags.push('gps_not_shared');
+  else if (distanceMeters(parsedCoordinates.latitude, parsedCoordinates.longitude, deviceLatitude, deviceLongitude) > 250) integrityFlags.push('device_far_from_point');
 
   const payload = {
     id: 'ECO-' + new Date().getFullYear() + '-' + String(Date.now()).slice(-7),
@@ -175,6 +223,12 @@ async function handleCreate(req, res, admin, body) {
     trunkDiameterCm: body.trunkDiameterCm, treeHeightEstimateM: body.treeHeightEstimateM,
     treeCondition: safeText(body.treeCondition, 100), treeDamageNotes: safeText(body.treeDamageNotes, 1000),
     backgroundFlags: Array.isArray(body.backgroundFlags) ? body.backgroundFlags.slice(0, 30) : [],
+    participantChecklist: Array.isArray(body.participantChecklist) ? body.participantChecklist.slice(0, 12).map(Boolean) : [],
+    landmarks: landmarks, leafHashes: leafHashes,
+    photoPrecheck: body.photoPrecheck && typeof body.photoPrecheck === 'object' ? body.photoPrecheck : {},
+    integrityCode: safeText(body.integrityCode, 20).toUpperCase(), capturedAt: body.capturedAt || new Date().toISOString(),
+    gpsAccuracyM: body.gpsAccuracyM, deviceLatitude: deviceLatitude, deviceLongitude: deviceLongitude,
+    integrityFlags: integrityFlags,
     aiResult: body.aiResult || null
   };
 
@@ -182,9 +236,16 @@ async function handleCreate(req, res, admin, body) {
   if (!validCoordinates(payload.coordinates)) throw new Error('INVALID_COORDINATES');
   if (files.length !== 30) throw new Error('PHOTO_COUNT_REQUIRED');
   if (!treePhoto) throw new Error('TREE_PHOTO_REQUIRED');
+  if (!/^[A-Z0-9]{6}$/.test(payload.integrityCode)) throw new Error('INTEGRITY_CODE_REQUIRED');
+  if (payload.participantChecklist.length < 6 || payload.participantChecklist.some(function (value) { return !value; })) throw new Error('CHECKLIST_REQUIRED');
+  if (landmarks.length !== files.length || landmarks.some(function (set) { return !isCompleteSet(set); })) throw new Error('LANDMARKS_REQUIRED');
+  if (!payload.photoPrecheck || payload.photoPrecheck.passed !== true) throw new Error('PHOTO_PRECHECK_REQUIRED');
 
   const { data, error } = await requests(admin).insert(toDbInsert(payload, currentUser)).select('*').single();
   if (error) throw error;
+  const hashRows = allHashes.map(function (hash, index) { return { sha256: hash, request_id: data.id, user_id: currentUser.id, file_kind: index === 0 ? 'tree' : 'leaf' }; });
+  const hashInsert = await admin.from('observation_file_hashes').insert(hashRows);
+  if (hashInsert.error) throw hashInsert.error;
   res.statusCode = 201;
   return res.end(JSON.stringify({ request: toClientRequest(data) }));
 }
@@ -192,14 +253,86 @@ async function handleCreate(req, res, admin, body) {
 async function handleModerate(req, res, admin, body) {
   const currentUser = await requireCurrentUser(req, admin, 'id,role,blocked');
   if (!['moderator', 'admin'].includes(currentUser.role)) throw new Error('MODERATOR_REQUIRED');
+  if (currentUser.role === 'moderator' && !await hasPassedCourse(admin, currentUser.id, 'moderator')) throw new Error('EDUCATION_REQUIRED');
   const id = safeText(body.id, 80);
   const patch = body.patch && typeof body.patch === 'object' ? body.patch : {};
   if (!id) throw new Error('REQUEST_ID_REQUIRED');
   if (!validPatch(patch)) throw new Error('INVALID_MODERATION_PATCH');
-  const { data, error } = await requests(admin).update(toDbUpdate(patch)).eq('id', id).select('*').single();
+  if (patch.status && !['pending_human', 'needs_revision', 'human_approved', 'rejected'].includes(patch.status)) throw new Error('INVALID_MODERATION_PATCH');
+  if (patch.aiStatus || patch.aiResult || patch.publishedAt) throw new Error('INVALID_MODERATION_PATCH');
+  const safePatch = { status: patch.status, humanStatus: patch.humanStatus,
+    moderationReason: safeText(patch.moderationReason, 1000),
+    moderationChecklist: Array.isArray(patch.moderationChecklist) ? patch.moderationChecklist.slice(0, 20).map(Boolean) : undefined,
+    moderatedAt: patch.moderatedAt || new Date().toISOString(),
+    returnedAt: patch.status === 'needs_revision' ? new Date().toISOString() : undefined };
+  const { data, error } = await requests(admin).update(toDbUpdate(safePatch)).eq('id', id).select('*').single();
   if (error) throw error;
+  const event = await admin.from('moderation_events').insert({ request_id: id, actor_id: currentUser.id,
+    action: patch.status || 'checklist_updated', details: { reason: safePatch.moderationReason || '', checklist: safePatch.moderationChecklist || [] } });
+  if (event.error) throw event.error;
   res.statusCode = 200;
   return res.end(JSON.stringify({ request: toClientRequest(data) }));
+}
+
+async function requireModerator(req, admin) {
+  const user = await requireCurrentUser(req, admin, 'id,role,blocked');
+  if (!['moderator', 'admin'].includes(user.role)) throw new Error('MODERATOR_REQUIRED');
+  if (user.role === 'moderator' && !await hasPassedCourse(admin, user.id, 'moderator')) throw new Error('EDUCATION_REQUIRED');
+  return user;
+}
+
+async function handleSaveLandmarks(req, res, admin, body) {
+  const user = await requireModerator(req, admin); const id = safeText(body.id, 80);
+  const landmarks = cleanLandmarkSets(body.landmarks, 30);
+  if (!id) throw new Error('REQUEST_ID_REQUIRED');
+  if (!landmarks.length || landmarks.some(function (set) { return !isCompleteSet(set); })) throw new Error('LANDMARKS_REQUIRED');
+  const update = await requests(admin).update({ landmarks: landmarks, updated_at: new Date().toISOString() }).eq('id', id).select('*').single();
+  if (update.error) throw update.error;
+  const event = await admin.from('moderation_events').insert({ request_id: id, actor_id: user.id, action: 'landmarks_corrected', details: { leafCount: landmarks.length } });
+  if (event.error) throw event.error;
+  res.statusCode = 200; return res.end(JSON.stringify({ request: toClientRequest(update.data) }));
+}
+
+async function handleStartAnalysis(req, res, admin, body) {
+  const user = await requireModerator(req, admin); const id = safeText(body.id, 80);
+  const found = await requests(admin).select('*').eq('id', id).maybeSingle();
+  if (found.error) throw found.error; if (!found.data) throw new Error('REQUEST_NOT_FOUND');
+  if (found.data.human_status !== 'approved') throw new Error('HUMAN_APPROVAL_REQUIRED');
+  const landmarks = cleanLandmarkSets(found.data.landmarks, 30);
+  if (!landmarks.length || landmarks.some(function (set) { return !isCompleteSet(set); })) throw new Error('LANDMARKS_REQUIRED');
+  const now = new Date().toISOString();
+  const update = await requests(admin).update({ ai_status: 'processing', analysis_started_at: now, updated_at: now }).eq('id', id).select('*').single();
+  if (update.error) throw update.error;
+  const event = await admin.from('moderation_events').insert({ request_id: id, actor_id: user.id, action: 'analysis_started', details: {} });
+  if (event.error) throw event.error;
+  res.statusCode = 202; return res.end(JSON.stringify({ request: toClientRequest(update.data), readyAfterMs: 8000 }));
+}
+
+async function handleFinishAnalysis(req, res, admin, body) {
+  const user = await requireModerator(req, admin); const id = safeText(body.id, 80);
+  const found = await requests(admin).select('*').eq('id', id).maybeSingle();
+  if (found.error) throw found.error; if (!found.data) throw new Error('REQUEST_NOT_FOUND');
+  if (found.data.ai_status !== 'processing' || !found.data.analysis_started_at) throw new Error('ANALYSIS_NOT_STARTED');
+  if (Date.now() - new Date(found.data.analysis_started_at).getTime() < 8000) throw new Error('ANALYSIS_STILL_RUNNING');
+  const result = calculateRequestFa(found.data.landmarks); const now = new Date().toISOString();
+  const update = await requests(admin).update({ ai_status: 'checked', ai_result: result, ai_checked_at: now, updated_at: now }).eq('id', id).select('*').single();
+  if (update.error) throw update.error;
+  const event = await admin.from('moderation_events').insert({ request_id: id, actor_id: user.id, action: 'analysis_completed', details: { meanFa: result.meanFa, validLeafCount: result.validLeafCount, engine: result.engine } });
+  if (event.error) throw event.error;
+  res.statusCode = 200; return res.end(JSON.stringify({ request: toClientRequest(update.data) }));
+}
+
+async function handlePublish(req, res, admin, body) {
+  const user = await requireModerator(req, admin); const id = safeText(body.id, 80);
+  const found = await requests(admin).select('id,human_status,ai_status').eq('id', id).maybeSingle();
+  if (found.error) throw found.error; if (!found.data) throw new Error('REQUEST_NOT_FOUND');
+  if (found.data.human_status !== 'approved' || found.data.ai_status !== 'checked') throw new Error('FINAL_REVIEW_REQUIRED');
+  const now = new Date().toISOString();
+  const update = await requests(admin).update({ status: 'published', published_at: now, approved_at: now, updated_at: now }).eq('id', id).select('*').single();
+  if (update.error) throw update.error;
+  const event = await admin.from('moderation_events').insert({ request_id: id, actor_id: user.id, action: 'published', details: {} });
+  if (event.error) throw event.error;
+  res.statusCode = 200; return res.end(JSON.stringify({ request: toClientRequest(update.data) }));
 }
 
 function photoExtension(type) {
@@ -266,9 +399,10 @@ async function handleParticipationAction(req, res, admin, body) {
 function statusForError(error) {
   const code = String(error && error.message || '');
   if (code === 'AUTH_REQUIRED') return 401;
-  if (['ACCOUNT_BLOCKED', 'EDUCATION_REQUIRED', 'MODERATOR_REQUIRED', 'CURATOR_REQUIRED'].includes(code)) return 403;
-  if (['ORGANIZATION_NOT_FOUND', 'MEMBER_NOT_FOUND', 'OBJECT_NOT_AVAILABLE', 'PROJECT_NOT_AVAILABLE'].includes(code)) return 404;
-  if (/^(REQUIRED_|INVALID_|PHOTO_|TREE_|REQUEST_|UNKNOWN_)/.test(code)) return 400;
+  if (['ACCOUNT_BLOCKED', 'EDUCATION_REQUIRED', 'MODERATOR_REQUIRED', 'CURATOR_REQUIRED', 'PARTICIPANT_REQUIRED'].includes(code)) return 403;
+  if (['ORGANIZATION_NOT_FOUND', 'MEMBER_NOT_FOUND', 'OBJECT_NOT_AVAILABLE', 'PROJECT_NOT_AVAILABLE', 'REQUEST_NOT_FOUND'].includes(code)) return 404;
+  if (code === 'ANALYSIS_STILL_RUNNING') return 409;
+  if (/^(REQUIRED_|INVALID_|PHOTO_|TREE_|REQUEST_|UNKNOWN_|DUPLICATE_|LANDMARKS_|CHECKLIST_|INTEGRITY_|OUTSIDE_|HUMAN_|ANALYSIS_|FINAL_)/.test(code)) return 400;
   return 500;
 }
 
@@ -285,6 +419,10 @@ module.exports = async function handler(req, res) {
     const body = await readBody(req);
     if (body.action === 'create') return handleCreate(req, res, admin, body);
     if (body.action === 'moderate') return handleModerate(req, res, admin, body);
+    if (body.action === 'save_landmarks') return handleSaveLandmarks(req, res, admin, body);
+    if (body.action === 'start_analysis') return handleStartAnalysis(req, res, admin, body);
+    if (body.action === 'finish_analysis') return handleFinishAnalysis(req, res, admin, body);
+    if (body.action === 'publish') return handlePublish(req, res, admin, body);
     if (body.action === 'prepare_uploads') return handlePrepareUploads(req, res, admin, body);
     return handleParticipationAction(req, res, admin, body);
   } catch (error) {

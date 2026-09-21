@@ -1,4 +1,4 @@
-// curator.js — организации, проекты, объекты, участники и статусы заявок
+// curator.js, организации, проекты, объекты, участники и статусы заявок
 (function () {
   'use strict';
 
@@ -14,7 +14,8 @@
       workspace.hidden = true;
       return;
     }
-    if (user.role === 'curator' && localStorage.getItem('curatorEducationCompleted') !== 'true') {
+    var curatorCourse = user.role === 'curator' ? await EcoAuth.refreshCourseStatus('curator').catch(function () { return null; }) : { completed: true };
+    if (user.role === 'curator' && (!curatorCourse || !curatorCourse.completed)) {
       denied.hidden = true;
       educationRequired.hidden = false;
       workspace.hidden = true;
@@ -24,7 +25,7 @@
     educationRequired.hidden = true;
     workspace.hidden = false;
 
-    var dashboard = { organizations: [], projects: [], objects: [], members: [], requests: [] };
+    var dashboard = { organizations: [], projects: [], objects: [], members: [], assignments: [], requests: [] };
     var orgForm = document.getElementById('organizaciyaForma');
     var projectForm = document.getElementById('proektForma');
     var objectForm = document.getElementById('obektForma');
@@ -108,15 +109,17 @@
       participantMembers.forEach(function (member) {
         var tr = document.createElement('tr');
         var org = dashboard.organizations.find(function (item) { return item.id === member.organizationId; });
-        var requestCount = dashboard.requests.filter(function (request) { return request.userId === member.userId; }).length;
-        [member.profile?.name || member.profile?.email || member.userId, member.profile?.city || 'Не указан', org?.name || '', String(requestCount)].forEach(function (value) {
+        var assignments = dashboard.assignments.filter(function (item) { return item.userId === member.userId; });
+        var submitted = assignments.reduce(function (sum,item) { return sum + Number(item.submittedTrees || 0); }, 0);
+        var published = assignments.reduce(function (sum,item) { return sum + Number(item.publishedTrees || 0); }, 0);
+        [member.profile?.name || member.profile?.email || member.userId, member.profile?.city || 'Не указан', org?.name || '', String(assignments.length), String(submitted), String(published)].forEach(function (value) {
           var td = document.createElement('td'); td.textContent = value; tr.appendChild(td);
         });
         membersBody.appendChild(tr);
       });
       if (!participantMembers.length) {
         var tr = document.createElement('tr');
-        var td = document.createElement('td'); td.colSpan = 4; td.textContent = 'Участники появятся после входа по коду организации.'; tr.appendChild(td); membersBody.appendChild(tr);
+        var td = document.createElement('td'); td.colSpan = 6; td.textContent = 'Участники появятся после входа по коду организации.'; tr.appendChild(td); membersBody.appendChild(tr);
       }
 
       var statuses = document.getElementById('statusySpisok');
@@ -134,6 +137,7 @@
       dashboard.objects = dashboard.objects || [];
       dashboard.members = dashboard.members || [];
       dashboard.requests = dashboard.requests || [];
+      dashboard.assignments = dashboard.assignments || [];
       render();
     }
 

@@ -1,4 +1,5 @@
 /* map.css — интерактивная карта подтверждённых наблюдений */
+.karta--temnaya [class*="ground-pane"]{filter:invert(.87) hue-rotate(170deg) brightness(.72) contrast(.92)}
 
 /* обёртка страницы карты */
 .karta-stranica {

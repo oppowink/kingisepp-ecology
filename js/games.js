@@ -1,28 +1,24 @@
-/* games.js — три локальные мини-игры. Прогресс обучения, роли, заявки и API
-   не затрагиваются. Фотографии подключаются по путям из GAMES_ASSETS.txt. */
+/* games.js. Три локальные мини-игры. Прогресс обучения, роли и заявки не затрагиваются. */
 (function () {
   'use strict';
 
   const ASSETS = {
-    roadTree: { path: 'img/games/tree_road.jpg', alt: 'Берёза возле дороги', detail: 'Дерево у улицы, рядом асфальт.' },
-    parkTree: { path: 'img/games/tree_park.jpg', alt: 'Берёза в парке', detail: 'Дерево в парке, вокруг открытая почва.' },
-    normal1: { path: 'img/games/leaf_normal_1.png', alt: 'Образец с целым контуром', detail: 'Край целый. Обе стороны близки по форме.' },
-    normal2: { path: 'img/games/leaf_normal_2.png', alt: 'Целый лист с небольшой естественной неровностью', detail: 'Отверстий и разрывов нет. Различия сторон небольшие.' },
-    normal3: { path: 'img/games/leaf_normal_3.png', alt: 'Целый расправленный лист', detail: 'Пластинка расправлена. Край виден полностью.' },
-    damaged1: { path: 'img/games/leaf_damaged_1.png', alt: 'Лист с утраченной частью края', detail: 'Часть края отсутствует: ткань оборвана.' },
-    damaged2: { path: 'img/games/leaf_damaged_2.png', alt: 'Лист с разрывом пластинки', detail: 'От края к середине проходит разрыв.' },
-    damaged3: { path: 'img/games/leaf_damaged_3.png', alt: 'Лист с отверстиями в пластинке', detail: 'Внутри пластинки видны отверстия.' },
-    asymmetric1: { path: 'img/games/leaf_asymmetric_1.png', alt: 'Целый лист с разной шириной сторон', detail: 'Край целый. Одна сторона заметно шире другой.' },
-    asymmetric2: { path: 'img/games/leaf_asymmetric_2.png', alt: 'Целый лист с различием формы сторон', detail: 'Ткань не утрачена. Форма сторон заметно различается.' },
-    asymmetric3: { path: 'img/games/leaf_asymmetric_3.png', alt: 'Целый лист с различием расположения жилок', detail: 'Разрывов нет. Парные жилки расположены неодинаково.' },
-    blurred: { path: 'img/games/moderator_leaf_blurred.jpg', alt: 'Нерезкая фотография листа', detail: 'Из-за нерезкости границы листа и жилки не различимы.' },
-    cropped: { path: 'img/games/moderator_leaf_cropped.jpg', alt: 'Фотография с обрезанным краем листа', detail: 'Часть листа находится за границей снимка.' },
-    street: { path: 'img/icons/games/territory-road.png', alt: 'Иконка: улица', detail: '∥', icon: true },
-    park: { path: 'img/icons/games/territory-park.png', alt: 'Иконка: парк', detail: '◇', icon: true },
-    asphalt: { path: 'img/icons/games/surface-asphalt.png', alt: 'Иконка: асфальт', detail: '▤', icon: true },
-    soil: { path: 'img/icons/games/surface-soil.png', alt: 'Иконка: почва', detail: '▧', icon: true },
-    near: { path: 'img/icons/games/distance-near.png', alt: 'Иконка: близко к дороге', detail: '↔', icon: true },
-    far: { path: 'img/icons/games/distance-far.png', alt: 'Иконка: далеко от дороги', detail: '↤', icon: true }
+    roadTree: { path: 'img/home/aktualnost/doroga.png', alt: 'Берёзы возле дороги', detail: 'Дерево у улицы, рядом асфальт.' },
+    parkTree: { path: 'img/home/aktualnost/berezy.png', alt: 'Берёзы вдали от дороги', detail: 'Дерево в зелёной зоне.' },
+    normal1: { path: 'img/leaf1.png', alt: 'Образец с целым контуром', detail: 'Край целый. Обе стороны близки по форме.' },
+    normal2: { path: 'img/leaf2.png', alt: 'Целый лист с небольшой естественной неровностью', detail: 'Отверстий и разрывов нет.' },
+    normal3: { path: 'img/leaf3.png', alt: 'Целый расправленный лист', detail: 'Пластинка расправлена. Край виден полностью.' },
+    damaged1: { path: 'img/leaf4.png', alt: 'Учебный образец повреждённого листа', detail: 'Часть края нужно внимательно проверить.' },
+    damaged2: { path: 'img/leaf4.png', alt: 'Учебный образец с повреждением', detail: 'Повреждение мешает восстановить исходную форму.' },
+    damaged3: { path: 'img/leaf4.png', alt: 'Учебный образец с повреждением пластинки', detail: 'Пластинку нужно проверить на отверстия.' },
+    asymmetric1: { path: 'img/leaf2.png', alt: 'Целый лист с разной шириной сторон', detail: 'Одна сторона заметно шире другой.' },
+    asymmetric2: { path: 'img/leaf3.png', alt: 'Целый лист с различием формы сторон', detail: 'Ткань не утрачена.' },
+    asymmetric3: { path: 'img/leaf1.png', alt: 'Целый лист с различием сторон', detail: 'Парные жилки расположены неодинаково.' },
+    blurred: { path: 'img/leaf4.png', alt: 'Учебный пример нерезкой фотографии', detail: 'Границы листа и жилки различимы недостаточно.' },
+    cropped: { path: 'img/leaf3.png', alt: 'Учебный пример обрезанного листа', detail: 'Нужно проверить, весь ли лист попал в кадр.' },
+    street: { path: '', alt: 'Улица', detail: 'улица', icon: true }, park: { path: '', alt: 'Парк', detail: 'парк', icon: true },
+    asphalt: { path: '', alt: 'Асфальт', detail: 'асфальт', icon: true }, soil: { path: '', alt: 'Почва', detail: 'почва', icon: true },
+    near: { path: '', alt: 'Близко к дороге', detail: 'близко', icon: true }, far: { path: '', alt: 'Далеко от дороги', detail: 'далеко', icon: true }
   };
   const SITES = {
     road: { name: 'У дороги', asset: 'roadTree', description: 'Улица · асфальт · близко к дороге', fields: { territory: 'street', surface: 'asphalt', distance: 'near' } },
@@ -30,7 +26,7 @@
   };
   const LEAVES = [
     { asset: 'normal1', category: 'normal', note: 'Целый контур позволяет выполнить промеры. Небольшая естественная неровность допустима.' },
-    { asset: 'damaged1', category: 'damaged', note: 'Утраченная ткань — повреждение, а не различие сторон при развитии листа.' },
+    { asset: 'damaged1', category: 'damaged', note: 'Утраченная ткань, повреждение, а не различие сторон при развитии листа.' },
     { asset: 'asymmetric1', category: 'asymmetric', note: 'Различие ширины нужно измерить. Целый асимметричный лист не исключают только из-за формы.' },
     { asset: 'normal2', category: 'normal', note: 'Материал целый. Отбирать только идеально симметричные листья нельзя.' },
     { asset: 'damaged2', category: 'damaged', note: 'Разрыв мешает восстановить исходную форму. Этот образец отмечают отдельно.' },
@@ -165,7 +161,7 @@
   }
   function assetMarkup(key) {
     const asset = ASSETS[key];
-    const placeholder = asset.icon ? asset.detail : '<span class="asset-label">Фото пока нет</span><span>' + escapeHTML(asset.detail) + '</span>';
+    const placeholder = asset.icon ? asset.detail : '<span class="asset-label">Учебный образец</span><span>' + escapeHTML(asset.detail) + '</span>';
     return '<span class="asset' + (asset.icon ? ' asset-icon' : '') + '" title="' + escapeHTML(asset.alt) + '">' +
       '<img hidden draggable="false" data-asset="' + escapeHTML(key) + '" alt="' + escapeHTML(asset.alt) + '">' +
       '<span class="asset-fallback"' + (asset.icon ? ' aria-hidden="true"' : '') + '>' + placeholder + '</span></span>';
@@ -173,7 +169,7 @@
   function hydrateAssets() {
     stage.querySelectorAll('img[data-asset]').forEach(img => {
       const asset = ASSETS[img.dataset.asset];
-      if (missingAssets.has(asset.path)) return;
+      if (!asset.path || missingAssets.has(asset.path)) return;
       img.addEventListener('load', () => { img.hidden = false; img.parentElement.classList.add('asset-loaded'); }, { once: true });
       img.addEventListener('error', () => { missingAssets.add(asset.path); img.hidden = true; }, { once: true });
       img.src = asset.path;
@@ -435,7 +431,7 @@
       facts = ['Паспорт связывает каждый образец с местом сбора.', 'Различие условий не доказывает влияние дороги: нужны измерения, повторы и сравнение.', 'В реальном проекте одна заявка включает дерево, его фотографию и 30 листьев.'];
     } else if (currentGame === 'leaves') {
       result = 'Разложено ' + model.sorted + '/9. С первого раза: ' + model.firstTry + '. Ошибочных переносов: ' + model.errors + '.';
-      facts = ['Повреждение ткани и различие сторон — разные признаки.', 'Целые асимметричные листья не отбрасывают ради красивого результата.', 'На платформе пригодность материала проверяется по методике, а ФА рассчитывается по промерам.'];
+      facts = ['Повреждение ткани и различие сторон, разные признаки.', 'Целые асимметричные листья не отбрасывают ради красивого результата.', 'На платформе пригодность материала проверяется по методике, а ФА рассчитывается по промерам.'];
     } else {
       result = 'Проверено ' + model.decisions.length + '/3. Обоснованных решений: ' + model.score + '.';
       facts = model.decisions.map(entry => {

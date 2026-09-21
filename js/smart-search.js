@@ -1,4 +1,4 @@
-// smart-search.js — FAQ-аккордеон и локальный поиск без внешнего API
+// smart-search.js, FAQ-аккордеон и локальный поиск без внешнего API
 (function () {
   'use strict';
 

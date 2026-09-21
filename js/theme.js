@@ -1,4 +1,4 @@
-// theme.js — переключение светлой и тёмной темы (сохранение в localStorage)
+// theme.js, переключение светлой и тёмной темы (сохранение в localStorage)
 (function () {
   'use strict';
 
