@@ -104,10 +104,6 @@
 
 <!-- основной контент -->
 <main class="lichnyy-kabinet vnutrennyaya-stranica">
-<nav aria-label="Навигация страницы" class="stranica-deystviya">
-<a class="stranica-knopka" href="index.html">В меню</a>
-</nav>
-
 <!-- блок входа -->
 <section aria-labelledby="vhodZagolovok" class="vhod-blok" id="vhodBlok">
 <h1 id="vhodZagolovok">Личный кабинет</h1>
@@ -145,16 +141,38 @@
 
 <!-- блок личного кабинета (скрыт до входа) -->
 <section aria-labelledby="kabinetImya" class="kabinet-blok" hidden="" id="kabinetBlok">
-<div class="kabinet-welcome" id="kabinetWelcome" hidden aria-live="polite"><h2>Привет!</h2><p id="kabinetWelcomeText"></p></div>
+<div class="kabinet-welcome" id="kabinetWelcome" hidden aria-live="polite"><h2>Привет!</h2></div>
+<div class="kabinet-intro"><p id="kabinetWelcomeText"></p></div>
 <!-- информация о пользователе -->
 <div class="kabinet-polzovatel">
+<div class="kabinet-lichnost">
 <h1 id="kabinetImya"></h1>
-<p id="kabinetEmail"></p>
+<div class="kabinet-lichnost__detali"><p id="kabinetEmail"></p><button class="knopka-tekst" id="vyhodKnopka" type="button">Выйти</button></div>
+</div>
 <p class="kabinet-status" id="kabinetObuchenie"></p>
-<a class="kabinet-guide" id="kabinetGuide" href="docs/volunteer-method-guide.pdf" download>Сначала можно скачать методичку</a>
-<button class="knopka-tekst" id="vyhodKnopka" type="button">Выйти</button>
+<a class="kabinet-guide" id="kabinetGuide" href="docs/volunteer-method-guide.pdf" download>Скачать методическое пособие</a>
 </div>
 
+
+<section aria-label="Тестовый вход под ролью" class="kabinet-roli-test" hidden="" id="kabinetRoliTest">
+<div aria-label="Тестовый вход под ролью" class="kabinet-roli-test__knopki" role="group">
+<button class="knopka-vtorichnaya" data-test-role="participant" type="button">Войти как волонтёр</button>
+<button aria-label="Войти как куратор, dev-curator@kingisepp.ru" class="knopka-vtorichnaya" data-test-email="dev-curator@kingisepp.ru" data-test-role="curator" type="button">Войти как куратор</button>
+<button class="knopka-vtorichnaya" data-test-role="moderator" type="button">Войти как модератор</button>
+<button class="knopka-vtorichnaya" data-test-role="admin" type="button">Войти как админ</button>
+</div>
+</section>
+<!-- навигация в кабинете -->
+<nav aria-label="Разделы личного кабинета" class="kabinet-navigaciya" id="kabinetNavigaciya">
+<a href="education.html" id="ssylkaObuchenie">Обучение</a>
+<a href="submit.html" id="ssylkaPodacha">Добавить точку</a>
+<a href="my-requests.html" id="ssylkaMoiZayavki">Мои заявки <span class="kabinet-navigaciya__schetchik" id="kolichestvoZayavok"></span></a>
+<a href="feedback.html" id="ssylkaFeedback">Обратная связь</a>
+<a hidden="" href="education-moderator.html" id="ssylkaObuchenieModeratora">Обучение модератора</a>
+<a hidden="" href="moderator.html" id="ssylkaModerator">Модерация</a>
+<a hidden="" href="education-curator.html" id="ssylkaObuchenieKuratora">Обучение куратора</a>
+<a hidden="" href="curator.html" id="ssylkaKurator">Кабинет куратора</a>
+</nav>
 <!-- профиль участника: город и привязка к организации -->
 <section aria-labelledby="profilNastroikiZagolovok" class="kabinet-profil" id="kabinetProfil">
 <h2 id="profilNastroikiZagolovok">Профиль и организация</h2>
@@ -178,29 +196,10 @@
 </div>
 <p aria-live="polite" class="soobshchenie" hidden="" id="profilSoobshchenie"></p>
 </section>
-<section aria-label="Тестовый вход под ролью" class="kabinet-roli-test" hidden="" id="kabinetRoliTest">
-<div aria-label="Тестовый вход под ролью" class="kabinet-roli-test__knopki" role="group">
-<button class="knopka-vtorichnaya" data-test-role="participant" type="button">Войти как волонтёр</button>
-<button aria-label="Войти как куратор, dev-curator@kingisepp.ru" class="knopka-vtorichnaya" data-test-email="dev-curator@kingisepp.ru" data-test-role="curator" type="button">Войти как куратор</button>
-<button class="knopka-vtorichnaya" data-test-role="moderator" type="button">Войти как модератор</button>
-<button class="knopka-vtorichnaya" data-test-role="admin" type="button">Войти как админ</button>
-</div>
-</section>
-<!-- навигация в кабинете -->
-<nav aria-label="Разделы личного кабинета" class="kabinet-navigaciya" id="kabinetNavigaciya">
-<a href="education.html" id="ssylkaObuchenie">Обучение</a>
-<a href="submit.html" id="ssylkaPodacha">Добавить точку</a>
-<a href="my-requests.html" id="ssylkaMoiZayavki">Мои заявки <span class="kabinet-navigaciya__schetchik" id="kolichestvoZayavok"></span></a>
-<a href="feedback.html" id="ssylkaFeedback">Обратная связь</a>
-<a hidden="" href="education-moderator.html" id="ssylkaObuchenieModeratora">Обучение модератора</a>
-<a hidden="" href="moderator.html" id="ssylkaModerator">Модерация</a>
-<a hidden="" href="education-curator.html" id="ssylkaObuchenieKuratora">Обучение куратора</a>
-<a hidden="" href="curator.html" id="ssylkaKurator">Кабинет куратора</a>
-</nav>
 <section aria-labelledby="sertifikatZagolovok" class="kabinet-sertifikat">
 <h2 id="sertifikatZagolovok">Сертификат</h2>
 <p id="sertifikatTekst">Сертификат откроется после обязательного обучения.</p>
-<button class="ssylka-svechenie" id="sertifikatVolonteraKnopka" type="button">Открыть сертификат <span aria-hidden="true">↗</span></button>
+<button class="ssylka-svechenie" id="sertifikatVolonteraKnopka" type="button">Открыть сертификат</button>
 <p aria-live="polite" class="soobshchenie" hidden="" id="sertifikatSoobshchenie"></p>
 </section>
 </section>

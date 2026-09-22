@@ -3,19 +3,20 @@
   'use strict';
 
   const ASSETS = {
-    roadTree: { path: 'img/games/tree-street.jpg', alt: 'Берёза на улице Кингисеппа', detail: 'Настоящее дерево у улицы.' },
-    parkTree: { path: 'img/games/tree-park.jpg', alt: 'Берёза в зелёной зоне Кингисеппа', detail: 'Настоящее дерево среди других берёз.' },
-    normal1: { path: 'img/games/birch-leaves.jpg', crop: 'normal-left', alt: 'Первый целый лист берёзы', detail: 'Край листа целый и различим.' },
-    normal2: { path: 'img/games/birch-leaves.jpg', crop: 'normal-middle', alt: 'Второй целый лист берёзы', detail: 'Жилки и контур видны.' },
-    normal3: { path: 'img/games/birch-leaves.jpg', crop: 'normal-right', alt: 'Третий целый лист берёзы', detail: 'Пластинка расправлена.' },
-    damaged1: { path: 'img/games/damaged-leaves.jpg', crop: 'damaged-top', alt: 'Лист берёзы с отмершим краем', detail: 'Край повреждён и изменил форму.' },
-    damaged2: { path: 'img/games/damaged-leaves.jpg', crop: 'damaged-middle', alt: 'Лист берёзы с утратой ткани', detail: 'По такому краю нельзя восстановить исходную форму.' },
-    damaged3: { path: 'img/games/damaged-leaves.jpg', crop: 'damaged-bottom', alt: 'Третий повреждённый лист берёзы', detail: 'Заметны обширные повреждения.' },
-    other1: { path: 'img/games/other-species.jpg', crop: 'other-top', alt: 'Неберёзовый лист вверху слева', detail: 'Форма и край не подходят под берёзу повислую.' },
-    other2: { path: 'img/games/other-species.jpg', crop: 'other-bottom', alt: 'Неберёзовый лист внизу слева', detail: 'Это лист другого растения.' },
-    other3: { path: 'img/games/other-species.jpg', crop: 'other-right', alt: 'Крупный кленовый лист справа', detail: 'Лист клёна, а не берёзы.' },
-    blurred: { path: 'img/games/leaf-sideways.jpg', alt: 'Лист снят под неудобным углом', detail: 'Положение листа не подходит для разметки.' },
-    cropped: { path: 'img/games/leaf-damaged.jpg', alt: 'Повреждённый лист', detail: 'Контур повреждён.' },
+    roadTree: { path: 'img/games/tree-street-edited.png', alt: 'Берёза на улице Кингисеппа, игровая версия снимка', detail: 'Берёза у улицы.' },
+    parkTree: { path: 'img/games/tree-park-edited.png', alt: 'Берёза в зелёной зоне Кингисеппа, игровая версия снимка', detail: 'Берёза в зелёной зоне.' },
+    normal1: { path: 'img/games/normal1-cutout.png', leaf: true, alt: 'Первый целый лист берёзы', detail: 'Край листа целый и различим.' },
+    normal2: { path: 'img/games/normal2-cutout.png', leaf: true, alt: 'Второй целый лист берёзы', detail: 'Жилки и контур видны.' },
+    normal3: { path: 'img/games/normal3-cutout.png', leaf: true, alt: 'Третий целый лист берёзы', detail: 'Пластинка расправлена.' },
+    damaged1: { path: 'img/games/damaged1-cutout.png', leaf: true, alt: 'Лист берёзы с отмершим краем', detail: 'Край повреждён и изменил форму.' },
+    damaged2: { path: 'img/games/damaged2-cutout.png', leaf: true, alt: 'Лист берёзы с утратой ткани', detail: 'По такому краю нельзя восстановить исходную форму.' },
+    damaged3: { path: 'img/games/damaged3-cutout.png', leaf: true, alt: 'Третий повреждённый лист берёзы', detail: 'Заметны обширные повреждения.' },
+    other1: { path: 'img/games/other1-cutout.png', leaf: true, alt: 'Неберёзовый узкий лист', detail: 'Форма и край не подходят под берёзу повислую.' },
+    other2: { path: 'img/games/other2-cutout.png', leaf: true, alt: 'Неберёзовый ярко-зелёный лист', detail: 'Это лист другого растения.' },
+    other3: { path: 'img/games/other3-cutout.png', leaf: true, alt: 'Крупный кленовый лист', detail: 'Лист клёна, а не берёзы.' },
+    goodPhoto: { path: 'img/games/leaf-good-angle-cutout.png', leaf: true, alt: 'Лист на удачном учебном снимке', detail: 'Виден весь контур листа.' },
+    blurred: { path: 'img/games/leaf-sideways.jpg', alt: 'Исходный снимок листа под неудобным углом', detail: 'Положение листа на снимке не подходит для разметки.' },
+    cropped: { path: 'img/games/leaf-damaged-cutout.png', leaf: true, alt: 'Сильно повреждённый лист', detail: 'Повреждение искажает контур.' },
     street: { path: '', alt: 'Улица', detail: 'улица', icon: true }, park: { path: '', alt: 'Парк', detail: 'парк', icon: true },
     asphalt: { path: '', alt: 'Асфальт', detail: 'асфальт', icon: true }, soil: { path: '', alt: 'Почва', detail: 'почва', icon: true },
     near: { path: '', alt: 'Близко к дороге', detail: 'близко', icon: true }, far: { path: '', alt: 'Далеко от дороги', detail: 'далеко', icon: true }
@@ -39,7 +40,7 @@
   // или персональных данных реальных участников.
   const APPLICATIONS = [
     {
-      name: 'Парк', photos: ['parkTree', 'normal1', 'normal2'],
+      name: 'Парк', photos: ['parkTree', 'goodPhoto', 'normal2'],
       fields: [['Комплект', '2 дерева, по 12 листьев'], ['Место и дата', 'Указаны'], ['Паспорт', 'Заполнен']],
       expected: 'approve', summary: 'Полный комплект, заполненный паспорт и целые контуры.', note: 'Комплект полный, паспорт заполнен, контуры видны. Целый асимметричный лист не повод отклонять заявку.',
       next: 'После решения модератора программа считает ФА по проверенным точкам. Модератор ещё раз смотрит результат.'
@@ -53,7 +54,7 @@
     {
       name: 'Улица', photos: ['roadTree', 'cropped', 'normal3'],
       fields: [['Комплект', '3 дерева, по 10 листьев'], ['Место и дата', 'Указаны'], ['Паспорт', 'Нет расстояния до дороги']],
-      expected: 'reject', summary: 'Обрезан край снимка, нет расстояния до дороги.', note: 'У одного снимка обрезан край, в паспорте нет расстояния до дороги. Нужны полный снимок и заполненное поле.',
+      expected: 'reject', summary: 'Лист сильно повреждён, нет расстояния до дороги.', note: 'Один лист сильно повреждён, а в паспорте нет расстояния до дороги. Нужны подходящий образец и заполненное поле.',
       next: 'Количество файлов само по себе не гарантирует пригодность заявки для анализа.'
     }
   ];
@@ -162,7 +163,7 @@
   function assetMarkup(key) {
     const asset = ASSETS[key];
     const placeholder = asset.icon ? asset.detail : '<span class="asset-label">Учебный образец</span><span>' + escapeHTML(asset.detail) + '</span>';
-    return '<span class="asset' + (asset.icon ? ' asset-icon' : '') + (asset.crop ? ' asset--' + asset.crop : '') + '" title="' + escapeHTML(asset.alt) + '">' +
+    return '<span class="asset' + (asset.icon ? ' asset-icon' : '') + (asset.leaf ? ' asset-leaf asset-leaf--' + key : '') + '" title="' + escapeHTML(asset.alt) + '">' +
       '<img hidden draggable="false" data-asset="' + escapeHTML(key) + '" alt="' + escapeHTML(asset.alt) + '">' +
       '<span class="asset-fallback"' + (asset.icon ? ' aria-hidden="true"' : '') + '>' + placeholder + '</span></span>';
   }
@@ -198,8 +199,8 @@
     updateTitle();
     const descriptions = { road: 'Соберите образцы с двух деревьев и заполните паспорта.', leaves: 'Перенесите девять листьев в подходящие контейнеры.', moderator: 'Изучите фотографии и разложите три заявки по стопкам.' };
     show('<section class="lobby" aria-label="Выбор игры"><p>Сбор, сортировка и проверка данных. Без рейтинга.</p>' +
-      '<div class="game-catalog">' + ORDER.map((game, index) => '<button class="game-choice" data-start="' + game + '" type="button">' +
-        '<span class="choice-number">0' + (index + 1) + '</span><span class="choice-title">' + TITLES[game] + '</span>' +
+      '<div class="game-catalog">' + ORDER.map(game => '<button class="game-choice" data-start="' + game + '" type="button">' +
+        '<span class="choice-title">' + TITLES[game] + '</span>' +
         '<span class="choice-description">' + descriptions[game] + '</span><span class="choice-action">Играть</span></button>').join('') + '</div>' +
       '<div class="actions"><button class="button button-primary" type="button" data-action="start-all">Пройти все три</button></div>' +
       '<nav class="lobby-links" aria-label="О проекте"><a href="education.html">Инструкция</a><a href="account.html">Личный кабинет</a><a href="about.html">О проекте и авторе</a><a href="feedback.html">Обратная связь</a></nav></section>', true);
@@ -511,18 +512,6 @@
   });
   window.addEventListener('resize', () => { if (cancelDrag) cancelDrag(); });
 
-  // Только выбор темы сохраняется локально; блокировка хранилища не мешает игре.
-  const themeToggle = document.getElementById('themeToggle');
-  function theme(dark, persist = false) {
-    document.documentElement.classList.toggle('dark', dark);
-    themeToggle.textContent = dark ? 'Светлая тема' : 'Тёмная тема';
-    themeToggle.setAttribute('aria-label', 'Тёмная тема');
-    themeToggle.setAttribute('aria-pressed', String(dark));
-    if (persist) { try { localStorage.setItem('eco-theme', dark ? 'dark' : 'light'); } catch (_) { /* Игра работает и без localStorage. */ } }
-  }
-  let savedTheme = '';
-  try { savedTheme = localStorage.getItem('eco-theme'); } catch (_) { /* Ограниченный режим браузера. */ }
-  theme(savedTheme === 'dark' || (!savedTheme && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches));
-  themeToggle.addEventListener('click', () => theme(!document.documentElement.classList.contains('dark'), true));
+  // Общая шапка и переключение темы подключены на странице, как в остальных разделах.
   lobby();
 })();

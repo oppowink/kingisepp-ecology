@@ -1,11 +1,10 @@
 /* faq.css — аккордеон FAQ и локальный поиск на главной */
 .faq-stranica { width: min(900px, calc(100% - 46px)); }
 .faq-vvedenie { max-width: 740px; margin-bottom: 37px; }
-.faq-metka { margin: 0 0 10px; color: var(--accent); font-size: .78rem; letter-spacing: .035em; }
 .faq-vvedenie h1 { margin-bottom: 14px; }
 .faq-vvedenie > p:last-child { color: var(--text-muted); }
-.faq-spisok { display: grid; gap: 0; border-top: 1px solid var(--line); }
-.faq-element { border-bottom: 1px solid var(--line); }
+.faq-spisok { display: grid; gap: 0; border-top: 3px solid color-mix(in srgb,var(--accent) 45%,var(--line)); }
+.faq-element { border-bottom: 3px solid color-mix(in srgb,var(--accent) 45%,var(--line)); }
 .faq-vopros { width: 100%; min-height: 78px; display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 20px; padding: 17px 8px; border: 0; background: transparent; color: var(--text); text-align: left; cursor: pointer; }
 .faq-vopros::after { content: 'Читать ответ'; color: var(--accent); font-size: .75rem; font-weight: 500; white-space: nowrap; }
 .faq-vopros[aria-expanded="true"]::after { content: 'Свернуть'; }

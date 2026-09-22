@@ -4,12 +4,12 @@
 .kurator-vvedenie > p:last-child { color: var(--text-muted); }
 .kurator-metodichka { display: flex; align-items: center; flex-wrap: wrap; gap: 14px; margin-top: 20px; }
 .kurator-metodichka__word { color: var(--accent); font-size: .84rem; text-underline-offset: 4px; }
-.kurator-obuchenie-zaglushka { max-width: 680px; padding: 28px; background: var(--surface-soft); }
+.kurator-obuchenie-zaglushka { max-width: 680px; padding: 8px 0; background: transparent; }
 .kurator-obuchenie-zaglushka p { margin: 0 0 18px; color: var(--text-muted); }
 .kurator-metka,
-.kurator-shag { margin: 0 0 8px; color: var(--accent); font-size: .76rem; letter-spacing: .08em; text-transform: uppercase; }
+.kurator-shag { margin: 0 0 8px; color: var(--accent); font-size: .76rem; letter-spacing: normal; text-transform: none; }
 .kurator-rabochaya-oblast { display: grid; gap: 28px; }
-.kurator-blok { display: grid; gap: 22px; padding: clamp(23px, 4vw, 38px); background: var(--surface-soft); }
+.kurator-blok { display: grid; gap: 22px; padding: 25px 0; background: transparent; }
 .kurator-blok h2 { margin-bottom: 7px; }
 .kurator-blok > div > p:last-child { margin: 0; color: var(--text-muted); font-size: .86rem; }
 .kurator-forma { display: grid; gap: 17px; }
@@ -18,7 +18,7 @@
 .kurator-dve-kolonki { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
 .kurator-tri-kolonki { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
 .kurator-kartochki { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
-.kurator-kartochka { min-width: 0; padding: 18px; background: var(--surface); }
+.kurator-kartochka { min-width: 0; padding: 12px 0; background: transparent; }
 .kurator-kartochka h3 { margin: 0 0 7px; font-family: var(--font-heading); font-size: .96rem; font-weight: 500; }
 .kurator-kartochka p { margin: 5px 0 0; color: var(--text-muted); font-size: .8rem; overflow-wrap: anywhere; }
 .kurator-kod { display: inline-block; margin-top: 10px; padding: 5px 8px; background: var(--bg); color: var(--accent); font-family: ui-monospace, monospace; letter-spacing: .08em; }
@@ -27,7 +27,7 @@
 .kurator-tablica th,
 .kurator-tablica td { padding: 12px 10px; text-align: left; vertical-align: top; }
 .kurator-tablica th { color: var(--text-muted); font-size: .75rem; font-weight: 500; }
-.kurator-tablica td { background: var(--surface); font-size: .83rem; }
+.kurator-tablica td { background: color-mix(in srgb,var(--surface) 65%,var(--bg)); font-size: .83rem; }
 .kurator-pusto { margin: 0; color: var(--text-muted); font-size: .84rem; }
 @media (max-width: 760px) {
   .kurator-dve-kolonki,

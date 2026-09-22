@@ -1,6 +1,6 @@
-/* games.css — плоские игровые поверхности. Все цвета берутся из variables.css. */
+/* games.css — игры продолжают оформление остальных страниц сайта. */
 .arcade {
-  --game-accent: var(--warning);
+  --game-accent: var(--accent);
   box-sizing: border-box;
   margin: 0;
   height: 100vh;
@@ -10,60 +10,54 @@
   padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
   background: var(--bg);
   color: var(--text);
-  font: 16px/1.5 var(--font-body, Arial, sans-serif);
+  font: 1rem/1.55 var(--font-body);
 }
 .arcade *, .arcade *::before, .arcade *::after { box-sizing: border-box; border-radius: 0; }
 .arcade [hidden] { display: none !important; }
 .arcade h1, .arcade h2, .arcade h3, .arcade p, .arcade figure { margin: 0; }
-.arcade h1 { font: 500 clamp(26px, 3vw, 42px)/1.1 var(--font-heading, Georgia, serif); }
-.arcade h2 { font: 500 clamp(23px, 3vw, 32px)/1.2 var(--font-heading, Georgia, serif); }
+.arcade h1 { font: 400 clamp(1.8rem, 3vw, 2.55rem)/1.16 var(--font-heading); }
+.arcade h2 { font: 400 clamp(1.35rem, 2.1vw, 1.9rem)/1.3 var(--font-heading); }
 .arcade h3 { font-size: 18px; line-height: 1.4; }
-.arcade a { color: inherit; text-underline-offset: 4px; }
-.arcade button { font: inherit; color: inherit; cursor: pointer; border: 0; background: var(--surface); padding: 10px 16px; }
-.arcade button:disabled { cursor: default; color: var(--text-muted); }
+.arcade-main a { color: inherit; text-underline-offset: 4px; }
+.arcade-main button { font: inherit; color: inherit; cursor: pointer; border: 0; background: transparent; padding: 10px 16px; }
+.arcade-main button:disabled { cursor: default; color: var(--text-muted); }
 .arcade :focus-visible { outline: 3px solid var(--game-accent); outline-offset: 3px; }
-.arcade button, .arcade a { -webkit-tap-highlight-color: var(--surface-soft); }
-.arcade-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 24px; flex-shrink: 0; }
-.arcade-brand { font-weight: 700; text-decoration: none; }
-.arcade-nav { display: flex; gap: 20px; align-items: center; font-size: 14px; }
-.arcade .text-button { background: var(--bg); padding: 6px 0; text-decoration: underline; text-underline-offset: 4px; }
-.arcade-main { width: min(1160px, 100%); flex: 1; min-height: 0; margin: 0 auto; padding: 8px 24px 12px; display: flex; flex-direction: column; gap: 12px; }
+.arcade-main button, .arcade-main a { -webkit-tap-highlight-color: var(--surface-soft); }
+.arcade-main { width: min(1160px, 100%); flex: 1; min-height: 0; margin: 0 auto; padding: 23px 24px 8px; display: flex; flex-direction: column; gap: 12px; }
 .session-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-shrink: 0; }
 .eyebrow, .caption { color: var(--text-muted); font-size: 14px; }
 .session-heading { min-width: 0; }
-.arcade .button { border: 1px solid var(--text-muted); min-height: 44px; text-decoration: none; display: inline-flex; justify-content: center; align-items: center; padding: 9px 16px; gap: 8px; }
-.arcade .button-primary { background: var(--game-accent); color: var(--bg); border-color: var(--game-accent); }
-.arcade .button:hover:not(:disabled) { background: var(--text); color: var(--bg); }
+.arcade .button { border: 0; min-height: 44px; text-decoration: underline; text-underline-offset: 6px; display: inline-flex; justify-content: center; align-items: center; padding: 9px 14px; gap: 8px; color: var(--accent); }
+.arcade .button-primary { background: var(--accent); color: var(--bg); text-decoration: none; }
+.arcade .button:hover:not(:disabled) { background: var(--surface-soft); color: var(--accent); }
+.arcade .button-primary:hover:not(:disabled) { background: var(--text); color: var(--bg); }
 .game-stage { flex: 1; min-height: 0; display: flex; flex-direction: column; }
 .game-notice { min-height: 2.9em; flex-shrink: 0; font-size: 14px; color: var(--text); }
 .game-notice[data-tone="error"] { color: var(--danger); }
 .game-notice[data-tone="success"] { color: var(--success); }
 .actions { display: flex; gap: 10px; flex-wrap: wrap; }
-.arcade .selected { outline: 3px solid var(--game-accent); outline-offset: -3px; }
+.arcade .selected { outline: 2px solid var(--game-accent); outline-offset: -2px; }
 
 /* Каталог является стартовым экраном, а не длинной посадочной страницей. */
 .lobby { display: flex; flex-direction: column; justify-content: center; gap: 18px; flex: 1; }
-.game-catalog { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
-.arcade .game-choice { display: flex; flex-direction: column; gap: 14px; text-align: left; padding: 26px; min-height: 230px; background: var(--surface); border-top: 4px solid var(--accent); }
-.game-choice .choice-number { font-size: 22px; color: var(--game-accent); }
-.game-choice .choice-title { font-size: 20px; font-weight: 700; }
+.game-catalog { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(25px,4vw,68px); }
+.arcade .game-choice { display: flex; flex-direction: column; gap: 14px; text-align: left; padding: 16px 0; min-height: 210px; background: transparent; }
+.game-choice::before { content: '✳'; color: var(--warning); font-size: .96rem; }
+.game-choice .choice-title { font: 500 1.25rem/1.3 var(--font-heading); }
 .game-choice .choice-action { margin-top: auto; color: var(--game-accent); }
-.game-choice:hover { outline: 2px solid var(--game-accent); outline-offset: -2px; }
+.game-choice:hover .choice-title { color: var(--accent); text-decoration: underline; text-underline-offset: 6px; }
 .lobby-links { display: flex; gap: 18px; flex-wrap: wrap; font-size: 14px; }
 
 /* Изображение подменяет заглушку только после успешной загрузки файла. */
-.asset { position: relative; display: grid; place-items: center; width: 100%; height: 100%; min-height: 0; overflow: hidden; background: var(--input); }
+.asset { position: relative; display: grid; place-items: center; width: 100%; height: 100%; min-height: 0; overflow: hidden; background: transparent; }
 .asset img { width: 100%; height: 100%; object-fit: contain; display: block; min-height: 0; }
-/* Каждый образец берётся из исходного группового снимка без растяжения листа. */
-.asset--normal-left img { transform: translateX(58%) scale(1.6); }
-.asset--normal-middle img { transform: translateX(6%) scale(1.5); }
-.asset--normal-right img { transform: translateX(-50%) scale(1.55); }
-.asset--damaged-top img { transform: translateY(69%) scale(2.1); }
-.asset--damaged-middle img { transform: scale(2.1); }
-.asset--damaged-bottom img { transform: translateY(-75%) scale(2.1); }
-.asset--other-top img { transform: translate(44%, 12%) scale(1.5); }
-.asset--other-bottom img { transform: translate(38%, -66%) scale(2); }
-.asset--other-right img { transform: translateX(-18%) scale(1); }
+/* Тонкая линия повторяет прозрачный контур вырезанного листа. */
+.asset-leaf img { filter: url(#leafAlphaFilter) drop-shadow(1px 0 0 var(--accent)) drop-shadow(-1px 0 0 var(--accent)); }
+.asset-leaf--normal1 img,.asset-leaf--other2 img { transform: rotate(-7deg) scale(.94); }
+.asset-leaf--normal2 img,.asset-leaf--damaged2 img { transform: rotate(5deg) scale(.94); }
+.asset-leaf--normal3 img,.asset-leaf--other1 img { transform: rotate(-3deg) scale(.94); }
+.asset-leaf--damaged1 img,.asset-leaf--damaged3 img { transform: rotate(8deg) scale(.94); }
+.asset-leaf--other3 img { transform: rotate(-5deg) scale(.88); }
 .asset-fallback { display: grid; gap: 8px; place-content: center; padding: 12px; font-size: 14px; text-align: center; max-width: 32ch; }
 .asset-fallback .asset-label { color: var(--text-muted); }
 .asset.asset-loaded .asset-fallback { display: none; }
@@ -74,19 +68,20 @@
 .road-scene, .sorter-scene, .moderator-scene { display: flex; flex-direction: column; gap: 10px; flex: 1; min-height: 0; }
 .scene-toolbar { display: flex; justify-content: space-between; align-items: center; gap: 12px; font-size: 14px; flex-shrink: 0; }
 .map-board { display: grid; grid-template-columns: minmax(0, 1fr) 70px minmax(0, 1fr); gap: 14px; flex: 1; min-height: 130px; }
-.map-area { min-height: 0; display: flex; flex-direction: column; gap: 8px; background: var(--surface); padding: 14px; }
+.map-area { min-height: 0; display: flex; flex-direction: column; gap: 8px; background: transparent; padding: 6px; }
 .map-area > p { font-size: 14px; }
-.map-road { background: var(--text); color: var(--bg); display: grid; place-items: center; writing-mode: vertical-rl; font-size: 14px; }
-.arcade .tree-button { padding: 0; display: flex; flex-direction: column; flex: 1; min-height: 0; gap: 8px; width: 100%; background: var(--surface); }
+.map-road { background: color-mix(in srgb,var(--warning) 14%,var(--bg)); color: var(--text); display: grid; place-items: center; writing-mode: vertical-rl; font-size: 14px; }
+.arcade .tree-button { padding: 0; display: flex; flex-direction: column; flex: 1; min-height: 0; gap: 8px; width: 100%; background: transparent; }
 .tree-button .asset { flex: 1; min-height: 40px; }
+.tree-button .asset img { object-fit: cover; object-position: center 45%; clip-path: polygon(5% 0,100% 0,100% 95%,93% 100%,0 100%,0 7%); }
 .tree-button .tree-title { font-weight: 700; font-size: 16px; }
 .tree-button:disabled { cursor: default; }
 .tree-button:disabled .tree-title { color: var(--success); }
 .tree-meta { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
-.arcade .passport-link { padding: 4px 0; background: var(--surface); font-size: 14px; text-decoration: underline; }
+.arcade .passport-link { padding: 4px 0; background: transparent; font-size: 14px; text-decoration: underline; }
 .collection-dock { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; min-height: 105px; height: 120px; flex-shrink: 0; }
-.sample-bay { display: grid; place-items: center; background: var(--surface-soft); min-height: 0; }
-.arcade .leaf-token { position: relative; display: flex; gap: 10px; align-items: center; padding: 8px; height: 100%; max-height: 120px; width: min(100%, 260px); background: var(--input); font-size: 14px; }
+.sample-bay { display: grid; place-items: center; background: transparent; min-height: 0; }
+.arcade .leaf-token { position: relative; display: flex; gap: 10px; align-items: center; padding: 8px; height: 100%; max-height: 120px; width: min(100%, 260px); background: transparent; font-size: 14px; }
 .leaf-token .asset { width: 90px; flex-shrink: 0; }
 .leaf-token .asset-fallback { padding: 4px; font-size: 14px; }
 .arcade .drop-zone { border: 2px solid var(--text-muted); background: var(--surface); min-height: 64px; text-align: center; padding: 12px; display: flex; flex-direction: column; gap: 4px; justify-content: center; align-items: center; }
@@ -109,29 +104,29 @@
 .passport-option[aria-pressed="true"] { outline: 2px solid var(--game-accent); outline-offset: -2px; background: var(--surface-soft); }
 .comparison, .result-scene { display: flex; flex-direction: column; justify-content: center; gap: 18px; min-height: 0; flex: 1; }
 .comparison-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
-.comparison-grid > div { padding: 20px; background: var(--surface); display: grid; gap: 10px; }
+.comparison-grid > div { padding: 12px 0; background: transparent; display: grid; gap: 10px; }
 .result-facts { display: grid; gap: 10px; }
-.result-facts p { padding: 12px 16px; background: var(--surface); }
+.result-facts p { padding: 6px 0; background: transparent; }
 
 /* Лист перемещается в контейнер. После ошибки он остаётся на столе. */
 .progress-track { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
 .progress-value { height: 100%; width: 0; background: var(--game-accent); transition: width 160ms ease; }
-.sorting-table { flex: 1; min-height: 100px; display: flex; justify-content: center; align-items: stretch; padding: 12px; background: color-mix(in srgb, var(--accent) 8%, var(--bg)); }
-.arcade .sorting-leaf { display: flex; flex-direction: column; width: min(100%, 400px); min-height: 0; padding: 12px; gap: 8px; background: var(--bg); }
+.sorting-table { flex: 1; min-height: 100px; display: flex; justify-content: center; align-items: stretch; padding: 12px; background: transparent; }
+.arcade .sorting-leaf { display: flex; flex-direction: column; width: min(100%, 400px); min-height: 0; padding: 12px; gap: 8px; background: transparent; }
 .sorting-leaf .asset { flex: 1; }
 .sorting-leaf .asset-fallback { max-width: 30ch; }
 .leaf-caption { font-size: 14px; }
 .sorting-zones { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; flex-shrink: 0; }
-.sorting-zones .drop-zone { min-height: 85px; border: 0; border-top: 3px solid var(--accent); }
+.sorting-zones .drop-zone { min-height: 85px; border: 1px solid var(--line-strong); background: color-mix(in srgb,var(--accent) 5%,var(--bg)); }
 .sorting-zones .drop-zone > span:last-child { font-size: 14px; }
 .sort-footer { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-shrink: 0; min-height: 44px; }
 .sort-footer p { font-size: 14px; max-width: 60ch; }
 
 /* Стол модератора: решение перемещает заявку в выбранную стопку. */
 .moderation-stacks { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; font-size: 14px; }
-.paper-stack { display: flex; justify-content: space-between; padding: 10px 16px; background: var(--surface); }
-.application-desk { flex: 1; min-height: 0; background: var(--surface-soft); padding: 14px; display: flex; overflow: hidden; }
-.application-card { background: var(--input); padding: 18px; min-width: 0; flex: 1; display: flex; flex-direction: column; gap: 10px; }
+.paper-stack { display: flex; justify-content: space-between; padding: 10px 0; background: transparent; }
+.application-desk { flex: 1; min-height: 0; background: transparent; padding: 8px 0; display: flex; overflow: hidden; }
+.application-card { background: color-mix(in srgb,var(--surface) 76%,var(--bg)); padding: 18px; min-width: 0; flex: 1; display: flex; flex-direction: column; gap: 10px; }
 .application-body { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; flex: 1; min-height: 0; }
 .application-photos { display: flex; flex-direction: column; min-height: 0; gap: 8px; }
 .application-photos > .asset { flex: 1; min-height: 75px; }
@@ -142,7 +137,7 @@
 .photo-tab .asset-fallback { display: none; }
 .photo-tab .asset:not(.asset-loaded) { display: none; }
 .application-fields { margin: 0; display: grid; gap: 8px; align-content: start; }
-.application-fields div { background: var(--surface); padding: 8px 12px; }
+.application-fields div { background: transparent; padding: 6px 0; }
 .application-fields dt { font-size: 14px; color: var(--text-muted); }
 .application-fields dd { margin: 0; font-size: 16px; }
 .decision-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; flex-shrink: 0; }
@@ -157,17 +152,14 @@
 .review-message[data-correct="false"] h3 { color: var(--danger); }
 
 @media (max-width: 700px) {
-  .arcade-header { padding: 8px 12px; flex-wrap: wrap; gap: 4px 12px; }
-  .arcade-brand { font-size: 14px; }
-  .arcade-nav { gap: 14px; }
-  .account-link { display: none; }
+  .arcade { height: auto; min-height: 100dvh; }
   .arcade-main { padding: 4px 12px 8px; gap: 8px; }
   .session-header { gap: 8px; }
   .arcade .button { padding: 8px 12px; font-size: 14px; }
   .game-catalog { grid-template-columns: 1fr; gap: 8px; }
   .lobby { gap: 12px; }
-  .arcade .game-choice { display: grid; grid-template-columns: 24px 1fr; gap: 4px 12px; min-height: 0; padding: 12px; }
-  .choice-number { grid-row: span 3; }
+  .arcade .game-choice { display: flex; gap: 5px; min-height: 0; padding: 9px 0; }
+  .game-choice::before { display: none; }
   .game-choice .choice-title { font-size: 18px; }
   .game-choice .choice-description, .game-choice .choice-action { font-size: 14px; }
   .map-board { grid-template-columns: minmax(0, 1fr) 28px minmax(0, 1fr); gap: 6px; min-height: 140px; }
@@ -212,7 +204,6 @@
   .lobby-links { gap: 8px 16px; }
 }
 @media (max-height: 620px) and (min-width: 701px) {
-  .arcade-header { padding-top: 6px; padding-bottom: 6px; }
   .arcade-main { gap: 6px; }
   .eyebrow { display: none; }
   .collection-dock { height: 85px; min-height: 85px; }

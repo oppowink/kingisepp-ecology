@@ -168,6 +168,7 @@
       if (roleTestBlock) roleTestBlock.hidden = !chooseRole;
       if (chooseRole) {
         if (welcome) welcome.hidden = true;
+        if (welcomeText) welcomeText.parentElement.hidden = true;
         cabinetBlock.dataset.welcome = 'ready';
         cabinetBlock.hidden = false;
         return;
@@ -179,8 +180,9 @@
         if (guides[role]) guideLink.href = 'docs/' + guides[role] + '-method-guide.pdf';
       }
       if (welcome && welcomeText) {
+        welcomeText.parentElement.hidden = false;
         var introductions = {
-          participant: 'Здесь начнётся твоё наблюдение за городом. Открой методичку, пройди обучение и только потом отправляй первую точку.',
+          participant: 'Начни с методического пособия и обучения. После теста можно отправить первую точку своего города.',
           curator: 'Здесь можно собрать команду, назначить территорию и увидеть, как идут наблюдения участников.',
           moderator: 'Здесь ты проверяешь фотографии, разметку и результат перед публикацией на карте.',
           admin: 'Здесь собраны управление доступом и проверка заявок.'
@@ -189,12 +191,13 @@
         welcome.hidden = false;
         var onceKey = 'eco-intro:' + String(user.id || user.email) + ':' + role;
         var reduceMotion = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
-        var alreadySeen = sessionStorage.getItem(onceKey) === '1';
+        var alreadySeen = false;
+        try { alreadySeen = sessionStorage.getItem(onceKey) === '1'; } catch (_) {}
         if (!alreadySeen && !reduceMotion) {
           cabinetBlock.dataset.welcome = 'blank';
-          welcomeTimers.push(setTimeout(function () { cabinetBlock.dataset.welcome = 'hello'; }, 260));
-          welcomeTimers.push(setTimeout(function () { cabinetBlock.dataset.welcome = 'message'; }, 950));
-          welcomeTimers.push(setTimeout(function () { cabinetBlock.dataset.welcome = 'ready'; sessionStorage.setItem(onceKey, '1'); }, 2400));
+          welcomeTimers.push(setTimeout(function () { cabinetBlock.dataset.welcome = 'hello'; }, 200));
+          welcomeTimers.push(setTimeout(function () { cabinetBlock.dataset.welcome = 'message'; }, 1700));
+          welcomeTimers.push(setTimeout(function () { cabinetBlock.dataset.welcome = 'ready'; try { sessionStorage.setItem(onceKey, '1'); } catch (_) {} }, 2900));
         } else cabinetBlock.dataset.welcome = 'ready';
       }
 

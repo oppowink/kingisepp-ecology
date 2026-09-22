@@ -1,5 +1,7 @@
 Изменения по сравнению с приложенным архивом EcoBioMonitoring_full_2026-09-21(1).zip
 
+Дополнительный проход 22 сентября 2026 года: переоформлены страницы «Обо мне», FAQ, игры, обратная связь, кабинет и три курса. В игре восстановлены общие шапка, настройки, сетка и подвал; изображения листьев вырезаны отдельно, деревья очищены от отвлекающих объектов. Исходные снимки сохранены без изменений.
+
 Изменены:
 README.md
 about.html
@@ -8,6 +10,7 @@ api/education/complete.js
 api/requests/list.js
 css/auth.css
 css/components.css
+css/curator.css
 css/education.css
 css/faq.css
 css/feedback.css
@@ -28,6 +31,7 @@ education-moderator.html
 education.html
 faq.html
 feedback.html
+games.html
 index.html
 js/account.js
 js/auth.js
@@ -35,6 +39,7 @@ js/course-data.js
 js/course.js
 js/faq-data.js
 js/games.js
+curator.html
 js/glossary.js
 js/submit.js
 server/fa-analysis.js
@@ -65,6 +70,20 @@ img/games/leaf-sideways.jpg
 img/games/other-species.jpg
 img/games/tree-park.jpg
 img/games/tree-street.jpg
+img/games/tree-street-edited.png
+img/games/tree-park-edited.png
+img/games/normal1-cutout.png
+img/games/normal2-cutout.png
+img/games/normal3-cutout.png
+img/games/damaged1-cutout.png
+img/games/damaged2-cutout.png
+img/games/damaged3-cutout.png
+img/games/other1-cutout.png
+img/games/other2-cutout.png
+img/games/other3-cutout.png
+img/games/leaf-damaged-cutout.png
+img/games/leaf-good-angle-cutout.png
+img/games/leaf-sideways-cutout.png
 img/home/aktualnost/avtomobil-hd.png
 supabase/007_multitree_requests.sql
 
