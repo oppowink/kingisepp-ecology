@@ -16,7 +16,7 @@ function cleanPoint(point) {
 
 function cleanLandmarkSets(value, max) {
   if (!Array.isArray(value)) return [];
-  return value.slice(0, max || 30).map(function (set) {
+  return value.slice(0, max || 120).map(function (set) {
     const points = {};
     const source = set && set.points && typeof set.points === 'object' ? set.points : {};
     LANDMARK_NAMES.forEach(function (name) { const point = cleanPoint(source[name]); if (point) points[name] = point; });
@@ -25,6 +25,7 @@ function cleanLandmarkSets(value, max) {
       fileName: String(set && set.fileName || '').slice(0, 180),
       imageWidth: Math.max(1, Number(set && set.imageWidth || 1)),
       imageHeight: Math.max(1, Number(set && set.imageHeight || 1)),
+      treeIndex: Number.isInteger(Number(set && set.treeIndex)) ? Number(set.treeIndex) : 0,
       points: points
     };
   });
@@ -64,21 +65,28 @@ function calculateLeaf(set, index) {
   if (values.length !== 3) return null;
   const fa = values.reduce(function (sum, value) { return sum + value; }, 0) / values.length;
   return {
-    index: index, fileHash: set.fileHash || '', fileName: set.fileName || '', fa: Number(fa.toFixed(6)),
+    index: index, treeIndex: set.treeIndex, fileHash: set.fileHash || '', fileName: set.fileName || '', fa: Number(fa.toFixed(6)),
     traits: Object.fromEntries(Object.entries(traits).map(function (entry) { return [entry[0], Number(entry[1].toFixed(6))]; })),
     measurements: Object.fromEntries(Object.entries(measurements).map(function (entry) { return [entry[0], Number(entry[1].toFixed(3))]; }))
   };
 }
 
 function calculateRequestFa(sets) {
-  const leaves = cleanLandmarkSets(sets, 30).map(calculateLeaf).filter(Boolean);
+  const leaves = cleanLandmarkSets(sets, 120).map(calculateLeaf).filter(Boolean);
   if (!leaves.length) throw new Error('LANDMARKS_REQUIRED');
-  const meanFa = leaves.reduce(function (sum, leaf) { return sum + leaf.fa; }, 0) / leaves.length;
+  const byTree = new Map();
+  leaves.forEach(function (leaf) { const group = byTree.get(leaf.treeIndex) || []; group.push(leaf.fa); byTree.set(leaf.treeIndex, group); });
+  const trees = [...byTree].sort(function (a, b) { return a[0] - b[0]; }).map(function (entry) {
+    return { treeIndex: entry[0], leafCount: entry[1].length,
+      meanFa: Number((entry[1].reduce(function (sum, value) { return sum + value; }, 0) / entry[1].length).toFixed(6)) };
+  });
+  const meanFa = trees.reduce(function (sum, tree) { return sum + tree.meanFa; }, 0) / trees.length;
   const variance = leaves.length > 1 ? leaves.reduce(function (sum, leaf) { return sum + Math.pow(leaf.fa - meanFa, 2); }, 0) / (leaves.length - 1) : 0;
   return {
     status: 'calculated', engine: 'landmark-fa-v1',
     formula: 'mean(|L-R|/((L+R)/2)) for V1, V2 and width', validLeafCount: leaves.length,
     meanFa: Number(meanFa.toFixed(6)), standardDeviation: Number(Math.sqrt(variance).toFixed(6)),
+    trees: trees,
     leaves: leaves, calculatedAt: new Date().toISOString()
   };
 }

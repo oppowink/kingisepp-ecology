@@ -137,15 +137,39 @@
     if (!response.ok) throw new Error(data.error || 'CURATOR_DASHBOARD_FAILED'); return data;
   }
 
-  async function uploadObservationPhotos(treeFile, leafFiles) {
-    var leaves = Array.from(leafFiles || []); var descriptors = [{ clientId: 'tree', kind: 'tree', file: treeFile }].concat(leaves.map(function (file, index) { return { clientId: 'leaf-' + index, kind: 'leaf', file: file }; }));
-    var preparedResponse = await requestAction('prepare_uploads', { files: descriptors.map(function (item) { return { clientId: item.clientId, kind: item.kind, size: item.file.size, type: item.file.type }; }) });
-    var prepared = Array.isArray(preparedResponse.uploads) ? preparedResponse.uploads : []; if (prepared.length !== descriptors.length) throw new Error('UPLOAD_PREPARATION_FAILED');
-    var cursor = 0;
-    async function worker() { while (cursor < prepared.length) { var target = prepared[cursor++]; var source = descriptors.find(function (item) { return item.clientId === target.clientId; }); if (!source) throw new Error('UPLOAD_PREPARATION_FAILED'); var upload = await fetch(target.signedUrl, { method: 'PUT', headers: { 'content-type': source.file.type, 'x-upsert': 'false' }, body: source.file }); if (!upload.ok) throw new Error('PHOTO_UPLOAD_FAILED'); } }
-    await Promise.all([worker(), worker(), worker()]);
-    function metadata(item) { var source = descriptors.find(function (d) { return d.clientId === item.clientId; }); var meta = source.file._ecoMeta || {}; return { name: source.file.name, size: source.file.size, type: source.file.type, path: item.path, url: item.publicUrl, bgLight: meta.bgLight, sha256: meta.sha256 || '', imageWidth: meta.imageWidth || 0, imageHeight: meta.imageHeight || 0, precheck: meta.precheck || null }; }
-    return { treePhoto: metadata(prepared.find(function (item) { return item.clientId === 'tree'; })), files: prepared.filter(function (item) { return item.kind === 'leaf'; }).map(metadata) };
+  async function uploadObservationPhotos(trees) {
+    if (!Array.isArray(trees) || trees.length < 2 || trees.length > 4) throw new Error('INVALID_TREE_COUNT');
+    var descriptors = trees.flatMap(function (tree, treeIndex) {
+      return [{ clientId: 'tree-' + treeIndex, kind: 'tree', file: tree.treePhoto }].concat(
+        tree.files.map(function (file, leafIndex) { return { clientId: 'leaf-' + treeIndex + '-' + leafIndex, kind: 'leaf', file: file }; })
+      );
+    });
+    var uploadedById = new Map();
+    for (var offset = 0; offset < descriptors.length; offset += 25) {
+      var batch = descriptors.slice(offset, offset + 25);
+      var response = await requestAction('prepare_uploads', { files: batch.map(function (item) { return { clientId: item.clientId, kind: item.kind, size: item.file.size, type: item.file.type }; }) });
+      var prepared = Array.isArray(response.uploads) ? response.uploads : [];
+      if (prepared.length !== batch.length) throw new Error('UPLOAD_PREPARATION_FAILED');
+      var cursor = 0;
+      async function worker() {
+        while (cursor < prepared.length) {
+          var target = prepared[cursor++];
+          var source = batch.find(function (item) { return item.clientId === target.clientId; });
+          if (!source) throw new Error('UPLOAD_PREPARATION_FAILED');
+          var upload = await fetch(target.signedUrl, { method: 'PUT', headers: { 'content-type': source.file.type, 'x-upsert': 'false' }, body: source.file });
+          if (!upload.ok) throw new Error('PHOTO_UPLOAD_FAILED');
+          var meta = source.file._ecoMeta || {};
+          uploadedById.set(source.clientId, { name: source.file.name, size: source.file.size, type: source.file.type,
+            path: target.path, url: target.publicUrl, bgLight: meta.bgLight, sha256: meta.sha256 || '',
+            imageWidth: meta.imageWidth || 0, imageHeight: meta.imageHeight || 0, precheck: meta.precheck || null });
+        }
+      }
+      await Promise.all([worker(), worker(), worker()]);
+    }
+    var uploadedTrees = trees.map(function (tree, index) {
+      return { treePhoto: uploadedById.get('tree-' + index), files: tree.files.map(function (_, leafIndex) { return uploadedById.get('leaf-' + index + '-' + leafIndex); }) };
+    });
+    return { trees: uploadedTrees, treePhoto: uploadedTrees[0].treePhoto, files: uploadedTrees.flatMap(function (tree) { return tree.files; }) };
   }
 
   async function setUserRole(email, role, options) {

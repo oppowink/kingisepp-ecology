@@ -1,8 +1,1 @@
-GAMES_ASSETS.txt
-GAMES_INSTALL.txt
-js/education.js
-js/education-curator.js
-moderator-test.html
-js/moderator-test.js
-
-Эти файлы больше не используются. Старые курсы и тест модератора заменены общим ролевым модулем course.js. Отдельные инструкции по отсутствующим игровым изображениям не нужны: игры используют существующие ресурсы проекта.
+Удалений по сравнению с приложенным архивом EcoBioMonitoring_full_2026-09-21(1).zip нет.

@@ -111,7 +111,7 @@
 
 <!-- форма подачи наблюдения -->
 <form class="forma-nablyudeniya" hidden="" id="formaNablyudeniya" novalidate="">
-<p class="forma-nablyudeniya__poyasnenie">Одна заявка = одна точка, одно дерево и 30 фотографий листьев.</p>
+<p class="forma-nablyudeniya__poyasnenie">Одна заявка — одна точка, 2–4 дерева и по 10–30 фотографий листьев с каждого.</p>
 
 <!-- источник задания: собственная точка или объект, открытый куратором -->
 <fieldset class="forma-sekciya istochnik-zayavki">
@@ -149,8 +149,8 @@
 
 <!-- координаты выбираются на карте: ручной ввод исключён -->
 <section aria-labelledby="vyborKoordinatZagolovok" class="forma-sekciya karta-vybor">
-<h2 id="vyborKoordinatZagolovok">Выберите дерево на карте</h2>
-<p>Нажмите на место, где находится исследуемая берёза. Маркер можно переставить повторным нажатием.</p>
+<h2 id="vyborKoordinatZagolovok">Выберите точку на карте</h2>
+<p>Нажмите на место, где находятся исследуемые берёзы. Маркер можно переставить повторным нажатием.</p>
 <div aria-label="Карта для выбора координат дерева" id="kartaVyborKoordinat"></div>
 <p aria-live="polite" class="karta-vybor__status" id="kartaVyborStatus">Точка ещё не выбрана</p>
 </section>
@@ -220,61 +220,14 @@
 </div>
 </fieldset>
 
-<!-- паспорт дерева и обязательная обзорная фотография берёзы -->
-<fieldset class="forma-sekciya pasport-dereva">
-<legend>Паспорт дерева</legend>
-<div class="forma-nablyudeniya__ryad">
-<div class="pole-gruppa">
-<label class="pole-podpis" for="vidDereva">Вид дерева</label>
-<input class="pole-vvod" id="vidDereva" readonly="" value="Берёза повислая"/>
-</div>
-<div class="pole-gruppa">
-<label class="pole-podpis" for="sostoyanieDereva">Состояние кроны</label>
-<select class="pole-vybor" id="sostoyanieDereva" required="">
-<option value="">Выберите</option>
-<option>Без заметных нарушений</option>
-<option>Есть сухие ветви</option>
-<option>Крона разрежена</option>
-<option>Есть выраженные повреждения</option>
-</select>
-</div>
-</div>
-<div class="forma-nablyudeniya__ryad">
-<div class="pole-gruppa">
-<label class="pole-podpis" for="diametrStvola">Диаметр ствола на высоте груди, см</label>
-<input class="pole-vvod" id="diametrStvola" max="300" min="1" required="" step="0.1" type="number"/>
-</div>
-<div class="pole-gruppa">
-<label class="pole-podpis" for="vysotaDereva">Примерная высота дерева, м</label>
-<input class="pole-vvod" id="vysotaDereva" max="80" min="1" required="" step="0.1" type="number"/>
-</div>
-</div>
-<div class="pole-gruppa">
-<label class="pole-podpis" for="povrezhdeniyaDereva">Повреждения ствола и кроны</label>
-<input class="pole-vvod" id="povrezhdeniyaDereva" maxlength="500" placeholder="Если не обнаружены, укажите «не обнаружены»" required=""/>
-</div>
-<div class="pole-gruppa">
-<span class="pole-podpis">Обзорная фотография берёзы</span>
-<label class="zagruzka-foto zagruzka-foto--derevo" for="fotoDereva" id="zagruzkaFotoDereva">
-<img alt="" aria-hidden="true" src="img/icons/upload.png"/>
-<span>Добавьте одну фотографию дерева целиком</span>
-<input accept="image/*" hidden="" id="fotoDereva" name="treePhoto" required="" type="file"/>
-</label>
-<p class="zagruzka-foto__schetchik" id="schetchikFotoDereva">Файл не выбран</p>
-</div>
-</fieldset>
-
-<!-- загрузка 30 фотографий листьев (drag & drop) -->
-<div class="pole-gruppa">
-<span class="pole-podpis">Фотографии 30 листьев</span>
-<label class="zagruzka-foto" for="faylyNablyudeniya" id="zagruzkaFoto">
-<img alt="" aria-hidden="true" src="img/icons/upload.png"/>
-<span>Перетащите фотографии сюда или выберите файлы</span>
-<input accept="image/*" hidden="" id="faylyNablyudeniya" multiple="" name="photos" type="file"/>
-</label>
-<p class="zagruzka-foto__schetchik" id="schetchikFoto">0 / 30 фотографий</p>
-<p class="pole-oshibka" hidden="" id="oshibkaFoto"></p>
-</div>
+<!-- Каждое дерево остаётся отдельным набором внутри общей точки. -->
+<section class="tree-sets" aria-labelledby="treeSetsTitle">
+<h2 id="treeSetsTitle">Деревья в этой точке</h2>
+<p>Добавьте от двух до четырёх берёз. У каждой — своё обзорное фото и от 10 до 30 фотографий листьев.</p>
+<div id="treeSets"></div>
+<button class="knopka-vtorichnaya" id="addTree" type="button">Добавить дерево</button>
+<p class="pole-oshibka" hidden id="oshibkaFoto"></p>
+</section>
 
 <!-- комментарий -->
 <div class="pole-gruppa">
@@ -312,6 +265,7 @@
       <input type="checkbox" class="checklist-input" data-check="4">
       На фото видна центральная жилка по всей длине листа
     </label>
+    <label class="checklist-item"><input type="checkbox" class="checklist-input" data-check="6"> Фотографии листьев подписаны по деревьям: не менее 10 для каждого</label>
     <label class="checklist-item">
       <input type="checkbox" class="checklist-input" data-check="5">
       Координаты выбраны на карте и указана дата сбора
@@ -328,7 +282,7 @@
 
 <section class="forma-sekciya landmark-step" id="landmarkStep">
 <h2>Контрольные точки листьев</h2>
-<p id="landmarkHelp">После выбора 30 фотографий отметьте точки на каждом листе. Нажимайте по порядку, название текущей точки показано над снимком.</p>
+<p id="landmarkHelp">После выбора фотографий для всех деревьев отметьте точки на каждом листе. Нажимайте по порядку, название текущей точки показано над снимком.</p>
 <div class="landmark-status"><strong id="landmarkPhotoNumber">Фото не выбраны</strong><span id="landmarkPointName"></span></div>
 <div class="landmark-canvas" id="landmarkCanvas"><img id="landmarkImage" alt="Лист для расстановки контрольных точек"><div id="landmarkOverlay"></div></div>
 <div class="landmark-actions"><button class="knopka-vtorichnaya" id="landmarkUndo" type="button">Отменить точку</button><button class="knopka-osnovnaya" id="landmarkNext" type="button">Следующий лист</button></div>

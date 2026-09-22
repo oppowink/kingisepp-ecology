@@ -34,7 +34,7 @@
 <!-- тема, подключаем до body чтобы не мигало -->
 <script src="js/theme.js"></script>
 </head>
-<body>
+<body class="account-page">
 <!-- свечение за курсором -->
 <div aria-hidden="true" class="kursor" data-component="kursor"></div>
 
@@ -145,11 +145,13 @@
 
 <!-- блок личного кабинета (скрыт до входа) -->
 <section aria-labelledby="kabinetImya" class="kabinet-blok" hidden="" id="kabinetBlok">
+<div class="kabinet-welcome" id="kabinetWelcome" hidden aria-live="polite"><h2>Привет!</h2><p id="kabinetWelcomeText"></p></div>
 <!-- информация о пользователе -->
 <div class="kabinet-polzovatel">
 <h1 id="kabinetImya"></h1>
 <p id="kabinetEmail"></p>
 <p class="kabinet-status" id="kabinetObuchenie"></p>
+<a class="kabinet-guide" id="kabinetGuide" href="docs/volunteer-method-guide.pdf" download>Сначала можно скачать методичку</a>
 <button class="knopka-tekst" id="vyhodKnopka" type="button">Выйти</button>
 </div>
 
@@ -198,7 +200,7 @@
 <section aria-labelledby="sertifikatZagolovok" class="kabinet-sertifikat">
 <h2 id="sertifikatZagolovok">Сертификат</h2>
 <p id="sertifikatTekst">Сертификат откроется после обязательного обучения.</p>
-<button class="knopka-osnovnaya" id="sertifikatVolonteraKnopka" type="button">Открыть сертификат</button>
+<button class="ssylka-svechenie" id="sertifikatVolonteraKnopka" type="button">Открыть сертификат <span aria-hidden="true">↗</span></button>
 <p aria-live="polite" class="soobshchenie" hidden="" id="sertifikatSoobshchenie"></p>
 </section>
 </section>

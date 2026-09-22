@@ -20,6 +20,9 @@
     var logoutButton = document.getElementById('vyhodKnopka');
     var educationStatus = document.getElementById('kabinetObuchenie');
     var userInfo = document.querySelector('.kabinet-polzovatel');
+    var welcome = document.getElementById('kabinetWelcome');
+    var welcomeText = document.getElementById('kabinetWelcomeText');
+    var guideLink = document.getElementById('kabinetGuide');
     var cabinetNav = document.getElementById('kabinetNavigaciya');
     var educationLink = document.getElementById('ssylkaObuchenie');
     var submitLink = document.getElementById('ssylkaPodacha');
@@ -42,6 +45,7 @@
     var certificateMessage = document.getElementById('sertifikatSoobshchenie');
     var roleTestBlock = document.getElementById('kabinetRoliTest');
     var mode = 'login';
+    var welcomeTimers = [];
 
     if (!loginBlock || !cabinetBlock || !authForm || !emailInput || !passwordInput) return;
     if (typeof EcoAuth === 'undefined') {
@@ -139,8 +143,10 @@
     }
 
     async function render(user) {
+      welcomeTimers.forEach(clearTimeout);
+      welcomeTimers = [];
       loginBlock.hidden = Boolean(user);
-      cabinetBlock.hidden = !user;
+      cabinetBlock.hidden = true;
       if (!user) return;
 
       var nameEl = document.getElementById('kabinetImya');
@@ -160,7 +166,37 @@
       if (certificateSection) certificateSection.hidden = chooseRole || !['participant', 'curator', 'moderator'].includes(role);
       if (profileSection) profileSection.hidden = chooseRole || !['participant', 'curator'].includes(role);
       if (roleTestBlock) roleTestBlock.hidden = !chooseRole;
-      if (chooseRole) return;
+      if (chooseRole) {
+        if (welcome) welcome.hidden = true;
+        cabinetBlock.dataset.welcome = 'ready';
+        cabinetBlock.hidden = false;
+        return;
+      }
+
+      if (guideLink) {
+        var guides = { participant: 'volunteer', curator: 'curator', moderator: 'moderator' };
+        guideLink.hidden = !guides[role];
+        if (guides[role]) guideLink.href = 'docs/' + guides[role] + '-method-guide.pdf';
+      }
+      if (welcome && welcomeText) {
+        var introductions = {
+          participant: 'Здесь начнётся твоё наблюдение за городом. Открой методичку, пройди обучение и только потом отправляй первую точку.',
+          curator: 'Здесь можно собрать команду, назначить территорию и увидеть, как идут наблюдения участников.',
+          moderator: 'Здесь ты проверяешь фотографии, разметку и результат перед публикацией на карте.',
+          admin: 'Здесь собраны управление доступом и проверка заявок.'
+        };
+        welcomeText.textContent = introductions[role] || introductions.participant;
+        welcome.hidden = false;
+        var onceKey = 'eco-intro:' + String(user.id || user.email) + ':' + role;
+        var reduceMotion = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+        var alreadySeen = sessionStorage.getItem(onceKey) === '1';
+        if (!alreadySeen && !reduceMotion) {
+          cabinetBlock.dataset.welcome = 'blank';
+          welcomeTimers.push(setTimeout(function () { cabinetBlock.dataset.welcome = 'hello'; }, 260));
+          welcomeTimers.push(setTimeout(function () { cabinetBlock.dataset.welcome = 'message'; }, 950));
+          welcomeTimers.push(setTimeout(function () { cabinetBlock.dataset.welcome = 'ready'; sessionStorage.setItem(onceKey, '1'); }, 2400));
+        } else cabinetBlock.dataset.welcome = 'ready';
+      }
 
       if (educationStatus) {
         educationStatus.textContent = role === 'admin' ? 'Режим администратора' : educationDone ? 'Обязательное обучение пройдено' : 'Рабочие функции откроются после обучения и теста';
@@ -189,6 +225,7 @@
         countEl.textContent = requestCount ? String(requestCount) : '';
       }
       loadParticipationProfile(user);
+      cabinetBlock.hidden = false;
       var next = nextPage();
       if (next) location.replace(next);
     }
@@ -312,6 +349,8 @@
 
     if (logoutButton) {
       logoutButton.addEventListener('click', async function () {
+        var previous = EcoAuth.getUser && EcoAuth.getUser();
+        if (previous) sessionStorage.removeItem('eco-intro:' + String(previous.id || previous.email) + ':' + (previous.role || 'participant'));
         await EcoAuth.signOut();
         authForm.reset();
         setMode('login');
@@ -399,14 +438,6 @@
         var user = EcoAuth.switchRoleForTesting && EcoAuth.switchRoleForTesting(role);
         if (!user) {
           showMessage('Тестовые роли доступны только администратору.', 'error');
-          return;
-        }
-        if (role === 'moderator' || role === 'admin') {
-          location.href = 'moderator.html';
-          return;
-        }
-        if (role === 'curator') {
-          location.href = 'education-curator.html';
           return;
         }
         render(user);

@@ -3,19 +3,19 @@
   'use strict';
 
   const ASSETS = {
-    roadTree: { path: 'img/home/aktualnost/doroga.png', alt: 'Берёзы возле дороги', detail: 'Дерево у улицы, рядом асфальт.' },
-    parkTree: { path: 'img/home/aktualnost/berezy.png', alt: 'Берёзы вдали от дороги', detail: 'Дерево в зелёной зоне.' },
-    normal1: { path: 'img/leaf1.png', alt: 'Образец с целым контуром', detail: 'Край целый. Обе стороны близки по форме.' },
-    normal2: { path: 'img/leaf2.png', alt: 'Целый лист с небольшой естественной неровностью', detail: 'Отверстий и разрывов нет.' },
-    normal3: { path: 'img/leaf3.png', alt: 'Целый расправленный лист', detail: 'Пластинка расправлена. Край виден полностью.' },
-    damaged1: { path: 'img/leaf4.png', alt: 'Учебный образец повреждённого листа', detail: 'Часть края нужно внимательно проверить.' },
-    damaged2: { path: 'img/leaf4.png', alt: 'Учебный образец с повреждением', detail: 'Повреждение мешает восстановить исходную форму.' },
-    damaged3: { path: 'img/leaf4.png', alt: 'Учебный образец с повреждением пластинки', detail: 'Пластинку нужно проверить на отверстия.' },
-    asymmetric1: { path: 'img/leaf2.png', alt: 'Целый лист с разной шириной сторон', detail: 'Одна сторона заметно шире другой.' },
-    asymmetric2: { path: 'img/leaf3.png', alt: 'Целый лист с различием формы сторон', detail: 'Ткань не утрачена.' },
-    asymmetric3: { path: 'img/leaf1.png', alt: 'Целый лист с различием сторон', detail: 'Парные жилки расположены неодинаково.' },
-    blurred: { path: 'img/leaf4.png', alt: 'Учебный пример нерезкой фотографии', detail: 'Границы листа и жилки различимы недостаточно.' },
-    cropped: { path: 'img/leaf3.png', alt: 'Учебный пример обрезанного листа', detail: 'Нужно проверить, весь ли лист попал в кадр.' },
+    roadTree: { path: 'img/games/tree-street.jpg', alt: 'Берёза на улице Кингисеппа', detail: 'Настоящее дерево у улицы.' },
+    parkTree: { path: 'img/games/tree-park.jpg', alt: 'Берёза в зелёной зоне Кингисеппа', detail: 'Настоящее дерево среди других берёз.' },
+    normal1: { path: 'img/games/birch-leaves.jpg', crop: 'normal-left', alt: 'Первый целый лист берёзы', detail: 'Край листа целый и различим.' },
+    normal2: { path: 'img/games/birch-leaves.jpg', crop: 'normal-middle', alt: 'Второй целый лист берёзы', detail: 'Жилки и контур видны.' },
+    normal3: { path: 'img/games/birch-leaves.jpg', crop: 'normal-right', alt: 'Третий целый лист берёзы', detail: 'Пластинка расправлена.' },
+    damaged1: { path: 'img/games/damaged-leaves.jpg', crop: 'damaged-top', alt: 'Лист берёзы с отмершим краем', detail: 'Край повреждён и изменил форму.' },
+    damaged2: { path: 'img/games/damaged-leaves.jpg', crop: 'damaged-middle', alt: 'Лист берёзы с утратой ткани', detail: 'По такому краю нельзя восстановить исходную форму.' },
+    damaged3: { path: 'img/games/damaged-leaves.jpg', crop: 'damaged-bottom', alt: 'Третий повреждённый лист берёзы', detail: 'Заметны обширные повреждения.' },
+    other1: { path: 'img/games/other-species.jpg', crop: 'other-top', alt: 'Неберёзовый лист вверху слева', detail: 'Форма и край не подходят под берёзу повислую.' },
+    other2: { path: 'img/games/other-species.jpg', crop: 'other-bottom', alt: 'Неберёзовый лист внизу слева', detail: 'Это лист другого растения.' },
+    other3: { path: 'img/games/other-species.jpg', crop: 'other-right', alt: 'Крупный кленовый лист справа', detail: 'Лист клёна, а не берёзы.' },
+    blurred: { path: 'img/games/leaf-sideways.jpg', alt: 'Лист снят под неудобным углом', detail: 'Положение листа не подходит для разметки.' },
+    cropped: { path: 'img/games/leaf-damaged.jpg', alt: 'Повреждённый лист', detail: 'Контур повреждён.' },
     street: { path: '', alt: 'Улица', detail: 'улица', icon: true }, park: { path: '', alt: 'Парк', detail: 'парк', icon: true },
     asphalt: { path: '', alt: 'Асфальт', detail: 'асфальт', icon: true }, soil: { path: '', alt: 'Почва', detail: 'почва', icon: true },
     near: { path: '', alt: 'Близко к дороге', detail: 'близко', icon: true }, far: { path: '', alt: 'Далеко от дороги', detail: 'далеко', icon: true }
@@ -27,37 +27,37 @@
   const LEAVES = [
     { asset: 'normal1', category: 'normal', note: 'Целый контур позволяет выполнить промеры. Небольшая естественная неровность допустима.' },
     { asset: 'damaged1', category: 'damaged', note: 'Утраченная ткань, повреждение, а не различие сторон при развитии листа.' },
-    { asset: 'asymmetric1', category: 'asymmetric', note: 'Различие ширины нужно измерить. Целый асимметричный лист не исключают только из-за формы.' },
+    { asset: 'other1', category: 'other', note: 'Сначала проверьте вид: перед вами лист другого растения.' },
     { asset: 'normal2', category: 'normal', note: 'Материал целый. Отбирать только идеально симметричные листья нельзя.' },
     { asset: 'damaged2', category: 'damaged', note: 'Разрыв мешает восстановить исходную форму. Этот образец отмечают отдельно.' },
-    { asset: 'asymmetric2', category: 'asymmetric', note: 'Целостность сохранена. По внешнему виду нельзя объявлять воздух загрязнённым.' },
+    { asset: 'other2', category: 'other', note: 'Это другой вид растения. Его не используют в расчёте ФА берёзы.' },
     { asset: 'normal3', category: 'normal', note: 'Контур виден полностью. Пригодность снимка не означает нулевую асимметрию.' },
     { asset: 'damaged3', category: 'damaged', note: 'Отверстия относятся к повреждениям. Их нельзя подменять значением ФА.' },
-    { asset: 'asymmetric3', category: 'asymmetric', note: 'Расположение жилок оценивают по методике. Один лист не характеризует всю территорию.' }
+    { asset: 'other3', category: 'other', note: 'Клён отличается формой пластинки. Проверьте вид до разметки.' }
   ];
   // Это явно обозначенные учебные ситуации: нет координат, результатов ФА
   // или персональных данных реальных участников.
   const APPLICATIONS = [
     {
-      name: 'Парк', photos: ['parkTree', 'normal1', 'asymmetric1'],
-      fields: [['Комплект', 'Дерево и 30 листьев'], ['Место и дата', 'Указаны'], ['Паспорт', 'Заполнен']],
+      name: 'Парк', photos: ['parkTree', 'normal1', 'normal2'],
+      fields: [['Комплект', '2 дерева, по 12 листьев'], ['Место и дата', 'Указаны'], ['Паспорт', 'Заполнен']],
       expected: 'approve', summary: 'Полный комплект, заполненный паспорт и целые контуры.', note: 'Комплект полный, паспорт заполнен, контуры видны. Целый асимметричный лист не повод отклонять заявку.',
-      next: 'В реальном проекте одобренная заявка переходит на автоматическую проверку, а не сразу на карту.'
+      next: 'После решения модератора программа считает ФА по проверенным точкам. Модератор ещё раз смотрит результат.'
     },
     {
       name: 'Сквер', photos: ['parkTree', 'blurred', 'normal2'],
-      fields: [['Комплект', 'Дерево и 28 листьев'], ['Место и дата', 'Указаны'], ['Паспорт', 'Заполнен']],
-      expected: 'reject', summary: '28 листьев вместо 30, один снимок нерезкий.', note: 'Не хватает двух листьев, один показанный снимок нерезкий. Причина возврата: дополнить комплект и переснять нерезкий образец.',
+      fields: [['Комплект', '2 дерева, 12 и 8 листьев'], ['Место и дата', 'Указаны'], ['Паспорт', 'Заполнен']],
+      expected: 'reject', summary: 'На втором дереве только 8 листьев; один снимок под углом.', note: 'На втором дереве меньше 10 листьев и один снимок не подходит для разметки. Нужно дополнить набор и переснять.',
       next: 'Отклонение сопровождается понятной причиной. Участник должен знать, что исправить.'
     },
     {
       name: 'Улица', photos: ['roadTree', 'cropped', 'normal3'],
-      fields: [['Комплект', 'Дерево и 30 листьев'], ['Место и дата', 'Указаны'], ['Паспорт', 'Нет расстояния до дороги']],
+      fields: [['Комплект', '3 дерева, по 10 листьев'], ['Место и дата', 'Указаны'], ['Паспорт', 'Нет расстояния до дороги']],
       expected: 'reject', summary: 'Обрезан край снимка, нет расстояния до дороги.', note: 'У одного снимка обрезан край, в паспорте нет расстояния до дороги. Нужны полный снимок и заполненное поле.',
       next: 'Количество файлов само по себе не гарантирует пригодность заявки для анализа.'
     }
   ];
-  const CATEGORY_LABELS = { normal: 'Нормальный', damaged: 'Повреждённый', asymmetric: 'Асимметричный' };
+  const CATEGORY_LABELS = { normal: 'Берёза, целый', damaged: 'Берёза, повреждённый', other: 'Другой вид' };
   const ORDER = ['road', 'leaves', 'moderator'];
   const TITLES = { road: 'Детектив у дороги', leaves: 'Сортировщик листьев', moderator: 'Модератор на час' };
 
@@ -100,7 +100,7 @@
         [this.leaves[i], this.leaves[j]] = [this.leaves[j], this.leaves[i]];
       }
       this.index = 0; this.resolved = false; this.errors = 0; this.currentErrors = 0; this.firstTry = 0;
-      this.bins = { normal: 0, damaged: 0, asymmetric: 0 };
+      this.bins = { normal: 0, damaged: 0, other: 0 };
     }
     get current() { return this.leaves[this.index]; }
     get sorted() { return this.index + Number(this.resolved); }
@@ -162,7 +162,7 @@
   function assetMarkup(key) {
     const asset = ASSETS[key];
     const placeholder = asset.icon ? asset.detail : '<span class="asset-label">Учебный образец</span><span>' + escapeHTML(asset.detail) + '</span>';
-    return '<span class="asset' + (asset.icon ? ' asset-icon' : '') + '" title="' + escapeHTML(asset.alt) + '">' +
+    return '<span class="asset' + (asset.icon ? ' asset-icon' : '') + (asset.crop ? ' asset--' + asset.crop : '') + '" title="' + escapeHTML(asset.alt) + '">' +
       '<img hidden draggable="false" data-asset="' + escapeHTML(key) + '" alt="' + escapeHTML(asset.alt) + '">' +
       '<span class="asset-fallback"' + (asset.icon ? ' aria-hidden="true"' : '') + '>' + placeholder + '</span></span>';
   }
@@ -347,7 +347,7 @@
       assetMarkup(model.current.asset) + '<span class="leaf-caption">Перетащите в контейнер</span></button></div>' +
       '<div class="sorting-zones">' + Object.keys(CATEGORY_LABELS).map(category => '<button class="drop-zone" type="button" data-drop="' + category + '"><strong>' +
         CATEGORY_LABELS[category] + '</strong><span>В контейнере: ' + model.bins[category] + '</span></button>').join('') + '</div>' +
-      '<div class="sort-footer"><p>Категории учебные. Целый асимметричный лист тоже пригоден для промеров.</p><button class="button button-primary" data-action="next-leaf" type="button" hidden>Следующий лист</button></div></section>');
+      '<div class="sort-footer"><p>Проверяйте вид и повреждения. Целый лист с естественной асимметрией подходит для промеров.</p><button class="button button-primary" data-action="next-leaf" type="button" hidden>Следующий лист</button></div></section>');
     bindDrag(dropSorter);
     message('Смотрите на целостность края и различие сторон. Ошибочный перенос можно исправить.');
   }
@@ -428,10 +428,10 @@
     let result;
     if (currentGame === 'road') {
       result = 'Собрано ' + model.total + ' из 10 игровых листьев.';
-      facts = ['Паспорт связывает каждый образец с местом сбора.', 'Различие условий не доказывает влияние дороги: нужны измерения, повторы и сравнение.', 'В реальном проекте одна заявка включает дерево, его фотографию и 30 листьев.'];
+      facts = ['Паспорт связывает каждый образец с местом сбора.', 'Различие условий не доказывает влияние дороги: нужны измерения, повторы и сравнение.', 'В заявке 2–4 дерева и по 10–30 фотографий листьев с каждого.'];
     } else if (currentGame === 'leaves') {
       result = 'Разложено ' + model.sorted + '/9. С первого раза: ' + model.firstTry + '. Ошибочных переносов: ' + model.errors + '.';
-      facts = ['Повреждение ткани и различие сторон, разные признаки.', 'Целые асимметричные листья не отбрасывают ради красивого результата.', 'На платформе пригодность материала проверяется по методике, а ФА рассчитывается по промерам.'];
+      facts = ['Другой вид и повреждённая берёза исключаются из измерения ФА.', 'Целые асимметричные листья не отбрасывают ради красивого результата.', 'Пригодность материала проверяют до расчёта ФА по размеченным точкам.'];
     } else {
       result = 'Проверено ' + model.decisions.length + '/3. Обоснованных решений: ' + model.score + '.';
       facts = model.decisions.map(entry => {
@@ -443,7 +443,7 @@
     const nextGame = ORDER[ORDER.indexOf(currentGame) + 1];
     show('<section class="result-scene" aria-label="Результат игры"><h2>' + (completed ? 'Раунд завершён' : 'Раунд остановлен') + '</h2><p>' + result + '</p>' +
       '<div class="result-facts">' + facts.map(fact => '<p>' + escapeHTML(fact) + '</p>').join('') + '</div>' +
-      (currentGame === 'moderator' ? '<p class="caption">В проекте после человека следует автоматическая проверка. Игровое решение ничего не публикует и не выдаёт роль.</p>' : '') +
+      (currentGame === 'moderator' ? '<p class="caption">Программа считает ФА по проверенным человеком точкам. Игровое решение ничего не публикует.</p>' : '') +
       '<div class="actions"><button class="button button-primary" type="button" data-action="replay">Играть снова</button>' +
       (playAll && nextGame ? '<button class="button" type="button" data-next-game="' + nextGame + '">Следующая игра</button>' : '') +
       '<button class="button" type="button" data-action="lobby">К выбору игр</button><a class="button" href="education.html">К реальному проекту</a></div></section>', true);

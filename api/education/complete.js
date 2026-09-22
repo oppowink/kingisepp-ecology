@@ -4,9 +4,9 @@ const { getAdminClient } = require('../../server/supabase');
 const { profiles } = require('../../server/users');
 
 const TESTS = {
-  participant: { pass: 5, answers: { q1: 'betula', q2: 'one_tree', q3: 'light_background', q4: 'whole_leaf', q5: 'mark_tree', q6: 'moderation' } },
+  participant: { pass: 5, answers: { q1: 'betula', q2: 'two_to_four', q3: 'light_background', q4: 'whole_leaf', q5: 'mark_tree', q6: 'moderation' } },
   curator: { pass: 6, answers: { q1: 'organize', q2: 'join_code', q3: 'territory', q4: 'five_trees', q5: 'moderator_decides', q6: 'progress', q7: 'protect_data' } },
-  moderator: { pass: 9, answers: { q1: 'data_quality', q2: 'one_tree_30', q3: 'cut_leaf', q4: 'shape_distortion', q5: 'fix_or_reject', q6: 'check_landmarks', q7: 'after_final_review', q8: 'reason', q9: 'duplicate_flag', q10: 'checklist' } }
+  moderator: { pass: 9, answers: { q1: 'data_quality', q2: 'two_to_four', q3: 'cut_leaf', q4: 'shape_distortion', q5: 'fix_or_reject', q6: 'check_landmarks', q7: 'after_final_review', q8: 'reason', q9: 'duplicate_flag', q10: 'checklist' } }
 };
 function readBody(req) {
   return new Promise(function (resolve, reject) {

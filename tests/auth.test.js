@@ -246,7 +246,7 @@ test('education complete scores volunteer test and stores progress', async funct
       stage: 'test',
       answers: {
         q1: 'betula',
-        q2: 'one_tree',
+        q2: 'two_to_four',
         q3: 'light_background',
         q4: 'whole_leaf',
         q5: 'mark_tree',

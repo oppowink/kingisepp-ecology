@@ -2,7 +2,8 @@
 (function () {
   'use strict';
 
-  var MAX_PHOTOS = 30;
+  var MAX_PHOTOS = 120;
+  var MAX_PER_TREE = 30;
 
   document.addEventListener('DOMContentLoaded', async function () {
     var user = await EcoAuth.requireAuthAsync();
@@ -22,11 +23,8 @@
     form.hidden = false;
     locked.hidden = true;
 
-    var fileInput = document.getElementById('faylyNablyudeniya');
-    var treeFileInput = document.getElementById('fotoDereva');
-    var dropArea = document.getElementById('zagruzkaFoto');
-    var photoCounter = document.getElementById('schetchikFoto');
-    var treePhotoCounter = document.getElementById('schetchikFotoDereva');
+    var treeSetsElement = document.getElementById('treeSets');
+    var addTreeButton = document.getElementById('addTree');
     var photoError = document.getElementById('oshibkaFoto');
     var formError = document.getElementById('oshibkaPodachi');
     var dateInput = document.getElementById('dataSbora');
@@ -37,7 +35,6 @@
     var objectDescription = document.getElementById('obektNablyudeniyaOpisanie');
     var submitButton = form.querySelector('button[type="submit"]');
     var selectedFiles = [];
-    var selectedTreeFile = null;
     var landmarkSets = [];
     var landmarkPhoto = 0;
     var landmarkNames = ['apex','base','left_v1_base','left_v1_end','right_v1_base','right_v1_end','left_v2_base','left_v2_end','right_v2_base','right_v2_end','width_left','width_right'];
@@ -155,7 +152,7 @@
       var digest = await crypto.subtle.digest('SHA-256', buffer);
       var hash = Array.from(new Uint8Array(digest)).map(function(b){return b.toString(16).padStart(2,'0');}).join('');
       var image = await checkBackground(file);
-      file._ecoMeta = { sha256: hash, imageWidth: image.width, imageHeight: image.height, bgLight: image.light, precheck: { backgroundLight: image.light, readable: image.width >= 500 && image.height >= 500, birchCandidate: true } };
+      file._ecoMeta = { sha256: hash, imageWidth: image.width, imageHeight: image.height, bgLight: image.light, precheck: { backgroundLight: image.light, readable: image.width >= 500 && image.height >= 500, birchCandidate: null } };
       return file._ecoMeta;
     }
 
@@ -163,7 +160,10 @@
       if (!selectedFiles.length) { landmarkCanvas.style.display='none'; landmarkNumber.textContent='Фото не выбраны'; landmarkPointName.textContent=''; return; }
       landmarkCanvas.style.display='block';
       var set=landmarkSets[landmarkPhoto]||(landmarkSets[landmarkPhoto]={});
-      landmarkNumber.textContent='Лист '+(landmarkPhoto+1)+' из '+selectedFiles.length;
+      var file=selectedFiles[landmarkPhoto];
+      var treeIndex=Number(file._ecoTreeIndex||0);
+      var within=selectedFiles.slice(0,landmarkPhoto+1).filter(function(item){return item._ecoTreeIndex===treeIndex;}).length;
+      landmarkNumber.textContent='Дерево '+(treeIndex+1)+' · лист '+within+' · всего '+selectedFiles.length;
       var count=Object.keys(set).length;
       landmarkPointName.textContent=count<landmarkNames.length?'Сейчас: '+landmarkLabels[count]:'Все 12 точек отмечены';
       landmarkOverlay.replaceChildren();
@@ -174,20 +174,58 @@
 
     function showLandmarkPhoto(){if(!selectedFiles[landmarkPhoto])return;var old=landmarkImage.dataset.url;if(old)URL.revokeObjectURL(old);var url=URL.createObjectURL(selectedFiles[landmarkPhoto]);landmarkImage.dataset.url=url;landmarkImage.src=url;renderLandmarks();}
 
-    function setFiles(files) {
-      selectedFiles = Array.from(files || []).filter(function (file) {
-        return file.type.startsWith('image/') && file.size <= 12582912;
-      }).slice(0, MAX_PHOTOS);
-      photoCounter.textContent = selectedFiles.length + ' / ' + MAX_PHOTOS + ' фотографий';
-      photoError.hidden = true;
-      landmarkSets = selectedFiles.map(function(){return {};}); landmarkPhoto=0;
-      Promise.all(selectedFiles.map(prepareMeta)).catch(function(){showError('Не удалось проверить фотографии.');});
-      showLandmarkPhoto();
+    function treeBlocks() { return Array.from(treeSetsElement.querySelectorAll('.tree-block')); }
+    function readTrees() {
+      return treeBlocks().map(function (block, index) {
+        var leaves=Array.from(block.querySelector('[data-tree-leaves]').files||[]);
+        leaves.forEach(function(file){file._ecoTreeIndex=index;});
+        return {
+          treePhoto: block.querySelector('[data-tree-photo]').files[0]||null, files:leaves,
+          treeCondition:block.querySelector('[data-tree-condition]').value,
+          trunkDiameterCm:block.querySelector('[data-tree-diameter]').value,
+          treeHeightEstimateM:block.querySelector('[data-tree-height]').value,
+          treeDamageNotes:block.querySelector('[data-tree-notes]').value.trim()
+        };
+      });
     }
+    function addTree() {
+      if (treeBlocks().length>=4) return;
+      var number=treeBlocks().length+1;
+      var block=document.createElement('fieldset'); block.className='tree-block';
+      block.innerHTML='<legend>Берёза '+number+'</legend><div class="forma-nablyudeniya__ryad">'+
+        '<label class="pole-gruppa">Состояние кроны<select class="pole-vybor" data-tree-condition required><option value="">Выберите</option><option>Без заметных нарушений</option><option>Есть сухие ветви</option><option>Крона разрежена</option><option>Есть выраженные повреждения</option></select></label>'+ 
+        '<label class="pole-gruppa">Диаметр ствола, см<input class="pole-vvod" data-tree-diameter type="number" min="1" max="300" step="0.1" required></label></div>'+ 
+        '<div class="forma-nablyudeniya__ryad"><label class="pole-gruppa">Примерная высота, м<input class="pole-vvod" data-tree-height type="number" min="1" max="80" step="0.1" required></label>'+ 
+        '<label class="pole-gruppa">Повреждения ствола и кроны<input class="pole-vvod" data-tree-notes placeholder="Если нет — напишите «не замечены»" maxlength="500" required></label></div>'+ 
+        '<label class="pole-gruppa">Обзорная фотография этого дерева<input class="pole-vvod" data-tree-photo type="file" accept="image/*"></label>'+ 
+        '<label class="pole-gruppa">Фотографии листьев этого дерева (10–30)<input class="pole-vvod" data-tree-leaves type="file" accept="image/*" multiple></label>'+ 
+        '<p data-tree-count>Листья ещё не выбраны</p><button class="knopka-tekst" type="button" data-remove-tree>Убрать дерево</button>';
+      treeSetsElement.appendChild(block);
+      addTreeButton.hidden=treeBlocks().length>=4;
+      refreshLeaves();
+    }
+    function refreshLeaves() {
+      var previous=new Map(selectedFiles.map(function(file,index){return [file,landmarkSets[index]||{}];}));
+      selectedFiles=readTrees().flatMap(function(tree){return tree.files;}).slice(0,MAX_PHOTOS);
+      landmarkSets=selectedFiles.map(function(file){return previous.get(file)||{};});
+      landmarkPhoto=Math.min(landmarkPhoto,Math.max(0,selectedFiles.length-1));
+      treeBlocks().forEach(function(block,index){var count=block.querySelector('[data-tree-leaves]').files.length;block.querySelector('[data-tree-count]').textContent='Листьев: '+count+' (нужно от 10 до 30)';block.querySelector('legend').textContent='Берёза '+(index+1);});
+      photoError.hidden=true;
+      if(selectedFiles.length) showLandmarkPhoto(); else renderLandmarks();
+    }
+    addTreeButton.addEventListener('click',addTree);
+    treeSetsElement.addEventListener('change',function(event){
+      if(event.target.matches('[data-tree-leaves], [data-tree-photo]')) {
+        refreshLeaves();
+        if(event.target.files.length>MAX_PER_TREE && event.target.matches('[data-tree-leaves]')) {photoError.textContent='Для одного дерева допускается не более 30 листьев. Выберите файлы заново.';photoError.hidden=false;}
+      }
+    });
+    treeSetsElement.addEventListener('click',function(event){if(!event.target.matches('[data-remove-tree]'))return;if(treeBlocks().length<=2)return;event.target.closest('.tree-block').remove();addTreeButton.hidden=false;refreshLeaves();});
+    addTree(); addTree();
 
     landmarkOverlay.addEventListener('click',function(event){var set=landmarkSets[landmarkPhoto];var index=Object.keys(set).length;if(index>=landmarkNames.length)return;var rect=landmarkOverlay.getBoundingClientRect();set[landmarkNames[index]]={x:Math.max(0,Math.min(1,(event.clientX-rect.left)/rect.width)),y:Math.max(0,Math.min(1,(event.clientY-rect.top)/rect.height)),visible:true};renderLandmarks();});
     document.getElementById('landmarkUndo').addEventListener('click',function(){var set=landmarkSets[landmarkPhoto],keys=Object.keys(set);if(keys.length)delete set[keys[keys.length-1]];renderLandmarks();});
-    document.getElementById('landmarkNext').addEventListener('click',function(){if(Object.keys(landmarkSets[landmarkPhoto]||{}).length!==12)return;if(landmarkPhoto<selectedFiles.length-1){landmarkPhoto+=1;showLandmarkPhoto();}else showError('Разметка всех 30 листьев готова. Теперь можно отправить заявку.');});
+    document.getElementById('landmarkNext').addEventListener('click',function(){if(Object.keys(landmarkSets[landmarkPhoto]||{}).length!==12)return;if(landmarkPhoto<selectedFiles.length-1){landmarkPhoto+=1;showLandmarkPhoto();}else showError('Разметка листьев готова. Теперь можно отправить заявку.');});
 
     function selectedSourceMode() {
       return form.querySelector('input[name="sourceMode"]:checked')?.value || 'own';
@@ -247,26 +285,6 @@
       }
     });
 
-    fileInput.addEventListener('change', function () { setFiles(fileInput.files); });
-    treeFileInput.addEventListener('change', function () {
-      selectedTreeFile = treeFileInput.files && treeFileInput.files[0] ? treeFileInput.files[0] : null;
-      if (selectedTreeFile && (!selectedTreeFile.type.startsWith('image/') || selectedTreeFile.size > 12582912)) {
-        selectedTreeFile = null;
-        treeFileInput.value = '';
-        treePhotoCounter.textContent = 'Нужен файл изображения не больше 12 МБ';
-        return;
-      }
-      treePhotoCounter.textContent = selectedTreeFile ? selectedTreeFile.name : 'Файл не выбран';
-    });
-
-    ['dragenter', 'dragover'].forEach(function (type) {
-      dropArea.addEventListener(type, function (event) { event.preventDefault(); dropArea.classList.add('peretaskivanie'); });
-    });
-    ['dragleave', 'drop'].forEach(function (type) {
-      dropArea.addEventListener(type, function (event) { event.preventDefault(); dropArea.classList.remove('peretaskivanie'); });
-    });
-    dropArea.addEventListener('drop', function (event) { setFiles(event.dataTransfer.files); });
-
     form.addEventListener('submit', async function (event) {
       event.preventDefault();
       showError('');
@@ -298,22 +316,25 @@
         showError('Дата сбора не может быть в будущем.');
         return;
       }
-      if (!selectedTreeFile) {
-        showError('Добавьте обзорную фотографию исследуемой берёзы.');
-        return;
-      }
-      if (selectedFiles.length !== MAX_PHOTOS) {
-        photoError.textContent = 'Для одной точки нужно загрузить ровно 30 фотографий листьев.';
+      var treeData=readTrees();
+      if (treeData.length<2||treeData.length>4||treeData.some(function(tree){return !tree.treePhoto||tree.files.length<10||tree.files.length>30;})) {
+        photoError.textContent = 'Нужно 2–4 дерева: одно обзорное фото и 10–30 отдельных фотографий листьев для каждого.';
         photoError.hidden = false;
         return;
       }
-      if (landmarkSets.length !== MAX_PHOTOS || landmarkSets.some(function(set){return Object.keys(set).length!==12;})) { showError('Поставьте 12 контрольных точек на каждом из 30 листьев.'); document.getElementById('landmarkStep').scrollIntoView({behavior:'smooth'}); return; }
-      await Promise.all([selectedTreeFile].concat(selectedFiles).map(prepareMeta));
+      if (landmarkSets.length !== selectedFiles.length || landmarkSets.some(function(set){return Object.keys(set).length!==12;})) { showError('Поставьте 12 контрольных точек на каждом листе.'); document.getElementById('landmarkStep').scrollIntoView({behavior:'smooth'}); return; }
+      await Promise.all(treeData.map(function(tree){return tree.treePhoto;}).concat(selectedFiles).map(prepareMeta));
       if (selectedFiles.some(function(file){return !file._ecoMeta.precheck.backgroundLight||!file._ecoMeta.precheck.readable;})) { showError('Часть фотографий не прошла проверку фона или разрешения. Замените их перед отправкой.'); return; }
 
       try {
-        setBusy(true, 'Загружаем 31 фотографию…');
-        var uploaded = await EcoAuth.uploadObservationPhotos(selectedTreeFile, selectedFiles);
+        setBusy(true, 'Загружаем фотографии…');
+        var uploaded = await EcoAuth.uploadObservationPhotos(treeData);
+        var uploadedTrees=uploaded.trees.map(function(tree,index){return Object.assign({},tree,{
+          treeCondition:treeData[index].treeCondition,
+          trunkDiameterCm:treeData[index].trunkDiameterCm,
+          treeHeightEstimateM:treeData[index].treeHeightEstimateM,
+          treeDamageNotes:treeData[index].treeDamageNotes
+        });});
         setBusy(true, 'Сохраняем паспорт точки…');
         var parts = coordinates.split(',').map(Number);
         var request = await EcoAuth.createRequest({
@@ -326,8 +347,9 @@
           comment: document.getElementById('kommentariyNablyudeniya').value.trim(),
           files: uploaded.files,
           treePhoto: uploaded.treePhoto,
-          treeCount: 1,
-          leafCount: MAX_PHOTOS,
+          trees: uploadedTrees,
+          treeCount: uploadedTrees.length,
+          leafCount: selectedFiles.length,
           sourceType: object ? (object.assigned ? 'assigned_object' : 'open_object') : 'own',
           organizationId: object?.organizationId || null,
           projectId: object?.projectId || null,
@@ -340,13 +362,13 @@
           surfaceCover: document.getElementById('tipPokrytiya').value,
           weatherConditions: document.getElementById('pogodaNablyudeniya').value.trim(),
           treeSpecies: document.getElementById('vidDereva').value,
-          trunkDiameterCm: document.getElementById('diametrStvola').value,
-          treeHeightEstimateM: document.getElementById('vysotaDereva').value,
-          treeCondition: document.getElementById('sostoyanieDereva').value,
-          treeDamageNotes: document.getElementById('povrezhdeniyaDereva').value.trim(),
+          trunkDiameterCm: treeData[0].trunkDiameterCm,
+          treeHeightEstimateM: treeData[0].treeHeightEstimateM,
+          treeCondition: treeData[0].treeCondition,
+          treeDamageNotes: treeData[0].treeDamageNotes,
           backgroundFlags: uploaded.files.map(function (file) { return file.bgLight; })
           ,participantChecklist: Array.from(checks).map(function(box){return box.checked;})
-          ,landmarks: landmarkSets.map(function(points,index){var meta=selectedFiles[index]._ecoMeta||{};return {points:points,fileHash:meta.sha256||'',fileName:selectedFiles[index].name,imageWidth:meta.imageWidth||1,imageHeight:meta.imageHeight||1};})
+          ,landmarks: landmarkSets.map(function(points,index){var meta=selectedFiles[index]._ecoMeta||{};return {points:points,fileHash:meta.sha256||'',fileName:selectedFiles[index].name,imageWidth:meta.imageWidth||1,imageHeight:meta.imageHeight||1,treeIndex:selectedFiles[index]._ecoTreeIndex};})
           ,photoPrecheck: { passed: true, checked: selectedFiles.length, method: 'background-and-resolution-v1' }
           ,integrityCode: integrityCode
           ,capturedAt: new Date().toISOString()
