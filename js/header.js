@@ -3,6 +3,44 @@
   'use strict';
 
   document.addEventListener('DOMContentLoaded', function () {
+    var header = document.querySelector('.shapka');
+    if (header && !header.querySelector('.shapka-logo__nazvanie')) {
+      header.innerHTML = '<a aria-label="ЭкоБиоМониторинг, на главную" class="shapka-logo" href="index.html"><span class="shapka-logo__nazvanie"><span class="shapka-logo__bukva">Э</span><span class="shapka-logo__bukva">к</span><img alt="" aria-hidden="true" class="shapka-logo__list shapka-logo__list--1" src="img/leaf1.png"><span class="shapka-logo__bukva">Б</span><span class="shapka-logo__bukva">и</span><img alt="" aria-hidden="true" class="shapka-logo__list shapka-logo__list--2" src="img/leaf2.png"><span class="shapka-logo__bukva">М</span><span class="shapka-logo__bukva">о</span><span class="shapka-logo__bukva">н</span><span class="shapka-logo__bukva">и</span><span class="shapka-logo__bukva">т</span><span class="shapka-logo__bukva">о</span><span class="shapka-logo__bukva">р</span><span class="shapka-logo__bukva">и</span><span class="shapka-logo__bukva">н</span><span class="shapka-logo__bukva">г</span></span></a><div class="shapka-deystviya"><a class="shapka-ssylka" href="account.html"><img alt="" aria-hidden="true" class="shapka-ssylka__ikona" src="img/icons/user.png"><span>Личный кабинет</span></a><button aria-controls="nastroikiPanel" aria-expanded="false" aria-label="Открыть настройки" class="nastroiki-knopka" id="nastroikiKnopka" type="button"><img alt="" aria-hidden="true" class="nastroiki-knopka__ikona" src="img/icons/gear.png"><span class="nastroiki-knopka__tekst">Настройки</span></button></div>';
+    }
+
+    var createdPanel = false;
+    if (!document.getElementById('nastroikiFon')) {
+      var newOverlay = document.createElement('div');
+      newOverlay.className = 'nastroiki-fon';
+      newOverlay.id = 'nastroikiFon';
+      newOverlay.setAttribute('aria-hidden', 'true');
+      document.body.prepend(newOverlay);
+    }
+    if (!document.getElementById('nastroikiPanel')) {
+      createdPanel = true;
+      var newPanel = document.createElement('aside');
+      newPanel.className = 'nastroiki-panel';
+      newPanel.id = 'nastroikiPanel';
+      newPanel.setAttribute('aria-label', 'Настройки');
+      newPanel.setAttribute('aria-hidden', 'true');
+      newPanel.innerHTML = '<button aria-label="Закрыть настройки" class="nastroiki-zakryt" id="nastroikiZakryt" type="button"><img alt="" aria-hidden="true" src="img/icons/close.png"><span class="sr-only">Закрыть</span></button><div class="tema-vybor-blok"><p class="tema-podpis">Тема</p><div class="tema-vybor"><button class="tema-knopka" id="temaSvetlaya" type="button"><img alt="" aria-hidden="true" src="img/icons/sun.png"><span>Светлая</span></button><button class="tema-knopka" id="temaTemnaya" type="button"><img alt="" aria-hidden="true" src="img/icons/moon.png"><span>Тёмная</span></button></div></div><div class="nastroiki-akkaunt"><a class="nastroiki-ssylka nastroiki-ssylka--akcent" href="account.html"><img alt="" aria-hidden="true" src="img/icons/user.png"><span>Личный кабинет</span></a></div><nav aria-label="Навигация" class="nastroiki-navigaciya"><a class="nastroiki-ssylka" href="index.html">Главная</a><a class="nastroiki-ssylka" href="map.html">Карта</a><a class="nastroiki-ssylka" href="faq.html">Вопросы и ответы</a><a class="nastroiki-ssylka" href="games.html">Игры</a><a class="nastroiki-ssylka" href="about.html">О проекте и авторе</a><a class="nastroiki-ssylka" href="feedback.html">Обратная связь</a></nav>';
+      document.body.appendChild(newPanel);
+    }
+
+    if (!document.querySelector('.bokovye-listya')) {
+      var sideLeaves = document.createElement('div');
+      sideLeaves.className = 'bokovye-listya';
+      sideLeaves.setAttribute('aria-hidden', 'true');
+      sideLeaves.innerHTML = '<div class="bokovye-listya__storona bokovye-listya__storona--levo"><img src="img/leaf1.png" alt=""><img src="img/leaf2.png" alt=""><img src="img/leaf3.png" alt=""><img src="img/leaf4.png" alt=""></div><div class="bokovye-listya__storona bokovye-listya__storona--pravo"><img src="img/leaf4.png" alt=""><img src="img/leaf3.png" alt=""><img src="img/leaf2.png" alt=""><img src="img/leaf1.png" alt=""></div>';
+      document.body.appendChild(sideLeaves);
+    }
+
+    if (createdPanel && window.EcoTheme) {
+      document.getElementById('temaSvetlaya')?.addEventListener('click', function () { window.EcoTheme.applyTheme('light', true); });
+      document.getElementById('temaTemnaya')?.addEventListener('click', function () { window.EcoTheme.applyTheme('dark', true); });
+      window.EcoTheme.applyTheme(document.documentElement.classList.contains('dark') ? 'dark' : 'light', false);
+    }
+
     // элементы панели
     var panel = document.getElementById('nastroikiPanel');
     var overlay = document.getElementById('nastroikiFon');

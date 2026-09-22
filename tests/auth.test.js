@@ -250,7 +250,9 @@ test('education complete scores volunteer test and stores progress', async funct
         q3: 'light_background',
         q4: 'whole_leaf',
         q5: 'mark_tree',
-        q6: 'moderation'
+        q6: 'moderation',
+        q7: 'different_sides',
+        q8: 'semi_automatic'
       }
     }
   }, res);
@@ -258,7 +260,35 @@ test('education complete scores volunteer test and stores progress', async funct
   const body = JSON.parse(res.body);
   assert.equal(res.statusCode, 200);
   assert.equal(body.completed, true);
-  assert.equal(body.score, 6);
+  assert.equal(body.score, 8);
   assert.equal(saved.progress.passed, true);
   assert.equal(saved.user.education_completed, true);
+});
+
+test('education status explains a missing Supabase migration', async function () {
+  const session = require('../server/session');
+  const cookie = session.sessionCookieValue({
+    id: 'profile-1',
+    email: 'user@example.com',
+    name: 'Полина',
+    role: 'participant'
+  });
+  const admin = {
+    from(table) {
+      if (table === 'profiles') {
+        return { select() { return { eq() { return { async maybeSingle() { return { data: { id: 'profile-1', role: 'participant', blocked: false }, error: null }; } }; } }; } };
+      }
+      if (table === 'education_progress') {
+        return { select() { return { eq() { return { eq() { return { async maybeSingle() { return { data: null, error: new Error('column education_progress.lessons_completed does not exist') }; } }; } }; } }; } };
+      }
+      throw new Error('unexpected table ' + table);
+    }
+  };
+  const handler = loadHandler('../api/education/status', {
+    getAdminClient() { return admin; }
+  });
+  const res = response();
+  await handler({ method: 'GET', url: '/api/education/status?course=participant', headers: { cookie: cookie } }, res);
+  assert.equal(res.statusCode, 503);
+  assert.equal(JSON.parse(res.body).error, 'EDUCATION_DATABASE_NOT_READY');
 });

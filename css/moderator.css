@@ -1,8 +1,9 @@
 /* moderator.css — интерфейс модерации заявок */
+html:not(.dark) body { --bg:#fff; --surface:#fff; --surface-soft:#f5f8f2; }
 
 /* обёртка страницы модерации */
 .moderaciya {
-  width: min(920px, calc(100% - 46px));
+  width: min(1120px, calc(100% - 46px));
 }
 .moderaciya > h1 {
   margin-bottom: 39px;
@@ -16,8 +17,8 @@
   margin: 0 0 8px;
   color: var(--accent);
   font-size: .76rem;
-  letter-spacing: .08em;
-  text-transform: uppercase;
+  letter-spacing: normal;
+  text-transform: none;
 }
 .admin-panel h2 {
   margin-bottom: 18px;
@@ -217,8 +218,12 @@
 /* список заявок — сетка с отступами */
 .moderaciya-spisok {
   display: grid;
-  gap: 42px;
+  gap: 74px;
 }
+
+.moderaciya-zayavka { min-width: 0; }
+.moderaciya-zayavka__head { display: flex; align-items: flex-start; justify-content: space-between; gap: 22px; margin-bottom: 20px; }
+.moderaciya-zayavka__head > span { color: var(--text-muted); font-size: .82rem; white-space: nowrap; }
 
 /* карточка заявки */
 .moderaciya-zayavka h2 {
@@ -243,11 +248,17 @@
   color: var(--accent);
   font-size: .84rem;
 }
-.moderaciya-pasport { display: grid; grid-template-columns: minmax(110px, .38fr) 1fr; gap: 6px 14px; margin: 16px 0; padding: 15px; background: var(--surface-soft); font-size: .8rem; }
+.moderaciya-pasport { display: grid; grid-template-columns: minmax(150px,.42fr) minmax(0,1fr); gap: 7px 20px; max-width: 780px; margin: 16px 0; padding: 0; background: transparent; font-size: .84rem; }
 .moderaciya-pasport dt { color: var(--text-muted); }
 .moderaciya-pasport dd { margin: 0; overflow-wrap: anywhere; }
 .moderaciya-foto { display: flex; flex-wrap: wrap; gap: 7px; margin: 12px 0; }
 .moderaciya-foto img { width: 104px; height: 104px; object-fit: cover; background: var(--surface-soft); }
+.moderaciya-preview { display: grid; grid-template-columns: repeat(auto-fill,minmax(125px,1fr)); gap: 12px; margin: 25px 0; }
+.moderaciya-preview figure { min-width: 0; margin: 0; }
+.moderaciya-preview img { display: block; width: 100%; height: 150px; object-fit: cover; background: var(--surface-soft); }
+.moderaciya-preview figcaption { margin-top: 5px; color: var(--text-muted); font-size: .73rem; }
+.moderaciya-flagi { max-width: 780px; margin: 17px 0; color: var(--warning); font-size: .84rem; }
+.moderaciya-flagi--ok { color: var(--success); }
 
 /* блок с результатом предварительного AI-анализа */
 .moderaciya-ai {
@@ -262,25 +273,40 @@
 /* кнопки Одобрить / Отклонить */
 .moderaciya-deystviya {
   display: flex;
+  flex-wrap: wrap;
+  align-items: center;
   gap: 11px;
-  margin-top: 13px;
+  margin-top: 23px;
 }
 
 /* moderator.css — дополнение для чеклиста и селекта */
 .moderaciya-checklist {
-  background: var(--surface-soft);
-  padding: 10px;
-  margin: 12px 0;
+  display: grid;
+  gap: 8px;
+  max-width: 850px;
+  background: transparent;
+  padding: 0;
+  margin: 28px 0;
 }
+.moderaciya-checklist h3 { margin: 0 0 8px; font: 500 1.05rem/1.35 var(--font-heading); }
 .moderaciya-checklist label {
   display: flex;
   align-items: center;
   gap: 8px;
   font-size: 0.85rem;
   color: var(--text);
-  margin: 4px 0;
+  margin: 0;
   cursor: pointer;
 }
+.moderaciya-result { max-width: 850px; margin: 30px 0 0; padding: 24px 0; background: color-mix(in srgb,var(--accent) 7%,transparent); }
+.moderaciya-result h3 { margin: 0 22px 15px; font: 500 1.08rem/1.35 var(--font-heading); }
+.moderaciya-result dl { display: grid; grid-template-columns: minmax(170px,1fr) auto; gap: 7px 22px; margin: 0 22px 20px; }
+.moderaciya-result dt { color: var(--text-muted); }
+.moderaciya-result dd { margin: 0; color: var(--text); font-variant-numeric: tabular-nums; }
+.moderaciya-result table { width: 100%; border-collapse: collapse; }
+.moderaciya-result th,.moderaciya-result td { padding: 9px 22px; text-align: left; font-size: .82rem; }
+.moderaciya-result th { color: var(--text-muted); font-weight: 500; }
+.moderaciya-result p { margin: 18px 22px 0; color: var(--text-muted); font-size: .82rem; }
 .moderaciya-checklist input[type="checkbox"] {
   width: 16px;
   height: 16px;
@@ -321,4 +347,9 @@
   .moderaciya-deystviya {
     flex-wrap: wrap;
   }
+  .moderaciya-zayavka__head { display: block; }
+  .moderaciya-zayavka__head > span { display: block; margin-top: 8px; }
+  .moderaciya-pasport { grid-template-columns: 1fr; gap: 2px; }
+  .moderaciya-pasport dd { margin-bottom: 9px; }
+  .moderaciya-preview { grid-template-columns: repeat(2,minmax(0,1fr)); }
 }

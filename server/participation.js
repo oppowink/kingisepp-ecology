@@ -68,7 +68,6 @@ function publicObject(row) {
     centerLng: row.center_lng === null ? null : Number(row.center_lng),
     radiusM: row.radius_m === null ? null : Number(row.radius_m),
     requiredPoints: Number(row.required_points || 1),
-    requiredTrees: Number(row.required_points || 1),
     visibility: row.visibility,
     status: row.status,
     dueDate: row.due_date || null
@@ -335,7 +334,7 @@ async function createObject(admin, user, input) {
     center_lat: Number.isFinite(Number(input.centerLat)) ? Number(input.centerLat) : null,
     center_lng: Number.isFinite(Number(input.centerLng)) ? Number(input.centerLng) : null,
     radius_m: Number.isFinite(Number(input.radiusM)) ? Number(input.radiusM) : 100,
-    required_points: Math.min(30, Math.max(1, Number(input.requiredTrees || input.requiredPoints || 5))),
+    required_points: Math.min(30, Math.max(1, Number(input.requiredPoints || 1))),
     visibility: input.visibility === 'public' ? 'public' : 'organization',
     status: 'open',
     due_date: input.dueDate || null

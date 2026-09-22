@@ -1,4 +1,5 @@
 /* curator.css — рабочий кабинет куратора без декоративных разделителей */
+html:not(.dark) body { --bg:#fff; --surface:#fff; --surface-soft:#f5f8f2; }
 .kurator-stranica { width: min(1080px, calc(100% - 46px)); }
 .kurator-vvedenie { max-width: 780px; margin-bottom: 38px; }
 .kurator-vvedenie > p:last-child { color: var(--text-muted); }

@@ -3,20 +3,16 @@
 .info-stranica h1,.info-stranica h2 { letter-spacing: -.025em; }
 .info-geroy { display: grid; grid-template-columns: minmax(0,1.3fr) minmax(260px,.7fr); gap: clamp(32px,6vw,92px); align-items: end; padding: 46px 0 86px; }
 .info-geroy h1 { margin: 0 0 38px; }
-.info-geroy blockquote { position: relative; max-width: 700px; margin: 0 0 36px; padding: 0 20px 0 32px; font: italic clamp(1.42rem,2.7vw,2.18rem)/1.35 var(--font-heading); color: var(--accent); }
-.info-geroy blockquote::before,.info-geroy blockquote::after { position: absolute; color: var(--warning); font: normal 1.05rem/1 var(--font-body); }
-.info-geroy blockquote::before { content: '✳'; left: 0; top: .18em; }
-.info-geroy blockquote::after { content: '✳'; right: 0; bottom: -.22em; font-size: .75rem; }
+.info-geroy blockquote { position: relative; max-width: 700px; margin: 0 0 36px; padding: 0 20px 0 0; font: italic clamp(1.42rem,2.7vw,2.18rem)/1.35 var(--font-heading); color: var(--accent); }
 .info-geroy p { max-width: 690px; color: var(--text-muted); line-height: 1.75; }
 .info-portret { margin: 0; align-self: end; background: none; }
 .info-foto-avtora { display: block; width: 100%; max-height: 480px; object-fit: contain; object-position: bottom center; }
 .info-portret figcaption { padding: 7px 0 0; color: var(--text-muted); font-size: .78rem; }
-.info-prizyv { display: grid; grid-template-columns: 24px minmax(0,1fr) auto; gap: 15px 22px; align-items: center; max-width: 1050px; margin: 8px auto 112px; color: var(--text); }
-.info-prizyv::before { content: '✳'; grid-column: 1; align-self: start; margin-top: 9px; color: var(--warning); font-size: 1.1rem; }
-.info-prizyv > div { grid-column: 2; }
+.info-prizyv { display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 15px 34px; align-items: center; max-width: 1050px; margin: 8px auto 112px; color: var(--text); }
+.info-prizyv > div { grid-column: 1; }
 .info-prizyv h2 { max-width: 640px; margin-bottom: 12px; font-size: clamp(1.6rem,2.5vw,2.35rem); }
 .info-prizyv p { max-width: 690px; margin: 0; color: var(--text-muted); }
-.info-prizyv .ssylka-svechenie { grid-column: 3; white-space: nowrap; }
+.info-prizyv .ssylka-svechenie { grid-column: 2; white-space: nowrap; }
 .info-razdel { margin: 0 0 115px; }
 .info-razdel--image { display: grid; grid-template-columns: minmax(0,1.2fr) minmax(250px,.78fr); align-items: center; gap: clamp(40px,7vw,98px); }
 .info-razdel--reverse { grid-template-columns: minmax(250px,.72fr) minmax(0,1.35fr); }
@@ -29,7 +25,6 @@
 .info-territoriya figcaption { margin-top: 11px; color: var(--text-muted); font-size: .74rem; }
 .info-illyustraciya--fa { width: min(340px,95%); max-height: 360px; object-fit: contain; }
 .info-shagi { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: clamp(24px,4vw,68px); margin: 42px 0 30px; }
-.info-shagi article::before { content: '✳'; display: block; margin-bottom: 16px; color: var(--warning); font-size: .95rem; }
 .info-shagi h3 { margin: 0 0 14px; font: 500 clamp(1.16rem,1.6vw,1.42rem)/1.3 var(--font-heading); }
 .info-shagi p { margin: 0; font-size: .92rem; }
 .info-ssylka { display: inline-block; padding: 9px 2px; border: 0; background: none; color: var(--accent); font-weight: 600; text-decoration: underline; text-decoration-color: color-mix(in srgb,var(--accent) 55%,transparent); text-underline-offset: 6px; transition: color .18s ease,text-decoration-color .18s ease; }
@@ -45,13 +40,12 @@
   .info-stranica { width: min(100% - 34px,650px); }
   .info-geroy { grid-template-columns: 1fr; padding: 36px 0 68px; }
   .info-portret { width: min(76%,350px); justify-self: center; }
-  .info-prizyv { grid-template-columns: 22px 1fr; margin-bottom: 80px; }
-  .info-prizyv .ssylka-svechenie { grid-column: 2; justify-self: start; }
+  .info-prizyv { grid-template-columns: 1fr; margin-bottom: 80px; }
+  .info-prizyv .ssylka-svechenie { grid-column: 1; justify-self: start; }
   .info-razdel { margin-bottom: 79px; }
   .info-razdel--image,.info-razdel--reverse,.info-polza { grid-template-columns: 1fr; gap: 26px; }
   .info-razdel--reverse > div:first-child,.info-razdel--reverse > img:last-child { order: initial; }
   .info-razdel--reverse > img:last-child { grid-row: 2; }
   .info-shagi { grid-template-columns: 1fr; gap: 26px; }
-  .info-shagi article::before { display: inline-block; margin-bottom: 8px; }
   .info-territoriya { max-width: 450px; }
 }

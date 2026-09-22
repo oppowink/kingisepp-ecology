@@ -4,8 +4,8 @@ const { getAdminClient } = require('../../server/supabase');
 const { profiles } = require('../../server/users');
 
 const TESTS = {
-  participant: { pass: 5, answers: { q1: 'betula', q2: 'two_to_four', q3: 'light_background', q4: 'whole_leaf', q5: 'mark_tree', q6: 'moderation' } },
-  curator: { pass: 6, answers: { q1: 'organize', q2: 'join_code', q3: 'territory', q4: 'five_trees', q5: 'moderator_decides', q6: 'progress', q7: 'protect_data' } },
+  participant: { pass: 7, answers: { q1: 'betula', q2: 'two_to_four', q3: 'light_background', q4: 'whole_leaf', q5: 'mark_tree', q6: 'moderation', q7: 'different_sides', q8: 'semi_automatic' } },
+  curator: { pass: 6, answers: { q1: 'organize', q2: 'join_code', q3: 'territory', q4: 'monitoring_points', q5: 'moderator_decides', q6: 'progress', q7: 'protect_data' } },
   moderator: { pass: 9, answers: { q1: 'data_quality', q2: 'two_to_four', q3: 'cut_leaf', q4: 'shape_distortion', q5: 'fix_or_reject', q6: 'check_landmarks', q7: 'after_final_review', q8: 'reason', q9: 'duplicate_flag', q10: 'checklist' } }
 };
 function readBody(req) {
@@ -19,6 +19,10 @@ function readBody(req) {
 }
 function courseForRole(role) { return role === 'curator' ? 'curator' : role === 'moderator' ? 'moderator' : 'participant'; }
 function scoreAnswers(correct, answers) { return Object.keys(correct).reduce(function (score, key) { return score + (answers && answers[key] === correct[key] ? 1 : 0); }, 0); }
+function isEducationSchemaError(error) {
+  const text = String(error && (error.message || error.details || error.hint) || error || '');
+  return /education_progress|lessons_completed|lessons_completed_at|relation .* does not exist|column .* does not exist/i.test(text);
+}
 module.exports = async function handler(req, res) {
   res.setHeader('Cache-Control', 'no-store'); res.setHeader('Content-Type', 'application/json; charset=utf-8');
   if (req.method !== 'POST') { res.statusCode = 405; return res.end(JSON.stringify({ error: 'METHOD_NOT_ALLOWED' })); }
@@ -53,6 +57,10 @@ module.exports = async function handler(req, res) {
     res.statusCode = 200;
     return res.end(JSON.stringify({ course: course, lessonsCompleted: true, completed: passed, certificateUnlocked: passed, score: score, total: total, passScore: test.pass, attempts: attempts, completedAt: passed ? now : null }));
   } catch (error) {
+    if (isEducationSchemaError(error)) {
+      res.statusCode = 503;
+      return res.end(JSON.stringify({ error: 'EDUCATION_DATABASE_NOT_READY' }));
+    }
     res.statusCode = 500; return res.end(JSON.stringify({ error: 'EDUCATION_COMPLETE_FAILED', message: process.env.NODE_ENV === 'production' ? undefined : String(error.message || error) }));
   }
 };

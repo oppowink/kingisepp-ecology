@@ -101,14 +101,16 @@
       profileMessage.hidden = !text;
     }
 
-    function renderOrganizations(context) {
+    function renderOrganizations(context, role) {
       if (!organizationList) return;
       organizationList.replaceChildren();
       var memberships = Array.isArray(context?.memberships) ? context.memberships : [];
       if (!memberships.length) {
         var empty = document.createElement('p');
         empty.className = 'kabinet-organizacii__pusto';
-        empty.textContent = 'Вы пока не прикреплены к организации. Код можно получить у куратора.';
+        empty.textContent = role === 'curator'
+          ? 'Сначала создайте организацию в кабинете куратора — код подключения появится автоматически.'
+          : 'Вы пока не прикреплены к организации. Код можно получить у куратора.';
         organizationList.appendChild(empty);
         return;
       }
@@ -136,9 +138,9 @@
       try {
         var context = await EcoAuth.getParticipationContext();
         if (cityInput) cityInput.value = context?.profile?.city || user.city || '';
-        renderOrganizations(context);
+        renderOrganizations(context, user.role);
       } catch (_) {
-        showProfileMessage('Не удалось загрузить организации. Проверьте миграцию 005 в Supabase.', 'error');
+        showProfileMessage('Раздел организаций ещё не настроен. В Supabase SQL Editor один раз выполните файл supabase/005_organizations_curators_and_passports.sql.', 'error');
       }
     }
 
@@ -165,6 +167,7 @@
       if (cabinetNav) cabinetNav.hidden = chooseRole;
       if (certificateSection) certificateSection.hidden = chooseRole || !['participant', 'curator', 'moderator'].includes(role);
       if (profileSection) profileSection.hidden = chooseRole || !['participant', 'curator'].includes(role);
+      if (organizationForm) organizationForm.hidden = role !== 'participant';
       if (roleTestBlock) roleTestBlock.hidden = !chooseRole;
       if (chooseRole) {
         if (welcome) welcome.hidden = true;

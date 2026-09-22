@@ -5,6 +5,10 @@ const { profiles } = require('../../server/users');
 const COURSES = new Set(['participant', 'curator', 'moderator']);
 function queryParam(req, name) { return new URL(req.url || '/', 'http://localhost').searchParams.get(name) || ''; }
 function courseForRole(role) { return role === 'curator' ? 'curator' : role === 'moderator' ? 'moderator' : 'participant'; }
+function isEducationSchemaError(error) {
+  const text = String(error && (error.message || error.details || error.hint) || error || '');
+  return /education_progress|lessons_completed|lessons_completed_at|relation .* does not exist|column .* does not exist/i.test(text);
+}
 module.exports = async function handler(req, res) {
   res.setHeader('Cache-Control', 'no-store'); res.setHeader('Content-Type', 'application/json; charset=utf-8');
   if (req.method !== 'GET') { res.statusCode = 405; return res.end(JSON.stringify({ error: 'METHOD_NOT_ALLOWED' })); }
@@ -34,6 +38,10 @@ module.exports = async function handler(req, res) {
       attempts: data ? Number(data.attempts || 0) : 0, completedAt: data ? data.completed_at : null
     }));
   } catch (error) {
+    if (isEducationSchemaError(error)) {
+      res.statusCode = 503;
+      return res.end(JSON.stringify({ error: 'EDUCATION_DATABASE_NOT_READY' }));
+    }
     res.statusCode = 500;
     return res.end(JSON.stringify({ error: 'EDUCATION_STATUS_FAILED', message: process.env.NODE_ENV === 'production' ? undefined : String(error.message || error) }));
   }

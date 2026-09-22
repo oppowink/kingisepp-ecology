@@ -15,13 +15,26 @@
     if (document.getElementById('courseGuide')) document.getElementById('courseGuide').href = course.guide;
     var screen = document.getElementById('courseScreen'); var progress = document.getElementById('courseProgress');
     var back = document.getElementById('courseBack'); var next = document.getElementById('courseNext');
-    var message = document.getElementById('courseMessage'); var answers = {}; var lesson = 0; var question = 0; var phase = 'lessons';
+    var message = document.getElementById('courseMessage'); var answers = {}; var lesson = 0; var question = 0; var phase = 'lessons'; var checkpointAnswers = new Set();
     function showMessage(text, state) { message.textContent = text || ''; message.dataset.state = state || ''; message.hidden = !text; }
+    function courseError(error, fallback) {
+      var code = String(error && error.message || '');
+      if (code === 'EDUCATION_DATABASE_NOT_READY') return 'База обучения ещё не подготовлена. В Supabase SQL Editor выполните миграции 002 и 006, затем обновите страницу.';
+      if (code === 'BACKEND_NOT_CONFIGURED') return 'Откройте опубликованную версию Vercel: на локальной HTML-странице сервер обучения недоступен.';
+      if (code === 'AUTH_REQUIRED') return 'Сессия входа закончилась. Войдите в личный кабинет ещё раз.';
+      return fallback;
+    }
     function renderLesson() {
       phase = 'lessons'; var item = course.lessons[lesson]; progress.textContent = 'Разбираем по шагам'; app.dataset.phase = 'lesson';
       screen.innerHTML = '<article class="course-lesson"><h2>' + escapeHtml(item.title) + '</h2><p>' + escapeHtml(item.text) + '</p></article>';
       back.disabled = lesson === 0; back.hidden = false; next.hidden = false; next.disabled = false;
-      next.textContent = lesson === course.lessons.length - 1 ? 'Перейти к тесту' : 'Продолжить'; showMessage('');
+      next.textContent = lesson === course.lessons.length - 1 ? 'Проверить подготовку' : 'Продолжить'; showMessage('');
+    }
+    function renderCheckpoint() {
+      phase = 'checkpoint'; app.dataset.phase = 'lesson'; progress.textContent = 'Перед тестом';
+      var items = Array.isArray(course.checklist) ? course.checklist : [];
+      screen.innerHTML = '<section class="course-checkpoint"><h2>Подтвердите, что правила понятны</h2><p>Это не формальность: по этому же чек-листу будет проверяться реальная работа.</p><div class="course-checkpoint__items">' + items.map(function (item, index) { return '<label><input type="checkbox" data-checkpoint="' + index + '"' + (checkpointAnswers.has(index) ? ' checked' : '') + '><span>' + escapeHtml(item) + '</span></label>'; }).join('') + '</div></section>';
+      back.hidden = false; back.disabled = false; next.hidden = false; next.textContent = 'Перейти к тесту'; next.disabled = checkpointAnswers.size !== items.length; showMessage('');
     }
     function renderQuestion() {
       phase = 'test'; var item = course.questions[question]; progress.textContent = 'Проверяем знания'; app.dataset.phase = 'test';
@@ -31,14 +44,14 @@
     async function finishLessons() {
       next.disabled = true; next.textContent = 'Сохраняем…';
       try { await EcoAuth.completeCourseLessons(courseId); question = 0; renderQuestion(); }
-      catch (_) { renderLesson(); showMessage('Не удалось сохранить уроки. Проверьте подключение и попробуйте ещё раз.', 'error'); }
+      catch (error) { renderCheckpoint(); showMessage(courseError(error, 'Не удалось сохранить уроки. Проверьте подключение и попробуйте ещё раз.'), 'error'); }
     }
     async function finishTest() {
       next.disabled = true; next.textContent = 'Проверяем…';
       try {
         var result = await EcoAuth.completeCourse(courseId, answers);
         if (result.completed) renderDone(result); else { question = 0; answers = {}; renderQuestion(); showMessage('Результат ' + result.score + ' из ' + result.total + '. Нужно минимум ' + result.passScore + '. Можно пройти тест ещё раз.', 'error'); }
-      } catch (error) { renderQuestion(); showMessage(error.message === 'LESSONS_REQUIRED' ? 'Сначала завершите уроки.' : 'Не удалось сохранить результат. Проверьте подключение.', 'error'); }
+      } catch (error) { renderQuestion(); showMessage(error.message === 'LESSONS_REQUIRED' ? 'Сначала завершите уроки.' : courseError(error, 'Не удалось сохранить результат. Проверьте подключение.'), 'error'); }
     }
     function renderDone(status) {
       phase = 'done'; progress.textContent = 'Готово'; app.dataset.phase = 'done'; back.hidden = true; next.hidden = true;
@@ -46,9 +59,10 @@
       document.getElementById('courseCertificate').addEventListener('click', function () { showMessage('Сертификат разблокирован. Скачать его пока нельзя: макет ещё готовится.', 'warning'); });
     }
     screen.addEventListener('click', function (event) { var button = event.target.closest('[data-answer]'); if (!button || phase !== 'test') return; var item = course.questions[question]; answers[item.id] = button.dataset.answer; renderQuestion(); });
-    back.addEventListener('click', function () { if (phase === 'lessons' && lesson > 0) { lesson -= 1; renderLesson(); } else if (phase === 'test' && question > 0) { question -= 1; renderQuestion(); } });
-    next.addEventListener('click', async function () { if (phase === 'lessons') { if (lesson < course.lessons.length - 1) { lesson += 1; renderLesson(); } else await finishLessons(); } else if (phase === 'test') { if (question < course.questions.length - 1) { question += 1; renderQuestion(); } else await finishTest(); } });
+    screen.addEventListener('change', function (event) { var box = event.target.closest('[data-checkpoint]'); if (!box || phase !== 'checkpoint') return; var index = Number(box.dataset.checkpoint); if (box.checked) checkpointAnswers.add(index); else checkpointAnswers.delete(index); next.disabled = checkpointAnswers.size !== course.checklist.length; });
+    back.addEventListener('click', function () { if (phase === 'lessons' && lesson > 0) { lesson -= 1; renderLesson(); } else if (phase === 'checkpoint') { lesson = course.lessons.length - 1; renderLesson(); } else if (phase === 'test' && question > 0) { question -= 1; renderQuestion(); } });
+    next.addEventListener('click', async function () { if (phase === 'lessons') { if (lesson < course.lessons.length - 1) { lesson += 1; renderLesson(); } else renderCheckpoint(); } else if (phase === 'checkpoint') await finishLessons(); else if (phase === 'test') { if (question < course.questions.length - 1) { question += 1; renderQuestion(); } else await finishTest(); } });
     try { var status = await EcoAuth.refreshCourseStatus(courseId); if (status.completed) renderDone(status); else if (status.lessonsCompleted) renderQuestion(); else renderLesson(); }
-    catch (_) { renderLesson(); showMessage('Не удалось загрузить обучение из Supabase. Обновите страницу после проверки подключения.', 'error'); }
+    catch (error) { renderLesson(); showMessage(courseError(error, 'Не удалось загрузить обучение из Supabase. Обновите страницу после проверки подключения.'), 'error'); }
   });
 })();

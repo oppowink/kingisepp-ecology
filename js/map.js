@@ -131,7 +131,7 @@
       date: point.collectionDate || point.date || '',
       level: point.level || point.title || 'Подтверждённая точка',
       address: point.address || point.location || '',
-      explanation: point.explanation || ('Точка, одно дерево и 30 листьев прошли проверку. Автоматический расчёт ФА: ' + (point.aiResult && Number.isFinite(Number(point.aiResult.meanFa)) ? Number(point.aiResult.meanFa).toFixed(4) : 'значение не указано') + '.' + (passport ? ' ' + passport + '.' : '')),
+      explanation: point.explanation || ('Проверено деревьев: ' + Number(point.treeCount || 0) + ', листьев: ' + Number(point.leafCount || files.length) + '. Расчёт ФА по проверенным точкам: ' + (point.aiResult && Number.isFinite(Number(point.aiResult.meanFa)) ? Number(point.aiResult.meanFa).toFixed(4) : 'значение не указано') + '.' + (passport ? ' ' + passport + '.' : '')),
       photos: [treePhoto].concat(files.map(function (file) { return file.url || file.data; })).filter(Boolean),
       excelUrl: point.excelUrl || '',
       pdfUrl: point.pdfUrl || ''
@@ -162,6 +162,15 @@
       .catch(function () {});
   }
 
+  function loadEmbeddedResearchPoints() {
+    fetch('data/research-sites.json', { cache: 'no-store' })
+      .then(function (response) { return response.ok ? response.json() : null; })
+      .then(function (data) {
+        if (data && Array.isArray(data.points)) addApprovedPoints(data.points);
+      })
+      .catch(function () {});
+  }
+
   // создание карты
   function createMap() {
     var container = document.getElementById('karta');
@@ -181,6 +190,7 @@
       pokazatTochku: showPoint
     };
     applyCityFromData();
+    loadEmbeddedResearchPoints();
     loadApprovedRequests();
   }
 

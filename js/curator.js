@@ -187,6 +187,6 @@
       } catch (_) { showMessage('Не удалось назначить объект.', 'error'); }
     });
 
-    try { await reload(); } catch (_) { showMessage('Не удалось загрузить кабинет. Выполните миграцию 005 и обновите деплой.', 'error'); }
+    try { await reload(); } catch (_) { showMessage('Раздел организаций ещё не настроен. В Supabase SQL Editor один раз выполните файл supabase/005_organizations_curators_and_passports.sql, затем обновите страницу.', 'error'); }
   });
 })();

@@ -167,7 +167,7 @@
       var count=Object.keys(set).length;
       landmarkPointName.textContent=count<landmarkNames.length?'Сейчас: '+landmarkLabels[count]:'Все 12 точек отмечены';
       landmarkOverlay.replaceChildren();
-      landmarkNames.forEach(function(name,index){if(!set[name])return;var dot=document.createElement('span');dot.className='landmark-dot';dot.style.left=(set[name].x*100)+'%';dot.style.top=(set[name].y*100)+'%';dot.title=landmarkLabels[index];landmarkOverlay.appendChild(dot);});
+      landmarkNames.forEach(function(name,index){if(!set[name])return;var dot=document.createElement('span');dot.className='landmark-dot landmark-dot--group-'+(index<2?'axis':index<10?'vein':'width');dot.style.left=(set[name].x*100)+'%';dot.style.top=(set[name].y*100)+'%';dot.title=(index+1)+'. '+landmarkLabels[index];dot.textContent=String(index+1);landmarkOverlay.appendChild(dot);});
       document.getElementById('landmarkNext').disabled=count<landmarkNames.length;
       document.getElementById('landmarkNext').textContent=landmarkPhoto===selectedFiles.length-1?'Разметка готова':'Следующий лист';
     }
@@ -383,7 +383,7 @@
           PHOTO_UPLOAD_FAILED: 'Не удалось загрузить фотографии в Supabase Storage.',
           EDUCATION_REQUIRED: 'Сессия обучения не подтверждена. Вернитесь в личный кабинет.',
           OBJECT_NOT_AVAILABLE: 'Выбранный объект уже закрыт или недоступен.',
-          REQUESTS_API_FAILED: 'Сервер не смог сохранить заявку. Проверьте миграцию 005.'
+          REQUESTS_API_FAILED: 'Сервер не смог сохранить заявку. Проверьте, что в Supabase по порядку выполнены миграции 005, 006 и 007.'
         };
         showError(messages[error.message] || 'Не удалось сохранить заявку: ' + (error.message || 'неизвестная ошибка'));
         setBusy(false);

@@ -1,4 +1,5 @@
 /* my-requests.css — список заявок участника */
+html:not(.dark) body { --bg:#fff; --surface:#fff; --surface-soft:#f5f8f2; }
 
 /* обёртка страницы */
 .moi-zayavki {
