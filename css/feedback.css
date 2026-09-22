@@ -17,8 +17,8 @@
 
 /* иконка в заголовке */
 .obratnaya-svyaz__ikona {
-  width: 42px;
-  height: 42px;
+  width: 58px;
+  height: 58px;
   object-fit: contain;
 }
 
@@ -27,7 +27,7 @@
   display: grid;
   gap: 22px;
 }
-.forma-obratnoy-svyazi > .knopka-osnovnaya {
+.forma-obratnoy-svyazi > .ssylka-svechenie {
   justify-self: start;
 }
 
@@ -88,7 +88,7 @@
   border: 1px solid var(--line);
   border-radius: 0;
   background: var(--surface-soft);
-  box-shadow: var(--shadow-panel);
+  border-top: 0;
 }
 
 /* пункт списка */

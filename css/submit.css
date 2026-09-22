@@ -47,6 +47,14 @@
 .forma-sekciya > p { margin: -5px 0 16px; color: var(--text-muted); font-size: .84rem; }
 .pasport-territorii,
 .pasport-dereva { display: grid; gap: 18px; }
+.tree-sets > p { color: var(--text-muted); }
+#treeSets { display: grid; gap: 24px; }
+.tree-block { min-width: 0; margin: 0; padding: 25px 0; border: 0; border-top: 2px solid var(--accent); display: grid; gap: 16px; }
+.tree-block legend { padding: 0 10px 0 0; font: 500 1.45rem var(--font-heading); }
+.tree-block label { display: grid; align-content: start; gap: 6px; font-size: .88rem; }
+.tree-block input[type="file"] { background: var(--surface-soft); padding: 10px; max-width: 100%; }
+.tree-block [data-tree-count] { margin: 0; color: var(--text-muted); font-size: .86rem; }
+.tree-block [data-remove-tree] { justify-self: start; }
 
 /* выбор собственной точки или объекта куратора */
 .istochnik-zayavki__varianty { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }

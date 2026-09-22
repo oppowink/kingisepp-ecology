@@ -1,6 +1,6 @@
 /* games.css — плоские игровые поверхности. Все цвета берутся из variables.css. */
 .arcade {
-  --game-accent: var(--color-super, var(--color-accent-3, var(--accent)));
+  --game-accent: var(--warning);
   box-sizing: border-box;
   margin: 0;
   height: 100vh;
@@ -10,13 +10,13 @@
   padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
   background: var(--bg);
   color: var(--text);
-  font: 16px/1.45 Arial, sans-serif;
+  font: 16px/1.5 var(--font-body, Arial, sans-serif);
 }
 .arcade *, .arcade *::before, .arcade *::after { box-sizing: border-box; border-radius: 0; }
 .arcade [hidden] { display: none !important; }
 .arcade h1, .arcade h2, .arcade h3, .arcade p, .arcade figure { margin: 0; }
-.arcade h1 { font-size: clamp(18px, 2.5vw, 24px); line-height: 1.4; }
-.arcade h2 { font-size: 22px; line-height: 1.4; }
+.arcade h1 { font: 500 clamp(26px, 3vw, 42px)/1.1 var(--font-heading, Georgia, serif); }
+.arcade h2 { font: 500 clamp(23px, 3vw, 32px)/1.2 var(--font-heading, Georgia, serif); }
 .arcade h3 { font-size: 18px; line-height: 1.4; }
 .arcade a { color: inherit; text-underline-offset: 4px; }
 .arcade button { font: inherit; color: inherit; cursor: pointer; border: 0; background: var(--surface); padding: 10px 16px; }
@@ -44,7 +44,7 @@
 /* Каталог является стартовым экраном, а не длинной посадочной страницей. */
 .lobby { display: flex; flex-direction: column; justify-content: center; gap: 18px; flex: 1; }
 .game-catalog { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
-.arcade .game-choice { display: flex; flex-direction: column; gap: 14px; text-align: left; padding: 26px; min-height: 230px; background: var(--surface); }
+.arcade .game-choice { display: flex; flex-direction: column; gap: 14px; text-align: left; padding: 26px; min-height: 230px; background: var(--surface); border-top: 4px solid var(--accent); }
 .game-choice .choice-number { font-size: 22px; color: var(--game-accent); }
 .game-choice .choice-title { font-size: 20px; font-weight: 700; }
 .game-choice .choice-action { margin-top: auto; color: var(--game-accent); }
@@ -54,6 +54,16 @@
 /* Изображение подменяет заглушку только после успешной загрузки файла. */
 .asset { position: relative; display: grid; place-items: center; width: 100%; height: 100%; min-height: 0; overflow: hidden; background: var(--input); }
 .asset img { width: 100%; height: 100%; object-fit: contain; display: block; min-height: 0; }
+/* Каждый образец берётся из исходного группового снимка без растяжения листа. */
+.asset--normal-left img { transform: translateX(58%) scale(1.6); }
+.asset--normal-middle img { transform: translateX(6%) scale(1.5); }
+.asset--normal-right img { transform: translateX(-50%) scale(1.55); }
+.asset--damaged-top img { transform: translateY(69%) scale(2.1); }
+.asset--damaged-middle img { transform: scale(2.1); }
+.asset--damaged-bottom img { transform: translateY(-75%) scale(2.1); }
+.asset--other-top img { transform: translate(44%, 12%) scale(1.5); }
+.asset--other-bottom img { transform: translate(38%, -66%) scale(2); }
+.asset--other-right img { transform: translateX(-18%) scale(1); }
 .asset-fallback { display: grid; gap: 8px; place-content: center; padding: 12px; font-size: 14px; text-align: center; max-width: 32ch; }
 .asset-fallback .asset-label { color: var(--text-muted); }
 .asset.asset-loaded .asset-fallback { display: none; }
@@ -104,15 +114,15 @@
 .result-facts p { padding: 12px 16px; background: var(--surface); }
 
 /* Лист перемещается в контейнер. После ошибки он остаётся на столе. */
-.progress-track { height: 6px; background: var(--surface); flex-shrink: 0; }
+.progress-track { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
 .progress-value { height: 100%; width: 0; background: var(--game-accent); transition: width 160ms ease; }
-.sorting-table { flex: 1; min-height: 100px; display: flex; justify-content: center; align-items: stretch; padding: 12px; background: var(--surface-soft); }
-.arcade .sorting-leaf { display: flex; flex-direction: column; width: min(100%, 400px); min-height: 0; padding: 12px; gap: 8px; background: var(--input); }
+.sorting-table { flex: 1; min-height: 100px; display: flex; justify-content: center; align-items: stretch; padding: 12px; background: color-mix(in srgb, var(--accent) 8%, var(--bg)); }
+.arcade .sorting-leaf { display: flex; flex-direction: column; width: min(100%, 400px); min-height: 0; padding: 12px; gap: 8px; background: var(--bg); }
 .sorting-leaf .asset { flex: 1; }
 .sorting-leaf .asset-fallback { max-width: 30ch; }
 .leaf-caption { font-size: 14px; }
 .sorting-zones { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; flex-shrink: 0; }
-.sorting-zones .drop-zone { min-height: 85px; }
+.sorting-zones .drop-zone { min-height: 85px; border: 0; border-top: 3px solid var(--accent); }
 .sorting-zones .drop-zone > span:last-child { font-size: 14px; }
 .sort-footer { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-shrink: 0; min-height: 44px; }
 .sort-footer p { font-size: 14px; max-width: 60ch; }

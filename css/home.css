@@ -93,7 +93,7 @@
   justify-content: flex-end;
   padding: 50px 52px 51px;
   background: var(--surface);
-  box-shadow: var(--shadow-object);
+  border: 1px solid var(--line);
   will-change: transform, opacity;
 }
 .glavnaya-blok h2 {
@@ -156,7 +156,7 @@
   display: block;
   object-fit: contain;
   transform-origin: center;
-  transition: transform 260ms ease, filter 260ms ease;
+  transition: transform 260ms ease;
 }
 
 /* повороты листьев у каждой ссылки */
@@ -171,22 +171,13 @@
 .glavnaya-perehod:focus-visible .glavnaya-perehod__nazvanie {
   color: var(--accent);
   transform: translateY(-2px);
-  text-shadow: 0 0 12px rgba(55, 122, 67, .32);
+  text-decoration: underline;
 }
 html.dark .glavnaya-perehod:hover .glavnaya-perehod__nazvanie,
 html.dark .glavnaya-perehod:focus-visible .glavnaya-perehod__nazvanie {
   color: var(--acid);
-  text-shadow: 0 0 14px rgba(113, 226, 28, .34);
+  text-decoration: underline;
 }
-.glavnaya-perehod:hover .glavnaya-perehod__list,
-.glavnaya-perehod:focus-visible .glavnaya-perehod__list {
-  filter: drop-shadow(0 0 7px rgba(55, 122, 67, .24)) drop-shadow(0 0 16px rgba(55, 122, 67, .16));
-}
-html.dark .glavnaya-perehod:hover .glavnaya-perehod__list,
-html.dark .glavnaya-perehod:focus-visible .glavnaya-perehod__list {
-  filter: drop-shadow(0 0 8px rgba(113, 226, 28, .25)) drop-shadow(0 0 18px rgba(113, 226, 28, .16));
-}
-
 /* дополнительные повороты и масштабирование при наведении */
 .glavnaya-perehod--karta:hover .glavnaya-perehod__list { transform: rotate(-14deg) scale(1.045); }
 .glavnaya-perehod--uchastie:hover .glavnaya-perehod__list { transform: rotate(13deg) scale(1.045); }
@@ -305,7 +296,7 @@ html.dark .glavnaya-perehod:focus-visible .glavnaya-perehod__list {
 .glavnaya-scena--poslednyaya .glavnaya-perehod { min-height: 220px; }
 .glavnaya-scena--poslednyaya .glavnaya-perehod__list { width: min(215px, 100%); }
 
-/* термины — выделенные слова с подсказками */
+/* Пояснение появляется в потоке текста и не закрывает страницу. */
 .termin {
   display: inline;
   margin: 0;
@@ -318,8 +309,11 @@ html.dark .glavnaya-perehod:focus-visible .glavnaya-perehod__list {
   font-weight: 650;
   line-height: inherit;
   text-align: inherit;
-  text-decoration: none;
-  cursor: help;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: .16em;
+  text-decoration-color: currentColor;
+  cursor: pointer;
   transition: color var(--transition-fast), opacity var(--transition-fast);
 }
 .termin:hover,
@@ -329,88 +323,17 @@ html.dark .termin { color: var(--acid); }
 html.dark .termin:hover,
 html.dark .termin:focus-visible,
 html.dark .termin--aktivny { color: var(--accent-soft); }
-
-/* всплывающая подсказка для термина */
-.termin-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 1070;
-  visibility: hidden;
-  opacity: 0;
-  pointer-events: none;
-  background: var(--overlay);
-  transition: opacity 150ms ease, visibility 150ms ease;
-}
-.termin-overlay.vidim {
-  visibility: visible;
-  opacity: 1;
-  pointer-events: auto;
-}
-body.termin-podskazka-otkryta {
-  overflow: hidden;
-}
-.termin-tooltip {
-  position: fixed;
-  z-index: 1080;
-  width: min(370px, calc(100vw - 24px));
-  padding: 14px 16px 15px;
-  border: 0;
-  border-radius: 0;
-  background: var(--surface);
-  box-shadow: var(--shadow-panel);
-  color: var(--text);
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
-  transform: translateY(5px);
-  transition: opacity 150ms ease, transform 180ms ease, visibility 150ms ease;
-}
-html.dark .termin-tooltip { background: var(--surface-soft); }
-.termin-tooltip.vidim { opacity: 1; visibility: visible; pointer-events: auto; transform: translateY(0); }
-.termin-tooltip__tekst { display: block; color: var(--text-muted); font-size: .86rem; font-weight: 400; line-height: 1.5; }
-
-/* анимационная точка, указывающая на первый термин при первом посещении */
-.termin-demo-tochka {
-  position: fixed;
-  z-index: 1090;
-  left: 0;
-  top: 0;
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: var(--accent);
-  opacity: 0;
-  pointer-events: none;
-  transform: translate(-50%, -50%);
-  transition: left 560ms cubic-bezier(.22,1,.36,1), top 560ms cubic-bezier(.22,1,.36,1), opacity 150ms ease;
-}
-.termin-demo-tochka.vidim { opacity: 1; }
-
-/* подпись к демонстрационной точке */
-.termin-demo-podpis {
-  position: fixed;
-  z-index: 1085;
-  left: 50%;
-  bottom: clamp(20px, 4vh, 38px);
-  max-width: min(470px, calc(100vw - 36px));
-  margin: 0;
-  padding: 11px 15px 12px;
-  background: var(--surface);
-  box-shadow: var(--shadow-panel);
+.termin:focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }
+.termin-opisanie {
+  display: block;
+  width: min(100%, 46rem);
+  margin: .65em 0 .9em;
+  padding: .35em 0 .35em 1.1em;
+  border-left: 2px solid var(--accent);
   color: var(--text-muted);
-  font-size: .79rem;
-  font-weight: 400;
-  line-height: 1.4;
-  text-align: center;
-  opacity: 0;
-  pointer-events: none;
-  transform: translate(-50%, 6px);
-  transition: opacity 180ms ease, transform 220ms ease;
+  font-size: .87em;
+  line-height: 1.55;
 }
-html.dark .termin-demo-podpis { background: var(--surface-soft); }
-.termin-demo-podpis strong { color: var(--accent); font-weight: 650; }
-html.dark .termin-demo-podpis strong { color: var(--acid); }
-.termin-demo-podpis.vidim { opacity: 1; transform: translate(-50%, 0); }
 
 /* призыв в блоке участия */
 .glavnaya-blok .glavnaya-prizyv {
@@ -487,9 +410,6 @@ html.dark .glavnaya-blok .glavnaya-prizyv { color: var(--acid); }
   .aktualnost-strelka { width: 12.5%; top: 49%; }
   .aktualnost-fa { width: 18.5%; right: 2.5%; }
   .termin { cursor: pointer; }
-  .termin-tooltip { width: min(370px, calc(100vw - 24px)); padding: 13px 14px 14px; }
-  .termin-tooltip__tekst { font-size: .88rem; }
-  .termin-demo-podpis { bottom: 16px; font-size: .78rem; }
 }
 
 /* отключаем анимации при предпочтении reduced motion */
@@ -499,10 +419,7 @@ html.dark .glavnaya-blok .glavnaya-prizyv { color: var(--acid); }
   .aktualnost-element { opacity: 1 !important; transform: none !important; animation: none !important; }
   .aktualnost-avtomobil { transform: scaleX(-1) !important; }
   .aktualnost-vyhlop { transform: scaleX(-1) !important; }
-  .termin,
-  .termin-tooltip,
-  .termin-demo-tochka,
-  .termin-demo-podpis { transition: none; }
+  .termin { transition: none; }
   .jump-in { opacity: 1 !important; transform: none !important; animation: none !important; }
 }
 

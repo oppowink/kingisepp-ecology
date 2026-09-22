@@ -252,3 +252,33 @@
   .kabinet-prisoedinenie__stroka .knopka-vtorichnaya { justify-self: start; }
   .kabinet-organizaciya { align-items: flex-start; flex-direction: column; }
 }
+
+/* Кабинет: белая страница, спокойные ссылки и короткое появление после входа. */
+html:not(.dark) body.account-page { --bg: #fff; --surface: #fff; --surface-soft: #f7f9f5; }
+body.account-page::before,body.account-page::after { display: none; }
+.account-page .kabinet-blok { width: min(900px,100%); }
+.account-page .kabinet-welcome { min-height: 190px; text-align: left; margin: 10px 0 22px; }
+.account-page .kabinet-welcome h2 { font: 400 clamp(3.2rem,8vw,6rem)/1 var(--font-heading, Georgia, serif); color: var(--accent); }
+.account-page .kabinet-welcome p { max-width: 630px; margin: 20px 0; font-size: clamp(1rem,2vw,1.2rem); line-height: 1.6; color: var(--text-muted); transition: opacity .6s ease, transform .6s ease; }
+.account-page .kabinet-blok[data-welcome="blank"] .kabinet-welcome { visibility: hidden; }
+.account-page .kabinet-blok[data-welcome="hello"] .kabinet-welcome p { opacity: 0; transform: translateY(15px); }
+.account-page .kabinet-blok[data-welcome="blank"] > :not(.kabinet-welcome),
+.account-page .kabinet-blok[data-welcome="hello"] > :not(.kabinet-welcome),
+.account-page .kabinet-blok[data-welcome="message"] > :not(.kabinet-welcome) { visibility: hidden; opacity: 0; pointer-events: none; }
+.account-page .kabinet-blok[data-welcome="ready"] > :not(.kabinet-welcome) { animation: cabinet-reveal .55s both; }
+@keyframes cabinet-reveal { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+.account-page .kabinet-polzovatel { text-align: left; margin: 0 0 28px; }
+.account-page .kabinet-polzovatel h1 { font-size: clamp(1.6rem,3vw,2.25rem); }
+.account-page .kabinet-status { display: block; width: fit-content; min-height: 0; padding: 0; border: 0; text-align: left; }
+.account-page .kabinet-guide { display: inline-block; color: var(--accent); text-underline-offset: 5px; margin-right: 22px; margin-bottom: 10px; }
+.account-page .kabinet-profil { width: 100%; padding: 26px 0; margin-bottom: 20px; background: transparent; }
+.account-page .kabinet-navigaciya { width: 100%; display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 8px 34px; }
+.account-page .kabinet-navigaciya a { justify-content: space-between; min-height: 65px; padding: 8px 2px; border: 0; border-bottom: 1px solid var(--line); background: transparent; text-align: left; font: 400 1.22rem var(--font-heading, Georgia, serif); }
+.account-page .kabinet-navigaciya a::after { content: '↗'; color: var(--accent); font: 400 1rem var(--font-body, Arial, sans-serif); }
+.account-page .kabinet-navigaciya a:hover { border-color: var(--accent); background: transparent; }
+.account-page #ssylkaModerator:not([hidden]) { grid-column: auto; width: auto; justify-self: stretch; }
+.account-page .kabinet-sertifikat { width: 100%; padding: 28px 0 0; border: 0; text-align: left; }
+.account-page .kabinet-sertifikat p { margin: 10px 0 4px; }
+.account-page .kabinet-sertifikat .ssylka-svechenie { font-size: 1.08rem; }
+@media(max-width:640px){ .account-page .kabinet-navigaciya{grid-template-columns:1fr}.account-page .kabinet-welcome{min-height:155px} }
+@media(prefers-reduced-motion:reduce){ .account-page .kabinet-blok[data-welcome="ready"] > :not(.kabinet-welcome){animation:none}.account-page .kabinet-welcome p{transition:none} }

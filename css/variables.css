@@ -53,7 +53,7 @@
   /* акценты */
   --accent: #377a43;
   --accent-soft: #81c995;
-  --acid: #66d900;
+  --acid: #4d7448;
 
   /* линии и сетка */
   --line: rgba(70, 108, 70, .24);
@@ -99,11 +99,11 @@ html.dark {
 
   --accent: #69b66d;
   --accent-soft: #8cc58e;
-  --acid: #71e21c;
+  --acid: #aac69b;
 
-  --line: rgba(113, 226, 28, .14);
-  --line-strong: rgba(113, 226, 28, .30);
-  --grid: rgba(113, 226, 28, .045);
+  --line: rgba(166, 195, 158, .19);
+  --line-strong: rgba(166, 195, 158, .36);
+  --grid: rgba(166, 195, 158, .055);
 
   --overlay: rgba(0, 0, 0, .62);
   --vignette: rgba(0, 0, 0, .46);
