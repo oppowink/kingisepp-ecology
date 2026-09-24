@@ -120,23 +120,36 @@
   }
 
   function preparePoint(point) {
-    var files = Array.isArray(point.files) ? point.files : [];
-    var treePhoto = point.treePhoto && (point.treePhoto.url || point.treePhoto.data);
-    var passport = [
-      point.territoryType ? 'Территория: ' + point.territoryType : '',
-      point.treeCondition ? 'Состояние дерева: ' + point.treeCondition : '',
-      Number.isFinite(Number(point.roadDistanceM)) ? 'До дороги: ' + Number(point.roadDistanceM) + ' м' : ''
-    ].filter(Boolean).join('. ');
-    return {
-      date: point.collectionDate || point.date || '',
-      level: point.level || point.title || 'Подтверждённая точка',
-      address: point.address || point.location || '',
-      explanation: point.explanation || ('Проверено деревьев: ' + Number(point.treeCount || 0) + ', листьев: ' + Number(point.leafCount || files.length) + '. Расчёт ФА по проверенным точкам: ' + (point.aiResult && Number.isFinite(Number(point.aiResult.meanFa)) ? Number(point.aiResult.meanFa).toFixed(4) : 'значение не указано') + '.' + (passport ? ' ' + passport + '.' : '')),
-      photos: [treePhoto].concat(files.map(function (file) { return file.url || file.data; })).filter(Boolean),
-      excelUrl: point.excelUrl || '',
-      pdfUrl: point.pdfUrl || ''
-    };
-  }
+  var files = Array.isArray(point.files) ? point.files : [];
+  var treePhoto = point.treePhoto && (point.treePhoto.url || point.treePhoto.data);
+
+  var passportParts = [
+    point.territoryType ? 'Территория: ' + point.territoryType : '',
+    point.treeCondition ? 'Состояние дерева: ' + point.treeCondition : '',
+    Number.isFinite(Number(point.roadDistanceM)) ? 'До дороги: ' + Number(point.roadDistanceM) + ' м' : ''
+  ].filter(Boolean);
+
+  var faText = point.aiResult && Number.isFinite(Number(point.aiResult.meanFa))
+    ? 'ФА: ' + Number(point.aiResult.meanFa).toFixed(4)
+    : (point.fa != null ? 'ФА: ' + Number(point.fa).toFixed(4) : 'ФА: в обработке');
+
+  var mainText = [
+    faText,
+    'Деревьев: ' + Number(point.treeCount || 0),
+    'Листьев: ' + Number(point.leafCount || files.length),
+    passportParts.join('. ')
+  ].filter(Boolean).join('. ');
+
+  return {
+    date: point.collectionDate || point.date || '',
+    level: point.title || point.level || 'Подтверждённая точка',
+    address: point.address || point.location || '',
+    explanation: mainText + '.',
+    photos: [treePhoto].concat(files.map(function (file) { return file.url || file.data; })).filter(Boolean),
+    excelUrl: point.excelUrl || '',
+    pdfUrl: point.pdfUrl || ''
+  };
+}
 
   function applyCityFromData() {
     fetch('data/cities.json')
