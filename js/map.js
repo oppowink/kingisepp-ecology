@@ -24,38 +24,57 @@
   }
 
   // показать информацию о точке в панели
-  function showPoint(data) {
-    var panel = document.getElementById('tochkaInformaciya');
-    if (!panel || !data) return;
+function showPoint(data) {
+  var panel = document.getElementById('tochkaInformaciya');
+  if (!panel || !data) return;
 
-    panel.classList.add('smena-tochki');
-    window.setTimeout(function () {
-      document.getElementById('tochkaData').textContent = data.date || '';
-      document.getElementById('tochkaUroven').textContent = data.level || '';
-      document.getElementById('tochkaAdres').textContent = data.address || '';
-      document.getElementById('tochkaPoyasnenie').textContent = data.explanation || '';
+  panel.classList.add('smena-tochki');
+  window.setTimeout(function () {
+    document.getElementById('tochkaData').textContent = data.date || '';
+    document.getElementById('tochkaUroven').textContent = data.title || '';
+    document.getElementById('tochkaAdres').textContent = data.address || '';
 
-      var photos = document.getElementById('tochkaFotografii');
-      photos.innerHTML = '';
-      (data.photos || []).forEach(function (src) {
-        var image = document.createElement('img');
-        image.src = src;
-        image.alt = 'Фотография наблюдения';
-        image.loading = 'lazy';
-        photos.appendChild(image);
-      });
+    var pasport = document.getElementById('tochkaPasport');
+    pasport.innerHTML = '';
+    var rows = [
+      ['ФА', data.faText],
+      ['Территория', data.territory],
+      ['До дороги', data.roadDistance],
+      ['Состояние дерева', data.treeCondition],
+      ['Деревьев', data.trees],
+      ['Листьев', data.leaves]
+    ];
+    rows.forEach(function (row) {
+      if (!row[1]) return;
+      var dt = document.createElement('dt');
+      dt.textContent = row[0];
+      var dd = document.createElement('dd');
+      dd.textContent = row[1];
+      pasport.appendChild(dt);
+      pasport.appendChild(dd);
+    });
 
-      var downloads = document.getElementById('tochkaSkachivanie');
-      var excel = document.getElementById('tochkaExcel');
-      var pdf = document.getElementById('tochkaPdf');
-      downloads.hidden = !(data.excelUrl || data.pdfUrl);
-      if (data.excelUrl) { excel.href = data.excelUrl; excel.hidden = false; } else excel.hidden = true;
-      if (data.pdfUrl) { pdf.href = data.pdfUrl; pdf.hidden = false; } else pdf.hidden = true;
+    var photos = document.getElementById('tochkaFotografii');
+    photos.innerHTML = '';
+    (data.photos || []).forEach(function (src) {
+      var image = document.createElement('img');
+      image.src = src;
+      image.alt = 'Фотография наблюдения';
+      image.loading = 'lazy';
+      photos.appendChild(image);
+    });
 
-      panel.hidden = false;
-      requestAnimationFrame(function () { panel.classList.remove('smena-tochki'); });
-    }, panel.hidden ? 0 : 130);
-  }
+    var downloads = document.getElementById('tochkaSkachivanie');
+    var excel = document.getElementById('tochkaExcel');
+    var pdf = document.getElementById('tochkaPdf');
+    downloads.hidden = !(data.excelUrl || data.pdfUrl);
+    if (data.excelUrl) { excel.href = data.excelUrl; excel.hidden = false; } else excel.hidden = true;
+    if (data.pdfUrl) { pdf.href = data.pdfUrl; pdf.hidden = false; } else pdf.hidden = true;
+
+    panel.hidden = false;
+    requestAnimationFrame(function () { panel.classList.remove('smena-tochki'); });
+  }, panel.hidden ? 0 : 130);
+}
 
   // обновить внешний вид маркера (активный/неактивный)
   function applyMarkerState(placemark, active) {
@@ -119,32 +138,29 @@
     };
   }
 
-  function preparePoint(point) {
+ function preparePoint(point) {
   var files = Array.isArray(point.files) ? point.files : [];
   var treePhoto = point.treePhoto && (point.treePhoto.url || point.treePhoto.data);
 
-  var passportParts = [
-    point.territoryType ? 'Территория: ' + point.territoryType : '',
-    point.treeCondition ? 'Состояние дерева: ' + point.treeCondition : '',
-    Number.isFinite(Number(point.roadDistanceM)) ? 'До дороги: ' + Number(point.roadDistanceM) + ' м' : ''
-  ].filter(Boolean);
-
-  var faText = point.aiResult && Number.isFinite(Number(point.aiResult.meanFa))
-    ? 'ФА: ' + Number(point.aiResult.meanFa).toFixed(4)
-    : (point.fa != null ? 'ФА: ' + Number(point.fa).toFixed(4) : 'ФА: в обработке');
-
-  var mainText = [
-    faText,
-    'Деревьев: ' + Number(point.treeCount || 0),
-    'Листьев: ' + Number(point.leafCount || files.length),
-    passportParts.join('. ')
-  ].filter(Boolean).join('. ');
+  var faText = '';
+  if (point.aiResult && Number.isFinite(Number(point.aiResult.meanFa))) {
+    faText = Number(point.aiResult.meanFa).toFixed(4);
+  } else if (point.fa != null) {
+    faText = Number(point.fa).toFixed(4);
+  } else {
+    faText = 'в обработке';
+  }
 
   return {
     date: point.collectionDate || point.date || '',
-    level: point.title || point.level || 'Подтверждённая точка',
+    title: point.title || 'Подтверждённая точка',
     address: point.address || point.location || '',
-    explanation: mainText + '.',
+    faText: faText,
+    territory: point.territoryType || '',
+    roadDistance: Number.isFinite(Number(point.roadDistanceM)) ? Number(point.roadDistanceM) + ' м' : '',
+    treeCondition: point.treeCondition || '',
+    trees: Number(point.treeCount || 0),
+    leaves: Number(point.leafCount || files.length),
     photos: [treePhoto].concat(files.map(function (file) { return file.url || file.data; })).filter(Boolean),
     excelUrl: point.excelUrl || '',
     pdfUrl: point.pdfUrl || ''
