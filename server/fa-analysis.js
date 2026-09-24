@@ -42,8 +42,8 @@ function distanceToAxis(point, base, apex) {
   return Math.abs(axisY * point.x - axisX * point.y + apex.x * base.y - apex.y * base.x) / length;
 }
 function asymmetry(left, right) {
-  const mean = (left + right) / 2;
-  return Number.isFinite(mean) && mean > 0 ? Math.abs(left - right) / mean : NaN;
+  const sum = left + right;
+  return Number.isFinite(sum) && sum > 0 ? Math.abs(left - right) / sum : NaN;
 }
 
 function calculateLeaf(set, index) {
