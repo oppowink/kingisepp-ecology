@@ -83,3 +83,29 @@
     height: 54vh;
   }
 }
+
+.tochka-pasport {
+  display: grid;
+  grid-template-columns: minmax(140px, auto) minmax(0, 1fr);
+  gap: 8px 24px;
+  margin: 18px 0 0;
+  max-width: 640px;
+  font-size: .86rem;
+}
+.tochka-pasport dt {
+  color: var(--text-muted);
+}
+.tochka-pasport dd {
+  margin: 0;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+.tochka-data {
+  margin: 0 0 6px;
+  color: var(--text-muted);
+  font-size: .82rem;
+}
+.tochka-adres {
+  margin: 6px 0 0;
+  color: var(--text-muted);
+}
