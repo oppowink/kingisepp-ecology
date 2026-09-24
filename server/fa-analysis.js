@@ -84,7 +84,7 @@ function calculateRequestFa(sets) {
   const variance = leaves.length > 1 ? leaves.reduce(function (sum, leaf) { return sum + Math.pow(leaf.fa - meanFa, 2); }, 0) / (leaves.length - 1) : 0;
   return {
     status: 'calculated', engine: 'landmark-fa-v1',
-    formula: 'mean(|L-R|/((L+R)/2)) for V1, V2 and width', validLeafCount: leaves.length,
+    formula: 'mean(|L-R|/(L+R)) for V1, V2 and width', validLeafCount: leaves.length, 
     meanFa: Number(meanFa.toFixed(6)), standardDeviation: Number(Math.sqrt(variance).toFixed(6)),
     trees: trees,
     leaves: leaves, calculatedAt: new Date().toISOString()
