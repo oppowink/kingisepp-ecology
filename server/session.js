@@ -1,4 +1,3 @@
-// Подпись и разбор cookie-сессии (Vercel serverless)
 const crypto = require('crypto');
 
 const COOKIE_NAME = 'eco_session';

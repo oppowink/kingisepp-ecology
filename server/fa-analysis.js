@@ -41,6 +41,13 @@ function distanceToAxis(point, base, apex) {
   if (!length) return NaN;
   return Math.abs(axisY * point.x - axisX * point.y + apex.x * base.y - apex.y * base.x) / length;
 }
+function angleToAxis(start, end, base, apex) {
+  const vx = end.x - start.x; const vy = end.y - start.y;
+  const ax = apex.x - base.x; const ay = apex.y - base.y;
+  const lengths = Math.hypot(vx, vy) * Math.hypot(ax, ay);
+  if (!lengths) return NaN;
+  return Math.acos(Math.min(1, Math.max(-1, Math.abs(vx * ax + vy * ay) / lengths)));
+}
 function asymmetry(left, right) {
   const sum = left + right;
   return Number.isFinite(sum) && sum > 0 ? Math.abs(left - right) / sum : NaN;
@@ -52,17 +59,22 @@ function calculateLeaf(set, index) {
   const p = {};
   LANDMARK_NAMES.forEach(function (name) { p[name] = pixels(set.points[name], width, height); });
   const measurements = {
-    leftV1: distance(p.left_v1_base, p.left_v1_end), rightV1: distance(p.right_v1_base, p.right_v1_end),
     leftV2: distance(p.left_v2_base, p.left_v2_end), rightV2: distance(p.right_v2_base, p.right_v2_end),
-    widthLeft: distanceToAxis(p.width_left, p.base, p.apex), widthRight: distanceToAxis(p.width_right, p.base, p.apex)
+    widthLeft: distanceToAxis(p.width_left, p.base, p.apex), widthRight: distanceToAxis(p.width_right, p.base, p.apex),
+    basesLeft: distance(p.left_v1_base, p.left_v2_base), basesRight: distance(p.right_v1_base, p.right_v2_base),
+    endsLeft: distance(p.left_v1_end, p.left_v2_end), endsRight: distance(p.right_v1_end, p.right_v2_end),
+    angleLeft: angleToAxis(p.left_v2_base, p.left_v2_end, p.base, p.apex),
+    angleRight: angleToAxis(p.right_v2_base, p.right_v2_end, p.base, p.apex)
   };
   const traits = {
-    v1: asymmetry(measurements.leftV1, measurements.rightV1),
-    v2: asymmetry(measurements.leftV2, measurements.rightV2),
-    width: asymmetry(measurements.widthLeft, measurements.widthRight)
+    width: asymmetry(measurements.widthLeft, measurements.widthRight),
+    secondVein: asymmetry(measurements.leftV2, measurements.rightV2),
+    bases: asymmetry(measurements.basesLeft, measurements.basesRight),
+    ends: asymmetry(measurements.endsLeft, measurements.endsRight),
+    angle: asymmetry(measurements.angleLeft, measurements.angleRight)
   };
   const values = Object.values(traits).filter(Number.isFinite);
-  if (values.length !== 3) return null;
+  if (values.length !== 5) return null;
   const fa = values.reduce(function (sum, value) { return sum + value; }, 0) / values.length;
   return {
     index: index, treeIndex: set.treeIndex, fileHash: set.fileHash || '', fileName: set.fileName || '', fa: Number(fa.toFixed(6)),
@@ -83,8 +95,8 @@ function calculateRequestFa(sets) {
   const meanFa = trees.reduce(function (sum, tree) { return sum + tree.meanFa; }, 0) / trees.length;
   const variance = leaves.length > 1 ? leaves.reduce(function (sum, leaf) { return sum + Math.pow(leaf.fa - meanFa, 2); }, 0) / (leaves.length - 1) : 0;
   return {
-    status: 'calculated', engine: 'landmark-fa-v1',
-    formula: 'mean(|L-R|/(L+R)) for V1, V2 and width', validLeafCount: leaves.length, 
+    status: 'calculated', engine: 'landmark-fa-v2',
+    formula: 'mean(|L-R|/(L+R)) for width, second vein, vein bases, vein ends, angle', validLeafCount: leaves.length,
     meanFa: Number(meanFa.toFixed(6)), standardDeviation: Number(Math.sqrt(variance).toFixed(6)),
     trees: trees,
     leaves: leaves, calculatedAt: new Date().toISOString()

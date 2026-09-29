@@ -269,10 +269,19 @@ async function joinOrganization(admin, user, code) {
     .maybeSingle();
   if (organizationResult.error) throw organizationResult.error;
   if (!organizationResult.data) throw new Error('ORGANIZATION_NOT_FOUND');
+  const existing = await admin.from('organization_members')
+    .select('*')
+    .eq('organization_id', organizationResult.data.id)
+    .eq('user_id', user.id)
+    .maybeSingle();
+  if (existing.error) throw existing.error;
+  if (existing.data && existing.data.status === 'active') {
+    return { membership: existing.data, organization: publicOrganization(organizationResult.data) };
+  }
   const result = await admin.from('organization_members').upsert({
     organization_id: organizationResult.data.id,
     user_id: user.id,
-    member_role: user.role === 'curator' ? 'curator' : 'participant',
+    member_role: 'participant',
     status: 'active',
     updated_at: new Date().toISOString()
   }, { onConflict: 'organization_id,user_id' }).select('*').single();

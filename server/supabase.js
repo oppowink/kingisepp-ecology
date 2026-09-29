@@ -2,8 +2,6 @@ const { createClient } = require('@supabase/supabase-js');
 
 function getAdminClient() {
   const url = process.env.SUPABASE_URL;
-  // Административные операции выполняются только серверным ключом.
-  // Никогда не подменяем его публичным ключом: RLS должен оставаться включённым.
   const key =
     process.env.SUPABASE_SERVICE_ROLE_KEY ||
     process.env.SUPABASE_SECRET_KEY;

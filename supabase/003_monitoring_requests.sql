@@ -40,4 +40,4 @@ create index if not exists monitoring_requests_status_idx
 
 alter table public.monitoring_requests enable row level security;
 
-comment on table public.monitoring_requests is 'Заявки точек мониторинга: 1 точка, 1 дерево, 30 листьев, модерация человеком и нейросетью';
+comment on table public.monitoring_requests is 'Заявки точек мониторинга: 1 точка, 1 дерево, 30 листьев, ручная проверка фотографий и расчёт ФА по 12 ориентирам';
