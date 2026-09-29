@@ -1,12 +1,12 @@
-/* my-requests.css — список заявок участника */
+
 html:not(.dark) body { --bg:#fff; --surface:#fff; --surface-soft:#f5f8f2; }
 
-/* обёртка страницы */
+
 .moi-zayavki {
   width: min(820px, calc(100% - 46px));
 }
 
-/* шапка: заголовок + ссылка «Подать наблюдение» */
+
 .moi-zayavki__shapka {
   display: flex;
   align-items: baseline;
@@ -19,19 +19,19 @@ html:not(.dark) body { --bg:#fff; --surface:#fff; --surface-soft:#f5f8f2; }
   text-decoration: none;
 }
 
-/* список заявок — сетка с отступами */
+
 .spisok-zayavok {
   display: grid;
   gap: 31px;
   margin-top: 22px;
 }
 
-/* одна карточка заявки */
+
 .zayavka {
   padding: 0 0 3px;
 }
 
-/* верхняя часть: название + статус */
+
 .zayavka__verh {
   display: flex;
   align-items: baseline;
@@ -42,7 +42,7 @@ html:not(.dark) body { --bg:#fff; --surface:#fff; --surface-soft:#f5f8f2; }
   font-size: 1.08rem;
 }
 
-/* статус заявки */
+
 .zayavka__status {
   flex: 0 0 auto;
   font-size: .82rem;
@@ -61,7 +61,7 @@ html:not(.dark) body { --bg:#fff; --surface:#fff; --surface-soft:#f5f8f2; }
   color: var(--danger);
 }
 
-/* метаданные (место, дата) и причина отклонения */
+
 .zayavka__meta,
 .zayavka__prichina {
   margin: 8px 0 0;
@@ -69,7 +69,7 @@ html:not(.dark) body { --bg:#fff; --surface:#fff; --surface-soft:#f5f8f2; }
   font-size: .84rem;
 }
 
-/* ссылка на сертификат */
+
 .zayavka__sertifikat {
   display: inline-block;
   margin-top: 10px;
@@ -77,13 +77,13 @@ html:not(.dark) body { --bg:#fff; --surface:#fff; --surface-soft:#f5f8f2; }
   text-decoration: none;
 }
 
-/* если заявок нет */
+
 .zayavki-pusty {
   margin: 0;
   color: var(--text-muted);
 }
 
-/* мобильная адаптивность */
+
 @media (max-width: 600px) {
   .moi-zayavki__shapka,
   .zayavka__verh {

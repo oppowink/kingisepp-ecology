@@ -1,12 +1,9 @@
-// home.js, scroll-сцены главной и анимация актуальности
 (function () {
   'use strict';
 
-  // отключаем анимации при reduced motion или на тач-устройствах
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var mobileQuery = window.matchMedia('(max-width: 760px)');
 
-  // вспомогательные функции для плавной интерполяции
   function clamp(value, min, max) { return Math.min(max, Math.max(min, value)); }
   function smoother(value) {
     var t = clamp(value, 0, 1);
@@ -16,7 +13,6 @@
     return smoother(clamp((progress - from) / Math.max(.001, to - from), 0, 1));
   }
 
-  // вычисление прогресса секции относительно окна
   function sceneProgress(section) {
     var rect = section.getBoundingClientRect();
     var viewport = Math.max(1, window.innerHeight);
@@ -25,7 +21,6 @@
     return clamp((start - rect.top) / Math.max(1, start - finish), 0, 1);
   }
 
-  // расчёт целевых значений для текущего скролла
   function targetForScene(section) {
     var p = sceneProgress(section);
     var width = window.innerWidth;
@@ -48,7 +43,6 @@
   function almostEqual(a, b) { return Math.abs(a - b) < .08; }
   function approach(current, target, factor) { return current + (target - current) * factor; }
 
-  // инициализация scroll-сцен
   function initScrollScenes() {
     if (reduceMotion || mobileQuery.matches) return;
 
@@ -102,7 +96,6 @@
     updateTargets();
   }
 
-  // анимация актуальности, включается при появлении блока
   function initActualitySequence() {
     var stage = document.querySelector('[data-aktualnost-scena]');
     if (!stage) return;
@@ -125,7 +118,6 @@
     observer.observe(stage);
   }
 
-  // запускаем анимацию призыва только при появлении фразы в окне
   function initJumpIn() {
     var items = document.querySelectorAll('.jump-in');
     if (!items.length) return;
@@ -143,7 +135,6 @@
     items.forEach(function (item) { observer.observe(item); });
   }
 
-  // запуск при загрузке DOM
   document.addEventListener('DOMContentLoaded', function () {
     initScrollScenes();
     initActualitySequence();

@@ -1,4 +1,4 @@
-/* О проекте — текст, полевые фотографии и свободное пространство. */
+
 .info-stranica { width: min(1160px, calc(100% - 54px)); }
 .info-stranica h1,.info-stranica h2 { letter-spacing: -.025em; }
 .info-geroy { display: grid; grid-template-columns: minmax(0,1.3fr) minmax(260px,.7fr); gap: clamp(32px,6vw,92px); align-items: end; padding: 46px 0 86px; }
@@ -8,7 +8,8 @@
 .info-portret { margin: 0; align-self: end; background: none; }
 .info-foto-avtora { display: block; width: 100%; max-height: 480px; object-fit: contain; object-position: bottom center; }
 .info-portret figcaption { padding: 7px 0 0; color: var(--text-muted); font-size: .78rem; }
-.info-prizyv { display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 15px 34px; align-items: center; max-width: 1050px; margin: 8px auto 112px; color: var(--text); }
+.info-prizyv { position:relative;isolation:isolate;display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 15px 34px; align-items: center; max-width: 1050px; margin: 8px auto 112px; padding:clamp(28px,4vw,48px);color: var(--text); }
+.info-prizyv::before{content:"";position:absolute;inset:0;z-index:-1;background:var(--rose-soft);clip-path:polygon(2% 8%,96% 0,100% 86%,9% 100%,0 70%)}
 .info-prizyv > div { grid-column: 1; }
 .info-prizyv h2 { max-width: 640px; margin-bottom: 12px; font-size: clamp(1.6rem,2.5vw,2.35rem); }
 .info-prizyv p { max-width: 690px; margin: 0; color: var(--text-muted); }
@@ -30,7 +31,8 @@
 .info-ssylka { display: inline-block; padding: 9px 2px; border: 0; background: none; color: var(--accent); font-weight: 600; text-decoration: underline; text-decoration-color: color-mix(in srgb,var(--accent) 55%,transparent); text-underline-offset: 6px; transition: color .18s ease,text-decoration-color .18s ease; }
 .info-ssylka:hover { color: var(--text); text-decoration-color: currentColor; }
 .info-ssylka:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-.info-polza { display: grid; grid-template-columns: minmax(210px,.58fr) minmax(0,1fr); gap: 50px; align-items: start; }
+.info-polza { position:relative;isolation:isolate;display: grid; grid-template-columns: minmax(210px,.58fr) minmax(0,1fr); gap: 50px; align-items: start; padding:clamp(28px,4vw,46px); }
+.info-polza::before{content:"";position:absolute;inset:0;z-index:-1;background:color-mix(in srgb,var(--rose-soft) 76%,var(--surface));clip-path:polygon(0 0,97% 8%,100% 100%,4% 91%)}
 .info-polza p { margin: 0; }
 .info-final { max-width: 830px; margin: 0 auto 45px; padding: 12px 0 40px; text-align: center; }
 .info-final h2 { margin-bottom: 18px; font-size: clamp(1.8rem,3.2vw,2.7rem); }

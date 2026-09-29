@@ -1,4 +1,3 @@
-// auth.js: сессия в браузере, рабочие данные только через Supabase API.
 (function () {
   'use strict';
   var SESSION_CACHE = 'eco-session-user-v2';

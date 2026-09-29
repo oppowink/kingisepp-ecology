@@ -1,4 +1,3 @@
-// smart-search.js, FAQ-аккордеон и локальный поиск без внешнего API
 (function () {
   'use strict';
 
@@ -13,15 +12,18 @@
   }
 
   function terms(value) {
-    return normalize(value).split(' ').filter(function (word) { return word.length > 2; });
+    var stop = new Set(['как','что','это','где','зачем','для','мне','надо','нужно','можно','если','при','про']);
+    return normalize(value).split(' ').filter(function (word) { return word.length > 2 && !stop.has(word); }).map(function (word) {
+      return word.length > 5 ? word.replace(/(иями|ями|ами|ого|ему|ыми|ими|ация|ать|ить|ешь|ете|ов|ев|ей|ом|ам|ям|ах|ях|ия|ие|ый|ий|ая|ое|ые|а|я|ы|и|е|у|ю)$/,'') : word;
+    }).filter(function (word) { return word.length > 2; });
   }
 
   function searchFaq(query) {
     var words = terms(query);
     if (!words.length) return [];
     return (window.ECO_FAQ || []).map(function (item) {
-      var question = normalize(item.question);
-      var answer = normalize(item.answer);
+      var question = terms(item.question).join(' ');
+      var answer = terms(item.answer).join(' ');
       var score = words.reduce(function (sum, word) {
         return sum + (question.includes(word) ? 3 : 0) + (answer.includes(word) ? 1 : 0);
       }, 0);

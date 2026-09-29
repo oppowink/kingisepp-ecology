@@ -1,4 +1,3 @@
-// education.js — лёгкое обучение волонтёра и пробный тест
 (function () {
   'use strict';
 
@@ -48,7 +47,7 @@
       text: 'Когда точка может стать видимой на карте?',
       options: [
         { value: 'after_upload', label: 'Сразу после загрузки' },
-        { value: 'after_checks', label: 'После модератора и автоматической проверки' },
+        { value: 'after_checks', label: 'После модерации, расчёта ФА и финальной проверки' },
         { value: 'after_photo', label: 'После одной фотографии дерева' }
       ],
       correct: 'after_checks'

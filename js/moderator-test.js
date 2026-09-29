@@ -1,4 +1,3 @@
-// moderator-test.js — отдельный тест допуска модератора без стандартных radio-кнопок
 (function () {
   'use strict';
 
@@ -53,7 +52,7 @@
       options: [
         { value: 'after_submit', label: 'Сразу после отправки заявки' },
         { value: 'after_human', label: 'После решения модератора' },
-        { value: 'after_two_steps', label: 'После проверки модератором и автоматической проверки' }
+        { value: 'after_two_steps', label: 'После проверки исходных данных, расчёта ФА и финального решения' }
       ],
       answer: 'after_two_steps'
     },
@@ -76,7 +75,7 @@
       answer: 'mixed_trees'
     },
     {
-      question: 'Что означает статус ожидания автоматической проверки?',
+      question: 'Что означает статус ожидания расчёта ФА?',
       options: [
         { value: 'published', label: 'Точка уже опубликована' },
         { value: 'human_done_ai_wait', label: 'Модератор одобрил, но второй этап ещё не завершён' },

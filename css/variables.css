@@ -1,4 +1,4 @@
-/* variables.css — цвета, типографика и базовые переменные интерфейса */
+
 
 @font-face {
   font-family: 'Comfortaa';
@@ -39,52 +39,55 @@
 :root {
   color-scheme: light;
 
-  /* фоны и поверхности */
-  --bg: #f4f7ed;
-  --surface: #e8f1de;
-  --surface-soft: #edf5e6;
-  --input: #f7faf2;
 
-  /* текст */
-  --text: #263326;
-  --text-muted: #607060;
-  --text-soft: #637363;
+  --bg: #f6f5ef;
+  --surface: #fffdf7;
+  --surface-soft: #eeeee3;
+  --input: #fffdf7;
 
-  /* акценты */
-  --accent: #377a43;
-  --accent-soft: #81c995;
-  --acid: #4d7448;
 
-  /* линии и сетка */
-  --line: rgba(70, 108, 70, .24);
-  --line-strong: rgba(70, 108, 70, .46);
-  --grid: rgba(82, 110, 82, .065);
+  --text: #30351f;
+  --text-muted: #555b40;
+  --text-soft: #60664e;
 
-  /* оверлей и виньетка */
+
+  --accent: #4b4b20;
+  --accent-soft: #838f58;
+  --acid: #8a573f;
+  --rose: #e8b0c2;
+  --rose-soft: #f5e5ea;
+  --rose-ink: #783e53;
+
+
+  --line: rgba(75, 75, 32, .24);
+  --line-strong: rgba(75, 75, 32, .46);
+  --grid: rgba(75, 75, 32, .065);
+
+
   --overlay: rgba(18, 30, 18, .42);
   --vignette: rgba(29, 54, 29, .07);
 
-  /* статусы */
+
   --success: #2f7d3b;
   --warning: #956512;
   --danger: #aa4141;
 
-  /* тени */
+
   --shadow-panel: 0 16px 44px rgba(36, 58, 36, .08);
   --shadow-object: 0 24px 64px rgba(26, 46, 26, .10);
 
-  /* шрифты */
+
   --font-heading: 'Comfortaa', 'Trebuchet MS', 'Segoe UI', sans-serif;
   --font-body: 'Comfortaa', 'Segoe UI', Arial, sans-serif;
 
-  /* размеры и анимации */
+
   --header-height: 72px;
   --control-radius: 0px;
   --transition-fast: 160ms ease;
   --transition-base: 260ms ease;
 }
 
-/* тёмная тема — переопределяем переменные */
+
 html.dark {
   color-scheme: dark;
 
@@ -100,6 +103,9 @@ html.dark {
   --accent: #69b66d;
   --accent-soft: #8cc58e;
   --acid: #aac69b;
+  --rose: #c27e97;
+  --rose-soft: #392b34;
+  --rose-ink: #efb9cc;
 
   --line: rgba(166, 195, 158, .19);
   --line-strong: rgba(166, 195, 158, .36);

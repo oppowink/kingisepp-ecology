@@ -1,4 +1,4 @@
-/* faq.css — аккордеон FAQ и локальный поиск на главной */
+
 .faq-stranica { width: min(900px, calc(100% - 46px)); }
 .faq-vvedenie { max-width: 740px; margin-bottom: 37px; }
 .faq-vvedenie h1 { margin-bottom: 14px; }
@@ -14,7 +14,7 @@
 .faq-ne-nashli h2 { margin-bottom: 10px; }
 .faq-ne-nashli p { margin: 0 0 18px; color: var(--text-muted); }
 
-/* поиск на главной использует те же данные, но не требует отдельного сервера */
+
 .glavnaya-poisk { display: grid; gap: 15px; }
 .glavnaya-poisk__stroka { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px; }
 .glavnaya-poisk__rezultaty { display: grid; gap: 8px; margin-top: 5px; }

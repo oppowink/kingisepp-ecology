@@ -1,9 +1,8 @@
-/* games.js. Три локальные мини-игры. Прогресс обучения, роли и заявки не затрагиваются. */
 (function () {
   'use strict';
 
   const ASSETS = {
-    roadTree: { path: 'img/games/tree-road-generated.webp', alt: 'Берёза у дороги, игровая фотография', detail: 'Берёза у дороги.' },
+    roadTree: { path: 'img/games/tree-road-cutout.png', alt: 'Берёза у дороги, игровая фотография', detail: 'Берёза у дороги.' },
     parkTree: { path: 'img/games/tree-park-edited.webp', alt: 'Берёза в зелёной зоне Кингисеппа, игровая версия снимка', detail: 'Берёза в зелёной зоне.' },
     normal1: { path: 'img/games/normal1-cutout.webp', leaf: true, alt: 'Первый целый лист берёзы', detail: 'Край листа целый и различим.' },
     normal2: { path: 'img/games/normal2-cutout.webp', leaf: true, alt: 'Второй целый лист берёзы', detail: 'Жилки и контур видны.' },
@@ -18,9 +17,9 @@
     normalPhoto: { path: 'img/games/birch-leaves.jpg', alt: 'Листья берёзы на исходном фоне съёмки', detail: 'Исходный снимок сохраняет условия фотографирования.' },
     blurred: { path: 'img/games/leaf-sideways.jpg', alt: 'Исходный снимок листа под неудобным углом', detail: 'Положение листа на снимке не подходит для разметки.' },
     cropped: { path: 'img/games/leaf-damaged.jpg', alt: 'Сильно повреждённый лист на фоне съёмки', detail: 'Повреждение искажает контур.' },
-    containerNormal: { path: 'img/games/container-normal.webp', alt: 'Пластиковый контейнер для подходящих листьев', detail: 'Контейнер для подходящих листьев.' },
-    containerDamaged: { path: 'img/games/container-damaged.webp', alt: 'Пластиковый контейнер для повреждённых листьев', detail: 'Контейнер для повреждённых листьев.' },
-    containerOther: { path: 'img/games/container-other.webp', alt: 'Пластиковый контейнер для листьев другого вида', detail: 'Контейнер для другого вида.' },
+    containerNormal: { path: 'img/games/container-cutout.png', alt: 'Пластиковый контейнер для подходящих листьев', detail: 'Контейнер для подходящих листьев.' },
+    containerDamaged: { path: 'img/games/container-cutout.png', alt: 'Пластиковый контейнер для повреждённых листьев', detail: 'Контейнер для повреждённых листьев.' },
+    containerOther: { path: 'img/games/container-cutout.png', alt: 'Пластиковый контейнер для листьев другого вида', detail: 'Контейнер для другого вида.' },
     street: { path: '', alt: 'Улица', detail: 'улица', icon: true }, park: { path: '', alt: 'Парк', detail: 'парк', icon: true },
     asphalt: { path: '', alt: 'Асфальт', detail: 'асфальт', icon: true }, soil: { path: '', alt: 'Почва', detail: 'почва', icon: true },
     near: { path: '', alt: 'Близко к дороге', detail: 'близко', icon: true }, far: { path: '', alt: 'Далеко от дороги', detail: 'далеко', icon: true }
@@ -40,8 +39,6 @@
     { asset: 'damaged3', category: 'damaged', note: 'Отверстия относятся к повреждениям. Их нельзя подменять значением ФА.' },
     { asset: 'other3', category: 'other', note: 'Клён отличается формой пластинки. Проверьте вид до разметки.' }
   ];
-  // Это явно обозначенные учебные ситуации: нет координат, результатов ФА
-  // или персональных данных реальных участников.
   const APPLICATIONS = [
     {
       name: 'Парк', photos: ['parkTree', 'goodPhoto', 'normalPhoto'],
@@ -68,8 +65,6 @@
   const TITLES = { road: 'Детектив у дороги', leaves: 'Сортировщик листьев', moderator: 'Модератор на час' };
   const GAME_PREVIEWS = { road: 'roadTree', leaves: 'containerNormal', moderator: 'goodPhoto' };
 
-  // Состояния игр отделены от DOM: повторы клика и переносы вне зоны не
-  // увеличивают счёт. Эти же модели проверяются локальными тестами Node.
   class RoadGame {
     constructor() { this.counts = { road: 0, park: 0 }; this.passports = {}; this.active = null; this.samples = []; this.concluded = false; }
     get total() { return this.samples.length; }
@@ -230,8 +225,6 @@
     title.focus({ preventScroll: true });
   }
 
-  // Единое перетаскивание на Pointer Events поддерживает мышь, перо и касание.
-  // Нет HTML Drag API, несовместимого с частью мобильных браузеров.
   function bindDrag(onDrop) {
     const item = stage.querySelector('[data-draggable]');
     if (!item || item.disabled) return;
@@ -467,7 +460,6 @@
     message('Результат относится только к этому раунду. Обучение, сертификаты и настоящие заявки не изменены.');
   }
 
-  // Делегирование кликов не создаёт повторных обработчиков при смене экранов.
   stage.addEventListener('click', event => {
     if (Date.now() < suppressClickUntil) return;
     const button = event.target.closest('button');
@@ -528,7 +520,6 @@
   });
   window.addEventListener('resize', () => { if (cancelDrag) cancelDrag(); });
 
-  // Общая шапка и переключение темы подключены на странице, как в остальных разделах.
   preloadAssets();
   lobby();
 })();

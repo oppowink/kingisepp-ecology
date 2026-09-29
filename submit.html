@@ -1,39 +1,32 @@
 <!doctype html>
-<!-- submit.html - Форма подачи одного наблюдения и загрузки фотографий -->
+
 <html lang="ru">
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1" name="viewport"/>
 
-<!-- SEO (запрет индексации) -->
 <meta content="Отправка наблюдения участником экологического мониторинга." name="description"/>
 <meta content="noindex,nofollow" name="robots"/>
 
 <title>Добавить точку | ЭкоБиоМониторинг</title>
 
-<!-- фавиконка -->
 <link href="img/favicon.ico" rel="icon"/>
 
-<!-- стили -->
 <link href="css/variables.css" rel="stylesheet"/>
 <link href="css/components.css" rel="stylesheet"/>
 <link href="css/submit.css" rel="stylesheet"/>
 
-<!-- Та же карта, что используется на публичной странице проекта -->
 <link href="https://api-maps.yandex.ru" rel="preconnect"/>
 <script src="https://api-maps.yandex.ru/2.1/?apikey=188ac128-4a13-4cd1-b53a-cdf0eb730641&amp;lang=ru_RU"></script>
 
-<!-- тема, подключаем до body чтобы не мигало -->
 <script src="js/theme.js"></script>
 </head>
 <body>
-<!-- свечение за курсором -->
+
 <div aria-hidden="true" class="kursor" data-component="kursor"></div>
 
-<!-- затемнение под панель настроек -->
 <div aria-hidden="true" class="nastroiki-fon" id="nastroikiFon"></div>
 
-<!-- шапка -->
 <header class="shapka" data-component="shapka">
 <a aria-label="ЭкоБиоМониторинг, на главную" class="shapka-logo" href="index.html">
 <span class="shapka-logo__nazvanie">
@@ -46,7 +39,7 @@
 <span class="shapka-logo__bukva">р</span><span class="shapka-logo__bukva">и</span><span class="shapka-logo__bukva">н</span><span class="shapka-logo__bukva">г</span>
 </span>
 </a>
-<!-- кнопки шапки -->
+
 <div class="shapka-deystviya">
 <a class="shapka-ssylka" href="account.html">
 <img alt="" aria-hidden="true" class="shapka-ssylka__ikona" src="img/icons/user.png"/>
@@ -59,13 +52,12 @@
 </div>
 </header>
 
-<!-- панель настроек -->
 <aside aria-hidden="true" aria-label="Настройки" class="nastroiki-panel" id="nastroikiPanel">
 <button aria-label="Закрыть настройки" class="nastroiki-zakryt" id="nastroikiZakryt" type="button">
 <img alt="" aria-hidden="true" src="img/icons/close.png"/>
 <span class="sr-only">Закрыть</span>
 </button>
-<!-- переключатель темы -->
+
 <div class="tema-vybor-blok">
 <p class="tema-podpis">Тема</p>
 <div class="tema-vybor">
@@ -77,13 +69,13 @@
 </button>
 </div>
 </div>
-<!-- ссылка на личный кабинет -->
+
 <div class="nastroiki-akkaunt">
 <a class="nastroiki-ssylka nastroiki-ssylka--akcent" href="account.html">
 <img alt="" aria-hidden="true" src="img/icons/user.png"/><span>Личный кабинет</span>
 </a>
 </div>
-<!-- навигация -->
+
 <nav aria-label="Навигация" class="nastroiki-navigaciya">
 <a class="nastroiki-ssylka" href="index.html">Главная</a>
 <a class="nastroiki-ssylka" href="map.html">Карта</a>
@@ -94,25 +86,22 @@
 </nav>
 </aside>
 
-<!-- основной контент -->
 <main class="podacha-nablyudeniya vnutrennyaya-stranica">
 <nav aria-label="Навигация страницы" class="stranica-deystviya">
 <a class="stranica-knopka" href="account.html">Назад в кабинет</a>
 </nav>
-<!-- заголовок -->
+
 <h1>Добавить точку мониторинга</h1>
 
-<!-- блок, если обучение не пройдено -->
 <section class="dostup-soobshchenie" hidden="" id="podachaBlokirovka">
 <p>Добавление точки откроется после основного подтверждающего теста.</p>
 <a href="education.html">Перейти к обучению</a>
 </section>
 
-<!-- форма подачи наблюдения -->
 <form class="forma-nablyudeniya" hidden="" id="formaNablyudeniya" novalidate="">
 <p class="forma-nablyudeniya__poyasnenie">Одна заявка — одна точка, 2–4 дерева и по 10–30 фотографий листьев с каждого.</p>
+<nav class="submission-steps" aria-label="Порядок подачи"><span>1. Место и дата</span><span>2. Паспорт</span><span>3. Код и съёмка</span><span>4. Проверка фото</span><span>5. Разметка и отправка</span></nav>
 
-<!-- источник задания: собственная точка или объект, открытый куратором -->
 <fieldset class="forma-sekciya istochnik-zayavki">
 <legend>Откуда берётся точка</legend>
 <div class="istochnik-zayavki__varianty">
@@ -134,19 +123,16 @@
 </div>
 </fieldset>
 
-<!-- поле "Название наблюдения" -->
 <div class="pole-gruppa">
 <label class="pole-podpis" for="nazvanieNablyudeniya">Название точки</label>
 <input autocomplete="off" class="pole-vvod" id="nazvanieNablyudeniya" name="title" required=""/>
 </div>
 
-<!-- поле "Место наблюдения" -->
 <div class="pole-gruppa">
 <label class="pole-podpis" for="mestoNablyudeniya">Место наблюдения</label>
 <input autocomplete="street-address" class="pole-vvod" id="mestoNablyudeniya" name="location" required=""/>
 </div>
 
-<!-- координаты выбираются на карте: ручной ввод исключён -->
 <section aria-labelledby="vyborKoordinatZagolovok" class="forma-sekciya karta-vybor">
 <h2 id="vyborKoordinatZagolovok">Выберите точку на карте</h2>
 <p>Нажмите на место, где находятся исследуемые берёзы. Маркер можно переставить повторным нажатием.</p>
@@ -154,7 +140,6 @@
 <p aria-live="polite" class="karta-vybor__status" id="kartaVyborStatus">Точка ещё не выбрана</p>
 </section>
 
-<!-- блок с выбранными координатами и датой -->
 <div class="forma-nablyudeniya__ryad">
 <div class="pole-gruppa">
 <label class="pole-podpis" for="koordinatyNablyudeniya">Выбранные координаты</label>
@@ -166,7 +151,6 @@
 </div>
 </div>
 
-<!-- паспорт территории: контекст помогает сравнивать точки между собой -->
 <fieldset class="forma-sekciya pasport-territorii">
 <legend>Паспорт территории</legend>
 <div class="forma-nablyudeniya__ryad">
@@ -197,6 +181,7 @@
 <div class="pole-gruppa">
 <label class="pole-podpis" for="rasstoyanieDoroga">Расстояние до ближайшей дороги, м</label>
 <input class="pole-vvod" id="rasstoyanieDoroga" max="10000" min="0" required="" step="1" type="number"/>
+<p class="pole-podskazka">Измерьте по карте кратчайшее расстояние от дерева до края проезжей части. Это характеристика места для сопоставления групп, не множитель в формуле ФА.</p>
 </div>
 <div class="pole-gruppa">
 <label class="pole-podpis" for="intensivnostDvizheniya">Транспортная нагрузка</label>
@@ -219,7 +204,12 @@
 </div>
 </fieldset>
 
-<!-- Каждое дерево остаётся отдельным набором внутри общей точки. -->
+<section class="forma-sekciya" id="integrityBlock">
+<h2>Перед съёмкой: код полевого набора</h2>
+<output class="integrity-code" id="integrityCode"></output>
+<p>Перепишите код на листок и положите рядом с каждым деревом на обзорном фото. Сделайте фото листьев на белом фоне строго сверху: видны весь контур и центральная жилка, разрешение не ниже 500 × 500 пикселей. Требуется 10–30 отдельных фото для каждого из 2–4 деревьев.</p>
+<p>Код, дата, геолокация и проверка повторов помогают проверить происхождение набора; спорные случаи рассматривает модератор.</p>
+</section>
 <section class="tree-sets" aria-labelledby="treeSetsTitle">
 <h2 id="treeSetsTitle">Деревья в этой точке</h2>
 <p>Добавьте от двух до четырёх берёз. У каждой — своё обзорное фото и от 10 до 30 фотографий листьев.</p>
@@ -228,23 +218,19 @@
 <p class="pole-oshibka" hidden id="oshibkaFoto"></p>
 </section>
 
-<!-- комментарий -->
 <div class="pole-gruppa">
 <label class="pole-podpis" for="kommentariyNablyudeniya">Комментарий</label>
 <textarea class="pole-tekst" id="kommentariyNablyudeniya" name="comment"></textarea>
 </div>
 
-<!-- результат предварительного анализа (заполняется JS) -->
 <section class="predvaritelnyy-analiz" hidden="" id="predvaritelnyyAnaliz">
 <h2>Результат предварительного анализа</h2>
 <div id="predvaritelnyyAnalizRezultat"></div>
 <p>Результат предварительный, окончательное решение принимает модератор</p>
 </section>
 
-<!-- общее сообщение об ошибке -->
 <p class="soobshchenie" hidden="" id="oshibkaPodachi"></p>
 
-<!-- ЧЕКЛИСТ САМОПРОВЕРКИ ДЛЯ ВОЛОНТЁРА -->
 <div class="pole-gruppa" id="checklistBlock">
   <span class="pole-podpis">Проверьте себя перед отправкой</span>
   <div class="checklist">
@@ -274,13 +260,6 @@
 <p class="checklist-error" id="checklistError" hidden>Отметьте все пункты перед отправкой</p>
 </div>
 
-<section class="forma-sekciya" id="integrityBlock">
-<h2>Код полевого набора</h2>
-<p>Перед съёмкой запишите этот код на листке и положите его рядом с деревом на обзорной фотографии. Код связывает набор с местом и датой сбора.</p>
-<p>Геолокация, время съёмки, код и проверка повторов повышают достоверность набора. Они не дают абсолютной гарантии, поэтому спорные случаи отдельно рассматривает модератор.</p>
-<output class="integrity-code" id="integrityCode"></output>
-</section>
-
 <section class="forma-sekciya landmark-step" id="landmarkStep">
 <h2>Контрольные точки листьев</h2>
 <p id="landmarkHelp">После выбора фотографий для всех деревьев отметьте точки на каждом листе. Нажимайте по порядку, название текущей точки показано над снимком.</p>
@@ -289,14 +268,10 @@
 <div class="landmark-actions"><button class="knopka-vtorichnaya" id="landmarkUndo" type="button">Отменить точку</button><button class="knopka-osnovnaya" id="landmarkNext" type="button">Следующий лист</button></div>
 </section>
 
-
-
-<!-- кнопка отправки -->
 <button class="knopka-osnovnaya" type="submit">Отправить точку на проверку</button>
 </form>
 </main>
 
-<!-- подвал -->
 <footer aria-label="Подвал сайта" class="podval" data-component="podval">
 <div class="podval-vnutri">
 <span class="podval-nazvanie">ЭкоБиоМониторинг</span>
@@ -305,7 +280,6 @@
 </div>
 </footer>
 
-<!-- скрипты -->
 <script src="js/auth.js"></script>
 <script defer src="js/header.js"></script>
 <script defer src="js/cursor.js"></script>

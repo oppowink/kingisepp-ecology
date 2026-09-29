@@ -1,7 +1,7 @@
-/* moderator.css — интерфейс модерации заявок */
+
 html:not(.dark) body { --bg:#fff; --surface:#fff; --surface-soft:#f5f8f2; }
 
-/* обёртка страницы модерации */
+
 .moderaciya {
   width: min(1120px, calc(100% - 46px));
 }
@@ -94,7 +94,7 @@ html:not(.dark) body { --bg:#fff; --surface:#fff; --surface-soft:#f5f8f2; }
   margin-bottom: 23px;
 }
 
-/* обучение модератора — блоки разделены отступами, без декоративных линий */
+
 .moderator-obuchenie {
   display: grid;
   gap: 18px;
@@ -215,7 +215,7 @@ html:not(.dark) body { --bg:#fff; --surface:#fff; --surface-soft:#f5f8f2; }
   background: color-mix(in srgb, var(--accent) 18%, var(--surface) 82%);
 }
 
-/* список заявок — сетка с отступами */
+
 .moderaciya-spisok {
   display: grid;
   gap: 74px;
@@ -225,20 +225,20 @@ html:not(.dark) body { --bg:#fff; --surface:#fff; --surface-soft:#f5f8f2; }
 .moderaciya-zayavka__head { display: flex; align-items: flex-start; justify-content: space-between; gap: 22px; margin-bottom: 20px; }
 .moderaciya-zayavka__head > span { color: var(--text-muted); font-size: .82rem; white-space: nowrap; }
 
-/* карточка заявки */
+
 .moderaciya-zayavka h2 {
   margin-bottom: 9px;
   font-size: 1.1rem;
 }
 
-/* информация об авторе */
+
 .moderaciya-meta {
   margin: 0;
   color: var(--text-muted);
   font-size: .84rem;
 }
 
-/* данные заявки (место, дата, фото) */
+
 .moderaciya-dannye {
   margin: 14px 0 0;
   color: var(--text-muted);
@@ -260,17 +260,17 @@ html:not(.dark) body { --bg:#fff; --surface:#fff; --surface-soft:#f5f8f2; }
 .moderaciya-flagi { max-width: 780px; margin: 17px 0; color: var(--warning); font-size: .84rem; }
 .moderaciya-flagi--ok { color: var(--success); }
 
-/* блок с результатом предварительного AI-анализа */
+
 .moderaciya-ai {
   margin-top: 14px;
 }
 
-/* поле для указания причины отклонения */
+
 .moderaciya-prichina {
   margin-top: 17px;
 }
 
-/* кнопки Одобрить / Отклонить */
+
 .moderaciya-deystviya {
   display: flex;
   flex-wrap: wrap;
@@ -279,7 +279,7 @@ html:not(.dark) body { --bg:#fff; --surface:#fff; --surface-soft:#f5f8f2; }
   margin-top: 23px;
 }
 
-/* moderator.css — дополнение для чеклиста и селекта */
+
 .moderaciya-checklist {
   display: grid;
   gap: 8px;
@@ -330,7 +330,7 @@ html:not(.dark) body { --bg:#fff; --surface:#fff; --surface-soft:#f5f8f2; }
   border-color: var(--accent);
 }
 
-/* Заголовок чеклиста — шрифт Comfortaa, не жирный */
+
 .mod-checklist-title {
   display: block;
   margin-bottom: 6px;

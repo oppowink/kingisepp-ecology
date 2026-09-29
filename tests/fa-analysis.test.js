@@ -15,9 +15,8 @@ function symmetricLeaf() {
 test('FA calculator returns zero for a symmetric landmark set', function () {
   const result = calculateLeaf(symmetricLeaf(), 0);
   assert.equal(result.fa, 0);
-  assert.equal(result.traits.v1, 0);
-  assert.equal(result.traits.v2, 0);
-  assert.equal(result.traits.width, 0);
+  assert.deepEqual(Object.keys(result.traits), ['width','secondVein','bases','ends','angle']);
+  Object.values(result.traits).forEach(value => assert.equal(value, 0));
 });
 
 test('request FA reports leaf count and positive asymmetry', function () {
@@ -27,5 +26,19 @@ test('request FA reports leaf count and positive asymmetry', function () {
   const result = calculateRequestFa([first, second]);
   assert.equal(result.validLeafCount, 2);
   assert.ok(result.meanFa > 0);
-  assert.equal(result.engine, 'landmark-fa-v1');
+  assert.equal(result.engine, 'landmark-fa-v2');
+  assert.equal(result.leaves[1].fa, Number((result.leaves[1].traits.width / 5).toFixed(6)));
+});
+
+test('all five pairs contribute to the leaf result', function () {
+  const leaf = symmetricLeaf();
+  leaf.points.right_v2_end.x = .76;
+  leaf.points.right_v1_base.y = .83;
+  leaf.points.right_v1_end.y = .58;
+  const result = calculateLeaf(leaf, 0);
+  assert.ok(result.traits.secondVein > 0);
+  assert.ok(result.traits.bases > 0);
+  assert.ok(result.traits.ends > 0);
+  assert.ok(result.traits.angle > 0);
+  assert.equal(result.fa, Number((Object.values(result.traits).reduce((a,b)=>a+b,0)/5).toFixed(6)));
 });

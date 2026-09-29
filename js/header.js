@@ -1,4 +1,3 @@
-// header.js, шапка, настройки и навигация
 (function () {
   'use strict';
 
@@ -41,7 +40,6 @@
       window.EcoTheme.applyTheme(document.documentElement.classList.contains('dark') ? 'dark' : 'light', false);
     }
 
-    // элементы панели
     var panel = document.getElementById('nastroikiPanel');
     var overlay = document.getElementById('nastroikiFon');
     var openButton = document.getElementById('nastroikiKnopka');
@@ -52,7 +50,6 @@
     var currentPage = (location.pathname.split('/').pop() || 'index.html').toLowerCase();
     var nav = panel.querySelector('.nastroiki-navigaciya');
 
-    // Общедоступные страницы добавляются перед двумя завершающими ссылками.
     function insertNavLink(href, text, dataName, beforeSelector) {
       if (!nav || nav.querySelector('[href="' + href + '"]')) return;
       var link = document.createElement('a');
@@ -67,7 +64,6 @@
     insertNavLink('games.html', 'Игры', '', '[href="about.html"], [href="feedback.html"]');
     insertNavLink('about.html', 'О проекте и авторе');
 
-    // подсветка текущей страницы в навигации
     panel.querySelectorAll('.nastroiki-navigaciya a').forEach(function (link) {
       var target = (link.getAttribute('href') || '').split('?')[0].toLowerCase();
       var active = target === currentPage;
@@ -76,13 +72,11 @@
       else link.removeAttribute('aria-current');
     });
 
-    // собираем фокусируемые элементы внутри панели
     function focusableItems() {
       return Array.from(panel.querySelectorAll('a[href], button:not([disabled]), input:not([disabled]), textarea:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])'))
         .filter(function (node) { return !node.hidden && node.offsetParent !== null; });
     }
 
-    // открыть/закрыть панель
     function setOpen(open) {
       panel.classList.toggle('otkryta', open);
       overlay.classList.toggle('vidim', open);
@@ -99,12 +93,10 @@
       }
     }
 
-    // обработчики кликов
     openButton.addEventListener('click', function () { setOpen(!panel.classList.contains('otkryta')); });
     overlay.addEventListener('click', function () { setOpen(false); });
     closeButton?.addEventListener('click', function () { setOpen(false); });
 
-    // клавиатура: Escape закрывает, Tab ловит внутри панели
     document.addEventListener('keydown', function (event) {
       if (!panel.classList.contains('otkryta')) return;
       if (event.key === 'Escape') {
@@ -126,7 +118,6 @@
       }
     });
 
-    // если в sessionStorage есть пользователь с ролью модератора, добавляем ссылку на модерацию
     try {
       var cached = JSON.parse(sessionStorage.getItem('eco-preview-user-v1') || sessionStorage.getItem('eco-session-user-v1') || 'null');
       if (cached && ['moderator', 'admin'].includes(cached.role) && nav && !nav.querySelector('[data-moderator-link]')) {
@@ -136,7 +127,6 @@
         insertNavLink('education-curator.html', 'Обучение куратора', 'curatorEducationLink', '[href="about.html"]');
         insertNavLink('curator.html', 'Кабинет куратора', 'curatorLink', '[href="about.html"]');
       }
-      // Повторяем подсветку после добавления ссылок, зависящих от роли.
       panel.querySelectorAll('.nastroiki-navigaciya a').forEach(function (link) {
         var target = (link.getAttribute('href') || '').split('?')[0].toLowerCase();
         var active = target === currentPage;

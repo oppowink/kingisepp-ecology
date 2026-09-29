@@ -1,4 +1,4 @@
-/* Вход и кабинет: та же сетка, цвет и типографика, что на общих страницах. */
+
 html:not(.dark) body.account-page { --bg: #fff; --surface: #fff; --surface-soft: #f5f8f2; }
 .lichnyy-kabinet { display: grid; align-content: start; width: min(1160px,calc(100% - 54px)); }
 .vhod-blok { width: min(540px,100%); padding-top: clamp(22px,6vh,72px); }
@@ -16,6 +16,8 @@ html:not(.dark) body.account-page { --bg: #fff; --surface: #fff; --surface-soft:
 
 .kabinet-blok { width: min(1140px,100%); margin: 0 auto; }
 .kabinet-welcome { position: fixed; z-index: 1600; inset: 0; display: grid; place-items: center; background-color: var(--bg); background-image: repeating-linear-gradient(0deg,var(--grid) 0 1px,transparent 1px 43px),repeating-linear-gradient(90deg,var(--grid) 0 1px,transparent 1px 43px); text-align: center; }
+.kabinet-welcome::before,.kabinet-welcome::after{content:"";position:absolute;top:12%;bottom:8%;width:min(9vw,120px);background:url('../img/leaf1.png') center 16%/contain no-repeat,url('../img/leaf3.png') center 77%/contain no-repeat;opacity:.25;pointer-events:none}
+.kabinet-welcome::before{left:2%}.kabinet-welcome::after{right:2%;transform:scaleX(-1)}
 .kabinet-welcome h2 { margin: 0; color: var(--accent); font: 400 clamp(1.85rem,4vw,2.65rem)/1.2 var(--font-heading); transition: opacity .55s ease,transform .55s ease; }
 .kabinet-blok[data-welcome="blank"] .kabinet-welcome h2 { opacity: 0; transform: translateY(7px); }
 .kabinet-blok[data-welcome="hello"] .kabinet-welcome h2 { opacity: 1; transform: translateY(0); }

@@ -1,10 +1,10 @@
-/* components.css — общие компоненты, шапка, настройки, поля и кнопки */
 
-/* сброс и базовые настройки */
+
+
 *, *::before, *::after { box-sizing: border-box; }
 html { min-width: 320px; background: var(--bg); font-size: 18px; }
 
-/* тело: фон, текст, отступы, минимальная высота */
+
 body {
   min-height: 100vh;
   margin: 0;
@@ -19,7 +19,7 @@ body {
   line-height: 1.58;
 }
 
-/* сетка на фоне — два повторяющихся градиента (горизонталь и вертикаль) */
+
 body::before,
 body::after {
   content: '';
@@ -34,10 +34,10 @@ body::before {
     repeating-linear-gradient(90deg, var(--grid) 0 1px, transparent 1px 43px);
 }
 
-/* Ровный фон: дополнительная виньетка не нужна. */
+
 body::after { display: none; }
 
-/* основной контент — поверх фона */
+
 main { position: relative; z-index: 2; flex: 1 0 auto; }
 a { color: inherit; }
 button, input, textarea, select { font: inherit; }
@@ -47,7 +47,7 @@ img { max-width: 100%; }
 [hidden] { display: none !important; }
 :focus-visible { outline: 1px solid var(--accent); outline-offset: 3px; }
 
-/* обёртка для внутренних страниц — ограничена по ширине */
+
 .vnutrennyaya-stranica {
   width: min(920px, calc(100% - 46px));
   margin: 0 auto;
@@ -67,7 +67,7 @@ img { max-width: 100%; }
 .vnutrennyaya-stranica h2,
 .karta-stranica h2 { font-size: clamp(1.08rem, 1.8vw, 1.34rem); }
 
-/* кастомный курсор — лист вместо стандартной стрелки */
+
 .kursor {
   position: fixed;
   left: 0;
@@ -93,7 +93,7 @@ img { max-width: 100%; }
   body.kursor-vklyuchen select { cursor: none; }
 }
 
-/* шапка — прилипает сверху, фон с размытием */
+
 .shapka {
   position: sticky;
   top: 0;
@@ -107,7 +107,7 @@ img { max-width: 100%; }
   background: var(--bg);
 }
 
-/* логотип с листьями внутри названия */
+
 .shapka-logo {
   display: inline-flex;
   align-items: center;
@@ -141,7 +141,7 @@ img { max-width: 100%; }
 .shapka-logo:hover .shapka-logo__list--1 { transform: translateY(-3px) rotate(-14deg) scale(1.05); }
 .shapka-logo:hover .shapka-logo__list--2 { transform: translateY(-4px) rotate(13deg) scale(1.05); }
 
-/* правая часть шапки — ссылка на кабинет и кнопка настроек */
+
 .shapka-deystviya { display: flex; align-items: center; gap: 19px; }
 .shapka-ssylka,
 .nastroiki-knopka {
@@ -172,7 +172,7 @@ img { max-width: 100%; }
 }
 .nastroiki-knopka:hover .nastroiki-knopka__ikona { transform: rotate(18deg) scale(1.04); }
 
-/* затемнение под панель настроек */
+
 .nastroiki-fon {
   position: fixed;
   inset: 0;
@@ -185,7 +185,7 @@ img { max-width: 100%; }
 }
 .nastroiki-fon.vidim { visibility: visible; pointer-events: auto; opacity: 1; }
 
-/* панель настроек — выезжает справа */
+
 .nastroiki-panel {
   position: fixed;
   top: 0;
@@ -202,7 +202,7 @@ img { max-width: 100%; }
 }
 .nastroiki-panel.otkryta { transform: translateX(0); }
 
-/* кнопка закрытия панели */
+
 .nastroiki-zakryt {
   position: absolute;
   top: 20px;
@@ -219,7 +219,7 @@ img { max-width: 100%; }
 .nastroiki-zakryt img { width: 28px; height: 28px; object-fit: contain; transition: transform var(--transition-fast); }
 .nastroiki-zakryt:hover img { transform: rotate(8deg) scale(1.04); }
 
-/* переключатель темы */
+
 .tema-podpis { margin: 0 0 12px; color: var(--text-muted); font-size: .78rem; }
 .tema-vybor { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .tema-knopka {
@@ -241,11 +241,11 @@ img { max-width: 100%; }
 .tema-knopka.aktivna { color: var(--accent); background: var(--surface-soft); }
 html.dark .tema-knopka.aktivna { color: var(--acid); }
 
-/* секция личного кабинета в панели */
+
 .nastroiki-akkaunt { margin-top: 31px; }
 .nastroiki-navigaciya { margin-top: 18px; }
 
-/* ссылки внутри панели */
+
 .nastroiki-ssylka {
   display: flex;
   align-items: center;
@@ -263,7 +263,7 @@ html.dark .tema-knopka.aktivna { color: var(--acid); }
 .nastroiki-ssylka--akcent { color: var(--accent); }
 .nastroiki-ssylka--aktivna { color: var(--text); }
 
-/* кнопки — общие стили */
+
 .knopka-osnovnaya,
 .knopka-vtorichnaya,
 .knopka-tekst {
@@ -326,23 +326,23 @@ button:disabled,
   transform: translateY(-1px);
 }
 
-/* Листья по краям продолжают графику презентации, не закрывая рабочую область. */
-.bokovye-listya { position: fixed; inset: var(--header-height) 0 0; z-index: 1; pointer-events: none; }
-.bokovye-listya__storona { position: absolute; top: 7vh; bottom: 5vh; width: 72px; display: flex; flex-direction: column; justify-content: space-around; align-items: center; }
+
+.bokovye-listya { position: fixed; inset: var(--header-height) 0 0; z-index: 20; pointer-events: none; }
+.bokovye-listya__storona { position: absolute; top: 7vh; bottom: 5vh; width: 112px; display: flex; flex-direction: column; justify-content: space-around; align-items: center; }
 .bokovye-listya__storona--levo { left: 8px; }
 .bokovye-listya__storona--pravo { right: 8px; }
-.bokovye-listya img { width: clamp(34px,3.6vw,55px); max-height: 72px; object-fit: contain; opacity: .2; pointer-events: auto; transition: opacity .22s ease, transform .22s ease; }
+.bokovye-listya img { width: clamp(68px,7.2vw,110px); max-height: 144px; object-fit: contain; opacity: .2; pointer-events: auto; transition: opacity .22s ease, transform .22s ease; }
 .bokovye-listya img:nth-child(1) { transform: rotate(-13deg); }
 .bokovye-listya img:nth-child(2) { transform: rotate(9deg); }
 .bokovye-listya img:nth-child(3) { transform: rotate(-7deg); }
 .bokovye-listya img:nth-child(4) { transform: rotate(14deg); }
 .bokovye-listya__storona--pravo img { transform: scaleX(-1) rotate(10deg); }
-.bokovye-listya img:hover { opacity: .92; transform: rotate(0) scale(1.06); }
+.bokovye-listya img:hover { opacity: 1; transform: rotate(0) scale(1.06); }
 .bokovye-listya__storona--pravo img:hover { transform: scaleX(-1) rotate(0) scale(1.06); }
 @media (max-width: 1180px) { .bokovye-listya { display: none; } }
 @media (prefers-reduced-motion: reduce) { .bokovye-listya img { transition: none; } }
 
-/* поля ввода и формы */
+
 .pole-gruppa { display: grid; gap: 7px; }
 .pole-podpis { color: var(--text-muted); font-size: .81rem; }
 .pole-vvod,
@@ -367,7 +367,7 @@ button:disabled,
 .soobshchenie[data-state='error'] { color: var(--danger); }
 .soobshchenie[data-state='success'] { color: var(--success); }
 
-/* подвал */
+
 .podval {
   position: relative;
   z-index: 2;
@@ -382,7 +382,7 @@ button:disabled,
 .podval-vnutri { display: flex; flex-wrap: wrap; justify-content: center; gap: 7px 14px; }
 .podval-nazvanie { font-family: var(--font-heading); color: var(--accent); }
 
-/* служебный класс для скрытого текста (screen reader only) */
+
 .sr-only {
   position: absolute !important;
   width: 1px !important;
@@ -395,7 +395,7 @@ button:disabled,
   border: 0 !important;
 }
 
-/* мобильная адаптивность */
+
 @media (max-width: 680px) {
   html { font-size: 17px; }
   :root { --header-height: 62px; }
@@ -429,10 +429,10 @@ button:disabled,
   .nastroiki-knopka__ikona { width: 26px; height: 26px; }
 }
 
-/* на тач-устройствах курсор не показываем */
+
 @media (pointer: coarse) { .kursor { display: none !important; } }
 
-/* отключаем анимации при предпочтении reduced motion */
+
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *, *::before, *::after {

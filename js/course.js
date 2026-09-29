@@ -1,4 +1,3 @@
-// course.js: уроки и тест по одному экрану, прогресс сохраняется в Supabase.
 (function () {
   'use strict';
   function escapeHtml(value) { return String(value || '').replace(/[&<>'"]/g, function (char) { return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' })[char]; }); }
@@ -54,7 +53,7 @@
       } catch (error) { renderQuestion(); showMessage(error.message === 'LESSONS_REQUIRED' ? 'Сначала завершите уроки.' : courseError(error, 'Не удалось сохранить результат. Проверьте подключение.'), 'error'); }
     }
     function renderDone(status) {
-      phase = 'done'; progress.textContent = 'Готово'; app.dataset.phase = 'done'; back.hidden = true; next.hidden = true;
+      phase = 'done'; progress.textContent = ''; app.dataset.phase = 'done'; back.hidden = true; next.hidden = true;
       screen.innerHTML = '<section class="course-done"><p class="course-done__mark">Готово</p><h2>Обучение пройдено</h2><p>Результат: ' + Number(status.score || 0) + ' из ' + Number(status.total || 0) + '. Доступ к рабочему разделу открыт.</p><div class="course-done__actions"><a class="knopka-osnovnaya" href="account.html">Вернуться в кабинет</a><button class="knopka-vtorichnaya" id="courseCertificate" type="button">Открыть сертификат</button></div></section>';
       document.getElementById('courseCertificate').addEventListener('click', function () { showMessage('Сертификат разблокирован. Скачать его пока нельзя: макет ещё готовится.', 'warning'); });
     }

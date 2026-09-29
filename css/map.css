@@ -1,7 +1,7 @@
-/* map.css — интерактивная карта подтверждённых наблюдений */
+
 .karta--temnaya [class*="ground-pane"]{filter:invert(.87) hue-rotate(170deg) brightness(.72) contrast(.92)}
 
-/* обёртка страницы карты */
+
 .karta-stranica {
   width: min(1120px, calc(100% - 46px));
   margin: 0 auto;
@@ -11,7 +11,7 @@
   margin-bottom: 33px;
 }
 
-/* контейнер карты с ограничением высоты */
+
 .karta-obertka {
   height: min(62vh, 650px);
   min-height: 410px;
@@ -23,7 +23,7 @@
   height: 100%;
 }
 
-/* панель информации о точке — плавное появление */
+
 .tochka-informaciya {
   padding: 30px 0 7px;
   transition: opacity var(--transition-fast);
@@ -32,7 +32,7 @@
   opacity: 0;
 }
 
-/* текстовая часть панели */
+
 .tochka-informaciya__tekst {
   max-width: 700px;
 }
@@ -44,7 +44,7 @@
   margin-top: 9px;
 }
 
-/* фотографии точки — горизонтальный скролл */
+
 .tochka-fotografii {
   display: flex;
   gap: 11px;
@@ -59,7 +59,7 @@
   object-fit: cover;
 }
 
-/* ссылки для скачивания результатов */
+
 .tochka-skachivanie {
   display: flex;
   flex-wrap: wrap;
@@ -72,7 +72,7 @@
   text-decoration: none;
 }
 
-/* мобильная адаптивность */
+
 @media (max-width: 680px) {
   .karta-stranica {
     width: calc(100% - 34px);

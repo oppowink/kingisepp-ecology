@@ -367,6 +367,8 @@ function photoExtension(type) {
 
 async function handlePrepareUploads(req, res, admin, body) {
   const currentUser = await requireCurrentUser(req, admin, 'id,role,blocked');
+  if (currentUser.role !== 'participant') throw new Error('PARTICIPANT_REQUIRED');
+  if (!await hasPassedCourse(admin, currentUser.id, 'participant')) throw new Error('EDUCATION_REQUIRED');
   const files = Array.isArray(body.files) ? body.files.slice(0, 25) : [];
   if (!files.length || body.files.length > 25) throw new Error('INVALID_UPLOAD_BATCH');
   files.forEach(function (file) {

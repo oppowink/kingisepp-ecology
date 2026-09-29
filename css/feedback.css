@@ -1,10 +1,10 @@
-/* feedback.css — форма обратной связи */
+
 
 .obratnaya-svyaz {
   width: min(680px, calc(100% - 46px));
 }
 
-/* заголовок с иконкой */
+
 .obratnaya-svyaz__zagolovok {
   display: flex;
   align-items: center;
@@ -15,14 +15,14 @@
   margin: 0;
 }
 
-/* иконка в заголовке */
+
 .obratnaya-svyaz__ikona {
   width: 58px;
   height: 58px;
   object-fit: contain;
 }
 
-/* сама форма — сетка с отступами */
+
 .forma-obratnoy-svyazi {
   display: grid;
   gap: 22px;
@@ -31,12 +31,12 @@
   justify-self: start;
 }
 
-/* выпадающий список темы */
+
 .vybor-temy {
   position: relative;
 }
 
-/* кнопка-переключатель списка */
+
 .vybor-temy__knopka {
   width: 100%;
   min-height: 44px;
@@ -62,7 +62,7 @@
   transform: none;
 }
 
-/* стрелка у кнопки */
+
 .vybor-temy__strelka {
   width: 8px;
   height: 8px;
@@ -77,7 +77,7 @@
   transform: translateY(2px) rotate(225deg);
 }
 
-/* выпадающий список */
+
 .vybor-temy__spisok {
   position: absolute;
   top: calc(100% + 5px);
@@ -91,7 +91,7 @@
   border-top: 0;
 }
 
-/* пункт списка */
+
 .vybor-temy__punkt {
   width: 100%;
   min-height: 41px;
@@ -113,12 +113,12 @@
   padding-left: 14px;
 }
 
-/* кнопка отправки при наведении */
+
 .forma-obratnoy-svyazi > .knopka-osnovnaya:hover {
   transform: translateY(-2px);
 }
 
-/* активный пункт */
+
 .vybor-temy__punkt.aktivny {
   background: var(--surface);
   color: var(--accent);
@@ -127,7 +127,7 @@ html.dark .vybor-temy__punkt.aktivny {
   color: var(--acid);
 }
 
-/* текстовое поле при наведении — чуть увеличивается */
+
 .pole-tekst:hover {
   transform: scale(1.008);
   transition: transform 0.15s ease;

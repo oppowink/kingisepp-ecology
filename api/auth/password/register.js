@@ -113,7 +113,6 @@ module.exports = async function handler(req, res) {
         provider: 'password'
       });
     } catch (profileError) {
-      // Не оставляем «полусозданный» аккаунт, если профиль записать не удалось.
       await admin.auth.admin.deleteUser(created.user.id).catch(function () {});
       throw profileError;
     }

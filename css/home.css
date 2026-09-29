@@ -1,8 +1,8 @@
-/* home.css — композиция и адаптивность главной страницы */
+
 
 .glavnaya { min-height: 100vh; }
 
-/* вводный блок с заголовком и описанием */
+
 .glavnaya-vvodnaya {
   min-height: calc(100vh - var(--header-height));
   display: grid;
@@ -26,7 +26,7 @@
   font-weight: 300;
 }
 
-/* три места под короткие агитационно-просветительские ролики */
+
 .glavnaya-video {
   position: relative;
   z-index: 2;
@@ -52,7 +52,7 @@
 .video-zaglushka h3 { margin: 0 0 8px; font-family: var(--font-heading); font-size: 1rem; font-weight: 500; }
 .video-zaglushka p { margin: 0; color: var(--text-muted); font-size: .76rem; overflow-wrap: anywhere; }
 
-/* фраза участия появляется, когда пользователь доходит до соответствующей сцены */
+
 .jump-in {
   transform-origin: left center;
   animation: jump-in 680ms cubic-bezier(.22, 1, .36, 1) both;
@@ -65,11 +65,11 @@
   100% { opacity: 1; transform: translateY(0) scale(1); }
 }
 
-/* каждая сцена — контейнер с липким блоком внутри */
+
 .glavnaya-scena { position: relative; height: 122vh; }
 .glavnaya-scena--poslednyaya { height: 114vh; }
 
-/* липкая обёртка — прилепляется к верху при скролле */
+
 .glavnaya-scena__lipkaya {
   position: sticky;
   top: var(--header-height);
@@ -83,7 +83,7 @@
   overflow: hidden;
 }
 
-/* блок с текстом внутри сцены */
+
 .glavnaya-blok {
   grid-column: 1;
   width: min(100%, 680px);
@@ -110,14 +110,22 @@
   font-size: clamp(1rem, 1.18vw, 1.1rem);
   font-weight: 300;
 }
+.glavnaya-blok-karta,.glavnaya-blok-igra,.glavnaya-blok-poisk {
+  background: var(--rose-soft);
+  border-color: color-mix(in srgb, var(--rose) 68%, var(--line));
+}
+.glavnaya-blok-karta h2,.glavnaya-blok-igra h2,.glavnaya-blok-poisk h2 { color: var(--rose-ink); }
+.glavnaya-perehod--karta:hover .glavnaya-perehod__nazvanie,
+.glavnaya-perehod--igra:hover .glavnaya-perehod__nazvanie,
+.glavnaya-perehod--poisk:hover .glavnaya-perehod__nazvanie { color: var(--rose-ink); }
 
-/* локальный поиск на главной */
+
 .glavnaya-blok-poisk { justify-content: center; }
 .glavnaya-blok-poisk > p { margin-bottom: 18px; }
 .glavnaya-blok-poisk .glavnaya-poisk__rezultaty { max-height: 235px; overflow-y: auto; padding-right: 4px; }
 .glavnaya-perehod--poisk .glavnaya-perehod__list { width: min(135px, 34%); height: min(135px, 34%); object-fit: contain; opacity: .82; }
 
-/* иллюстрация справа — картинка или ссылка-переход */
+
 .glavnaya-illyustraciya {
   grid-column: 2;
   justify-self: center;
@@ -128,7 +136,7 @@
   will-change: transform, opacity;
 }
 
-/* ссылка-переход с листом */
+
 .glavnaya-perehod {
   width: 100%;
   min-height: 300px;
@@ -159,14 +167,14 @@
   transition: transform 260ms ease;
 }
 
-/* повороты листьев у каждой ссылки */
+
 .glavnaya-perehod--karta .glavnaya-perehod__list { transform: rotate(-10deg); }
 .glavnaya-perehod--uchastie .glavnaya-perehod__list { transform: rotate(9deg); }
 .glavnaya-perehod--obuchenie .glavnaya-perehod__list { transform: rotate(-5deg); }
 .glavnaya-perehod--igra .glavnaya-perehod__list { transform: rotate(5deg); }
 .glavnaya-perehod--svyaz .glavnaya-perehod__list { transform: rotate(8deg); }
 
-/* hover-эффекты для ссылок */
+
 .glavnaya-perehod:hover .glavnaya-perehod__nazvanie,
 .glavnaya-perehod:focus-visible .glavnaya-perehod__nazvanie {
   color: var(--accent);
@@ -178,13 +186,13 @@ html.dark .glavnaya-perehod:focus-visible .glavnaya-perehod__nazvanie {
   color: var(--acid);
   text-decoration: underline;
 }
-/* дополнительные повороты и масштабирование при наведении */
+
 .glavnaya-perehod--karta:hover .glavnaya-perehod__list { transform: rotate(-14deg) scale(1.045); }
 .glavnaya-perehod--uchastie:hover .glavnaya-perehod__list { transform: rotate(13deg) scale(1.045); }
 .glavnaya-perehod--obuchenie:hover .glavnaya-perehod__list { transform: rotate(-9deg) scale(1.045); }
 .glavnaya-perehod--svyaz:hover .glavnaya-perehod__list { transform: rotate(12deg) scale(1.045); }
 
-/* специальная иллюстрация для блока актуальности — элементы позиционируются абсолютно */
+
 .glavnaya-illyustraciya--aktualnost {
   position: relative;
   width: min(590px, 43vw);
@@ -202,7 +210,7 @@ html.dark .glavnaya-perehod:focus-visible .glavnaya-perehod__nazvanie {
   will-change: opacity, transform;
 }
 
-/* позиционирование элементов внутри сцены актуальности */
+
 .aktualnost-doroga {
   z-index: 1;
   left: -7%;
@@ -236,7 +244,7 @@ html.dark .glavnaya-perehod:focus-visible .glavnaya-perehod__nazvanie {
   transform: translateY(-30px);
 }
 
-/* анимации для элементов актуальности — запускаются при добавлении класса aktualnost-aktivna */
+
 .glavnaya-illyustraciya--aktualnost.aktualnost-aktivna .aktualnost-doroga {
   animation: aktualnost-padenie .46s cubic-bezier(.22,1,.36,1) .06s both;
 }
@@ -256,7 +264,7 @@ html.dark .glavnaya-perehod:focus-visible .glavnaya-perehod__nazvanie {
   animation: aktualnost-padenie .44s cubic-bezier(.22,1,.36,1) 2.54s both;
 }
 
-/* ключевые кадры анимаций */
+
 @keyframes aktualnost-padenie {
   0% { opacity: 0; transform: translateY(-30px); }
   38% { opacity: .68; }
@@ -272,7 +280,7 @@ html.dark .glavnaya-perehod:focus-visible .glavnaya-perehod__nazvanie {
   100% { opacity: 1; transform: translate3d(clamp(82px, 8.4vw, 126px),0,0) scaleX(-1); }
 }
 
-/* последняя сцена — центрируется, блок занимает всю ширину */
+
 .glavnaya-scena--poslednyaya .glavnaya-scena__lipkaya {
   display: flex;
   flex-direction: column;
@@ -296,7 +304,7 @@ html.dark .glavnaya-perehod:focus-visible .glavnaya-perehod__nazvanie {
 .glavnaya-scena--poslednyaya .glavnaya-perehod { min-height: 220px; }
 .glavnaya-scena--poslednyaya .glavnaya-perehod__list { width: min(215px, 100%); }
 
-/* Пояснение появляется в потоке текста и не закрывает страницу. */
+
 .termin {
   display: inline;
   margin: 0;
@@ -309,8 +317,8 @@ html.dark .glavnaya-perehod:focus-visible .glavnaya-perehod__nazvanie {
   font-weight: 650;
   line-height: inherit;
   text-align: inherit;
-  text-decoration: underline;
-  text-decoration-thickness: 1px;
+  text-decoration: none;
+  border-bottom: 1px dotted currentColor;
   text-underline-offset: .16em;
   text-decoration-color: currentColor;
   cursor: pointer;
@@ -335,7 +343,7 @@ html.dark .termin--aktivny { color: var(--accent-soft); }
   line-height: 1.55;
 }
 
-/* призыв в блоке участия */
+
 .glavnaya-blok .glavnaya-prizyv {
   width: fit-content;
   max-width: 100%;
@@ -350,7 +358,7 @@ html.dark .termin--aktivny { color: var(--accent-soft); }
 }
 html.dark .glavnaya-blok .glavnaya-prizyv { color: var(--acid); }
 
-/* планшетная адаптивность (981–760) */
+
 @media (max-width: 980px) and (min-width: 761px) {
   .glavnaya-scena__lipkaya { grid-template-columns: minmax(330px, 1fr) minmax(230px, .72fr); width: calc(100% - 46px); gap: 34px; }
   .glavnaya-blok { padding: 42px 40px 44px; }
@@ -358,7 +366,7 @@ html.dark .glavnaya-blok .glavnaya-prizyv { color: var(--acid); }
   .glavnaya-perehod__list { width: min(255px, 100%); }
 }
 
-/* мобильная адаптивность (до 760px) */
+
 @media (max-width: 760px) {
   .glavnaya-video { width: calc(100% - 38px); margin-bottom: 90px; }
   .glavnaya-video__setka { grid-template-columns: 1fr; }
@@ -412,7 +420,7 @@ html.dark .glavnaya-blok .glavnaya-prizyv { color: var(--acid); }
   .termin { cursor: pointer; }
 }
 
-/* отключаем анимации при предпочтении reduced motion */
+
 @media (prefers-reduced-motion: reduce) {
   .glavnaya-blok,
   .glavnaya-illyustraciya { transform: none !important; opacity: 1 !important; }
@@ -423,7 +431,7 @@ html.dark .glavnaya-blok .glavnaya-prizyv { color: var(--acid); }
   .jump-in { opacity: 1 !important; transform: none !important; animation: none !important; }
 }
 
-/* на мобильных скрываем элементы актуальности (они всё равно не влезают) */
+
 @media (max-width: 760px) {
   .aktualnost-element {
     display: none !important;

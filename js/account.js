@@ -1,4 +1,3 @@
-// account.js, регистрация, вход и личный кабинет
 (function () {
   'use strict';
 

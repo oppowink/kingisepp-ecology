@@ -1,7 +1,7 @@
-/* submit.css — форма подачи наблюдения и загрузка фотографий */
-html:not(.dark) body { --bg:#fff; --surface:#fff; --surface-soft:#f5f8f2; }
 
-/* обёртка страницы */
+html:not(.dark) body { --bg:#f6f5ef; --surface:#fffdf7; --surface-soft:#eeeee3; }
+
+
 .podacha-nablyudeniya {
   width: min(780px, calc(100% - 46px));
 }
@@ -13,8 +13,10 @@ html:not(.dark) body { --bg:#fff; --surface:#fff; --surface-soft:#f5f8f2; }
   color: var(--text-muted);
   font-size: .86rem;
 }
+.submission-steps{display:flex;flex-wrap:wrap;gap:8px;margin:0;padding:0;list-style:none}
+.submission-steps span{padding:8px 11px;background:var(--surface-soft);border-left:2px solid var(--accent);font-size:.78rem}
 
-/* блок, если обучение не пройдено */
+
 .dostup-soobshchenie p {
   margin: 0 0 11px;
 }
@@ -23,13 +25,13 @@ html:not(.dark) body { --bg:#fff; --surface:#fff; --surface-soft:#f5f8f2; }
   text-decoration: none;
 }
 
-/* форма — сетка */
+
 .forma-nablyudeniya {
   display: grid;
   gap: 23px;
 }
 
-/* смысловые блоки паспорта и выбора источника задания */
+
 .forma-sekciya {
   min-width: 0;
   margin: 0;
@@ -37,6 +39,8 @@ html:not(.dark) body { --bg:#fff; --surface:#fff; --surface-soft:#f5f8f2; }
   border: 0;
   background: var(--surface-soft);
 }
+#integrityBlock { background: var(--rose-soft); border-left: 4px solid var(--rose); }
+#integrityBlock h2 { color: var(--rose-ink); }
 .forma-sekciya legend,
 .forma-sekciya > h2 {
   margin: 0 0 14px;
@@ -57,7 +61,7 @@ html:not(.dark) body { --bg:#fff; --surface:#fff; --surface-soft:#f5f8f2; }
 .tree-block [data-tree-count] { margin: 0; color: var(--text-muted); font-size: .86rem; }
 .tree-block [data-remove-tree] { justify-self: start; }
 
-/* выбор собственной точки или объекта куратора */
+
 .istochnik-zayavki__varianty { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
 .istochnik-variant { position: relative; display: block; cursor: pointer; }
 .istochnik-variant input { position: absolute; inline-size: 1px; block-size: 1px; opacity: 0; }
@@ -79,19 +83,19 @@ html:not(.dark) body { --bg:#fff; --surface:#fff; --surface-soft:#f5f8f2; }
 .istochnik-zayavki > .pole-gruppa { margin-top: 18px; }
 .pole-podskazka { margin: 7px 0 0; color: var(--text-muted); font-size: .78rem; }
 
-/* интерактивная карта выбора координат */
+
 #kartaVyborKoordinat { width: 100%; height: 360px; background: var(--surface); }
 .karta-vybor__status { margin: 11px 0 0 !important; color: var(--text-muted); }
 .karta-vybor__status[data-state='selected'] { color: var(--success); }
 
-/* ряд из двух полей (координаты + дата) */
+
 .forma-nablyudeniya__ryad {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 17px;
 }
 
-/* зона загрузки фотографий (drag & drop) */
+
 .zagruzka-foto {
   min-height: 132px;
   display: grid;
@@ -124,7 +128,7 @@ html:not(.dark) body { --bg:#fff; --surface:#fff; --surface-soft:#f5f8f2; }
 }
 .zagruzka-foto--derevo { min-height: 112px; }
 
-/* блок предварительного анализа */
+
 .predvaritelnyy-analiz {
   margin-top: 11px;
   padding: 21px 0 2px;
@@ -138,12 +142,12 @@ html:not(.dark) body { --bg:#fff; --surface:#fff; --surface-soft:#f5f8f2; }
   font-size: .83rem;
 }
 
-/* кнопка отправки — слева */
+
 .forma-nablyudeniya > .knopka-osnovnaya {
   justify-self: start;
 }
 
-/* Чеклист */
+
 .checklist {
   display: flex;
   flex-direction: column;
@@ -175,7 +179,7 @@ html:not(.dark) body { --bg:#fff; --surface:#fff; --surface-soft:#f5f8f2; }
 
 
 
-/* мобильная адаптивность */
+
 @media (max-width: 640px) {
   .forma-nablyudeniya__ryad {
     grid-template-columns: 1fr;
@@ -184,4 +188,11 @@ html:not(.dark) body { --bg:#fff; --surface:#fff; --surface-soft:#f5f8f2; }
   .istochnik-zayavki__varianty { grid-template-columns: 1fr; }
   #kartaVyborKoordinat { height: 310px; }
 }
-.integrity-code{display:inline-block;font:700 2rem/1 monospace;letter-spacing:.18em;padding:14px 0}.landmark-canvas{position:relative;display:none;width:min(100%,620px);margin:20px auto;background:#eee;touch-action:none}.landmark-canvas img{display:block;width:100%;max-height:70vh;object-fit:contain}.landmark-canvas>div{position:absolute;inset:0}.landmark-dot{position:absolute;display:grid;place-items:center;width:22px;height:22px;border:2px solid #fff;border-radius:50%;background:#bb2746;color:#fff;font:700 10px/1 var(--font-body);transform:translate(-50%,-50%);box-shadow:0 0 0 2px #293528}.landmark-dot--group-axis{background:#293528}.landmark-dot--group-vein{background:#bb2746}.landmark-dot--group-width{background:#9b5c16}.landmark-status,.landmark-actions{display:flex;justify-content:space-between;gap:12px;align-items:center}.landmark-actions{margin-top:18px}.landmark-actions button:disabled{opacity:.45}
+.integrity-code{display:inline-block;font:700 2rem/1 monospace;letter-spacing:.18em;padding:14px 0}
+.landmark-canvas{position:relative;display:none;width:min(100%,620px);margin:20px auto;background:#eee;touch-action:none}
+.landmark-canvas img{display:block;width:100%;height:auto;max-height:none}
+.landmark-canvas>div{position:absolute;inset:0;cursor:crosshair}
+.landmark-dot{position:absolute;display:grid;place-items:center;width:26px;height:26px;border:2px solid #fff;border-radius:50%;background:#a54360;color:#fff;font:700 11px/1 var(--font-body);transform:translate(-50%,-50%);box-shadow:0 0 0 2px #293528;pointer-events:none}
+.landmark-dot--group-axis{background:#293528}.landmark-dot--group-vein{background:#a54360}.landmark-dot--group-width{background:#8a573f}
+.landmark-status,.landmark-actions{display:flex;justify-content:space-between;gap:12px;align-items:center}.landmark-actions{margin-top:18px}.landmark-actions button:disabled{opacity:.45}
+.forma-sekciya legend{float:none;max-width:100%;line-height:1.45}

@@ -1,8 +1,6 @@
-// requests.js, список заявок текущего пользователя
 (function () {
   'use strict';
 
-  // экранирование HTML
   function escapeHtml(value) {
     return String(value || '').replace(/[&<>'"]/g, function (char) {
       return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' })[char];
@@ -18,19 +16,17 @@
     if (!list) return;
     if (EcoAuth.refreshRequests) await EcoAuth.refreshRequests('mine');
 
-    // соответствие статусов
     var labels = {
       pending: 'На проверке модератора',
       pending_human: 'На проверке модератора',
-      human_approved: 'Проверена модератором, ждёт нейросеть',
-      ai_checked: 'Проверена нейросетью',
+      human_approved: 'Исходные данные проверены, ждёт расчёт ФА',
+      ai_checked: 'ФА рассчитана, ждёт публикацию',
       approved: 'Принята',
       published: 'Опубликована на карте',
       rejected: 'Отклонена'
     };
     var items = EcoAuth.getMyRequests();
 
-    // если только что отправили заявку, показываем сообщение
     var lastId = sessionStorage.getItem('eco-last-request-id');
     if (notice && lastId) {
       notice.textContent = 'Заявка отправлена';
@@ -44,7 +40,6 @@
       return;
     }
 
-    // рендеринг карточек заявок
     list.innerHTML = items.map(function (item) {
       var reason = item.status === 'rejected' && item.moderationReason
         ? '<p class="zayavka__prichina">' + escapeHtml(item.moderationReason) + '</p>' : '';

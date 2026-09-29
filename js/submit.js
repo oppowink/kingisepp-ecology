@@ -1,4 +1,3 @@
-// submit.js, карта выбора координат, паспорт территории, фотографии и отправка заявки
 (function () {
   'use strict';
 
@@ -193,12 +192,12 @@
       var number=treeBlocks().length+1;
       var block=document.createElement('fieldset'); block.className='tree-block';
       block.innerHTML='<legend>Берёза '+number+'</legend><div class="forma-nablyudeniya__ryad">'+
-        '<label class="pole-gruppa">Состояние кроны<select class="pole-vybor" data-tree-condition required><option value="">Выберите</option><option>Без заметных нарушений</option><option>Есть сухие ветви</option><option>Крона разрежена</option><option>Есть выраженные повреждения</option></select></label>'+ 
-        '<label class="pole-gruppa">Диаметр ствола, см<input class="pole-vvod" data-tree-diameter type="number" min="1" max="300" step="0.1" required></label></div>'+ 
-        '<div class="forma-nablyudeniya__ryad"><label class="pole-gruppa">Примерная высота, м<input class="pole-vvod" data-tree-height type="number" min="1" max="80" step="0.1" required></label>'+ 
-        '<label class="pole-gruppa">Повреждения ствола и кроны<input class="pole-vvod" data-tree-notes placeholder="Если нет — напишите «не замечены»" maxlength="500" required></label></div>'+ 
-        '<label class="pole-gruppa">Обзорная фотография этого дерева<input class="pole-vvod" data-tree-photo type="file" accept="image/*"></label>'+ 
-        '<label class="pole-gruppa">Фотографии листьев этого дерева (10–30)<input class="pole-vvod" data-tree-leaves type="file" accept="image/*" multiple></label>'+ 
+        '<label class="pole-gruppa">Состояние кроны<select class="pole-vybor" data-tree-condition required><option value="">Выберите</option><option>Без заметных нарушений</option><option>Есть сухие ветви</option><option>Крона разрежена</option><option>Есть выраженные повреждения</option></select></label>'+
+        '<label class="pole-gruppa">Диаметр ствола, см<input class="pole-vvod" data-tree-diameter type="number" min="1" max="300" step="0.1" required></label></div>'+
+        '<div class="forma-nablyudeniya__ryad"><label class="pole-gruppa">Примерная высота, м<input class="pole-vvod" data-tree-height type="number" min="1" max="80" step="0.1" required></label>'+
+        '<label class="pole-gruppa">Повреждения ствола и кроны<input class="pole-vvod" data-tree-notes placeholder="Если нет — напишите «не замечены»" maxlength="500" required></label></div>'+
+        '<label class="pole-gruppa">Обзорная фотография этого дерева<input class="pole-vvod" data-tree-photo type="file" accept="image/*"></label>'+
+        '<label class="pole-gruppa">Фотографии листьев этого дерева (10–30)<input class="pole-vvod" data-tree-leaves type="file" accept="image/*" multiple></label>'+
         '<p data-tree-count>Листья ещё не выбраны</p><button class="knopka-tekst" type="button" data-remove-tree>Убрать дерево</button>';
       treeSetsElement.appendChild(block);
       addTreeButton.hidden=treeBlocks().length>=4;
@@ -214,10 +213,18 @@
       if(selectedFiles.length) showLandmarkPhoto(); else renderLandmarks();
     }
     addTreeButton.addEventListener('click',addTree);
-    treeSetsElement.addEventListener('change',function(event){
+    treeSetsElement.addEventListener('change',async function(event){
       if(event.target.matches('[data-tree-leaves], [data-tree-photo]')) {
         refreshLeaves();
-        if(event.target.files.length>MAX_PER_TREE && event.target.matches('[data-tree-leaves]')) {photoError.textContent='Для одного дерева допускается не более 30 листьев. Выберите файлы заново.';photoError.hidden=false;}
+        if(event.target.files.length>MAX_PER_TREE && event.target.matches('[data-tree-leaves]')) {photoError.textContent='Для одного дерева допускается не более 30 листьев. Выберите файлы заново.';photoError.hidden=false;return;}
+        var files=Array.from(event.target.files);
+        if(files.length){
+          photoError.textContent='Проверяем выбранные снимки…';photoError.hidden=false;
+          var checks=await Promise.all(files.map(checkBackground));
+          var bad=checks.map(function(info,index){return {info:info,file:files[index]};}).filter(function(item){return !item.info.light||item.info.width<500||item.info.height<500;});
+          if(bad.length){photoError.textContent='Замените '+bad.length+' фото: '+bad.slice(0,3).map(function(item){return item.file.name;}).join(', ')+'. Требуется светлый фон и разрешение от 500 × 500 пикселей.';}
+          else photoError.hidden=true;
+        }
       }
     });
     treeSetsElement.addEventListener('click',function(event){if(!event.target.matches('[data-remove-tree]'))return;if(treeBlocks().length<=2)return;event.target.closest('.tree-block').remove();addTreeButton.hidden=false;refreshLeaves();});
@@ -225,7 +232,7 @@
 
     landmarkOverlay.addEventListener('click',function(event){var set=landmarkSets[landmarkPhoto];var index=Object.keys(set).length;if(index>=landmarkNames.length)return;var rect=landmarkOverlay.getBoundingClientRect();set[landmarkNames[index]]={x:Math.max(0,Math.min(1,(event.clientX-rect.left)/rect.width)),y:Math.max(0,Math.min(1,(event.clientY-rect.top)/rect.height)),visible:true};renderLandmarks();});
     document.getElementById('landmarkUndo').addEventListener('click',function(){var set=landmarkSets[landmarkPhoto],keys=Object.keys(set);if(keys.length)delete set[keys[keys.length-1]];renderLandmarks();});
-    document.getElementById('landmarkNext').addEventListener('click',function(){if(Object.keys(landmarkSets[landmarkPhoto]||{}).length!==12)return;if(landmarkPhoto<selectedFiles.length-1){landmarkPhoto+=1;showLandmarkPhoto();}else showError('Разметка листьев готова. Теперь можно отправить заявку.');});
+    document.getElementById('landmarkNext').addEventListener('click',function(){if(Object.keys(landmarkSets[landmarkPhoto]||{}).length!==12)return;if(landmarkPhoto<selectedFiles.length-1){landmarkPhoto+=1;showLandmarkPhoto();}else {landmarkPointName.textContent='Разметка завершена. Проверьте паспорт и отправьте заявку.';}});
 
     function selectedSourceMode() {
       return form.querySelector('input[name="sourceMode"]:checked')?.value || 'own';

@@ -1,4 +1,3 @@
-// feedback.js, форма обратной связи с отправкой в Supabase
 (function () {
   'use strict';
 
@@ -8,7 +7,6 @@
     var submitButton = form ? form.querySelector('[type="submit"]') : null;
     if (!form) return;
 
-    // === КАСТОМНЫЙ СЕЛЕКТ ===
     var topicRoot = document.getElementById('vyborTemy');
     var topicButton = document.getElementById('vyborTemyKnopka');
     var topicList = document.getElementById('vyborTemySpisok');
@@ -107,7 +105,6 @@
       return !email || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
     }
 
-    // === ОТПРАВКА ФОРМЫ ===
     form.addEventListener('submit', async function (e) {
       e.preventDefault();
       showMessage('');

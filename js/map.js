@@ -1,4 +1,3 @@
-// map.js, Яндекс.Карта и отображение подтверждённых точек
 (function () {
   'use strict';
 
@@ -23,7 +22,6 @@
     return !['localhost', '127.0.0.1'].includes(location.hostname);
   }
 
-  // показать информацию о точке в панели
 function showPoint(data) {
   var panel = document.getElementById('tochkaInformaciya');
   if (!panel || !data) return;
@@ -76,7 +74,6 @@ function showPoint(data) {
   }, panel.hidden ? 0 : 130);
 }
 
-  // обновить внешний вид маркера (активный/неактивный)
   function applyMarkerState(placemark, active) {
     if (!placemark) return;
     placemark.options.set({
@@ -86,7 +83,6 @@ function showPoint(data) {
     });
   }
 
-  // установить выбранный маркер
   function setSelected(placemark) {
     if (selectedPlacemark && selectedPlacemark !== placemark) {
       applyMarkerState(selectedPlacemark, false);
@@ -95,7 +91,6 @@ function showPoint(data) {
     applyMarkerState(selectedPlacemark, true);
   }
 
-  // добавить одобренные точки на карту
   function addApprovedPoints(points) {
     if (!mapInstance || !Array.isArray(points)) return;
     points.filter(function (point) {
@@ -200,7 +195,6 @@ function showPoint(data) {
       .catch(function () {});
   }
 
-  // создание карты
   function createMap() {
     var container = document.getElementById('karta');
     if (!container) return;
