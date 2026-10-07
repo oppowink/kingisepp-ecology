@@ -214,7 +214,7 @@
       if (feedbackLink) feedbackLink.hidden = true;
       if (moderatorLink) {
         moderatorLink.hidden = !['moderator', 'admin'].includes(role);
-        moderatorLink.textContent = role === 'admin' ? 'Админка' : 'Проверка заявок';
+        moderatorLink.textContent = 'Проверка заявок';
       }
       if (moderatorEducationLink) moderatorEducationLink.hidden = role !== 'moderator';
       if (curatorEducationLink) curatorEducationLink.hidden = role !== 'curator';
@@ -223,7 +223,7 @@
         submitLink.classList.toggle('kabinet-navigaciya__ssylka--disabled', !educationDone);
         submitLink.setAttribute('aria-disabled', String(!educationDone));
       }
-      if (certificateText) certificateText.textContent = educationDone ? 'Сертификат разблокирован. Макет пока готовится, поэтому скачивание ещё не работает.' : 'Сертификат откроется после обязательного обучения.';
+      if (certificateText) certificateText.textContent = educationDone ? 'Обучение пройдено! Скачайте именной сертификат проекта в PDF.' : 'Сертификат откроется после обязательного обучения.';
       if (certificateButton) certificateButton.disabled = !educationDone;
       if (countEl) {
         var requestCount = EcoAuth.getMyRequests().length;
@@ -279,6 +279,8 @@
       if (code === 'ACCOUNT_BLOCKED') return 'Аккаунт заблокирован администратором.';
       if (code === 'CREDENTIALS_REQUIRED') return 'Введите e-mail и пароль.';
       if (code === 'REGISTRATION_FAILED') return 'Не удалось создать аккаунт. Проверьте настройки Supabase на Vercel.';
+      if (code === 'RATE_LIMITED') return 'Слишком много попыток. Подождите перед следующим входом';
+      if (code === 'RATE_LIMIT_UNAVAILABLE') return 'Вход временно недоступен. Попробуйте позже';
       if (code === 'LOGIN_FAILED') return 'Не удалось выполнить вход. Попробуйте ещё раз.';
       if (code === 'Failed to fetch' || code === 'NetworkError') {
         return 'Сервер не отвечает. Проверьте опубликованную версию сайта.';
@@ -426,14 +428,15 @@
     }
 
     if (certificateButton) {
-      certificateButton.addEventListener('click', function () {
+      certificateButton.addEventListener('click', async function () {
         var user = EcoAuth.getUser();
         var courseId = user && EcoAuth.courseForRole(user.role);
         if (!user || !courseId || !EcoAuth.isCourseCompleted(courseId)) {
           showCertificateMessage('Сначала пройдите обязательное обучение и тест.', 'error');
           return;
         }
-        showCertificateMessage('Сертификат разблокирован. Скачать его пока нельзя: макет ещё готовится.', 'warning');
+        certificateButton.disabled = true;
+        try { await EcoCertificates.download(courseId); showCertificateMessage('Сертификат подготовлен', 'success'); } catch (_) { showCertificateMessage('Не удалось получить подтверждение обучения или скачать PDF. Попробуйте ещё раз', 'error'); } finally { certificateButton.disabled = false; }
       });
     }
 

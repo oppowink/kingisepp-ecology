@@ -1,35 +1,35 @@
-<!doctype html>
+<!DOCTYPE html>
 
 <html lang="ru">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="description" content="Собирайте листья, сортируйте образцы и разбирайте учебные заявки в трёх мини-играх ЭкоБиоМониторинга.">
-  <title>Экологический детектив | ЭкоБиоМониторинг</title>
-  <link rel="icon" href="img/favicon.ico">
-  <link rel="stylesheet" href="css/variables.css">
-  <link rel="stylesheet" href="css/components.css">
-  <link rel="stylesheet" href="css/games.css">
-  <script src="js/theme.js"></script>
-  <script src="js/games.js" defer></script>
-</head>
-<body class="arcade">
-  <svg aria-hidden="true" width="0" height="0" style="position:absolute;overflow:hidden" focusable="false"><defs><filter id="leafAlphaFilter" x="-20%" y="-20%" width="140%" height="140%"><feComponentTransfer><feFuncA type="discrete" tableValues="0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1"/></feComponentTransfer></filter></defs></svg>
-  <div aria-hidden="true" class="kursor" data-component="kursor"></div><div aria-hidden="true" class="nastroiki-fon" id="nastroikiFon"></div>
-  <header class="shapka" data-component="shapka"><a aria-label="ЭкоБиоМониторинг, на главную" class="shapka-logo" href="index.html"><span class="shapka-logo__nazvanie"><span class="shapka-logo__bukva">Э</span><span class="shapka-logo__bukva">к</span><img alt="" aria-hidden="true" class="shapka-logo__list shapka-logo__list--1" src="img/leaf1.png"/><span class="shapka-logo__bukva">Б</span><span class="shapka-logo__bukva">и</span><img alt="" aria-hidden="true" class="shapka-logo__list shapka-logo__list--2" src="img/leaf2.png"/><span class="shapka-logo__bukva">М</span><span class="shapka-logo__bukva">о</span><span class="shapka-logo__bukva">н</span><span class="shapka-logo__bukva">и</span><span class="shapka-logo__bukva">т</span><span class="shapka-logo__bukva">о</span><span class="shapka-logo__bukva">р</span><span class="shapka-logo__bukva">и</span><span class="shapka-logo__bukva">н</span><span class="shapka-logo__bukva">г</span></span></a><div class="shapka-deystviya"><a class="shapka-ssylka" href="account.html"><img alt="" aria-hidden="true" class="shapka-ssylka__ikona" src="img/icons/user.png"/><span>Личный кабинет</span></a><button aria-controls="nastroikiPanel" aria-expanded="false" aria-label="Открыть настройки" class="nastroiki-knopka" id="nastroikiKnopka" type="button"><img alt="" aria-hidden="true" class="nastroiki-knopka__ikona" src="img/icons/gear.png"/><span class="nastroiki-knopka__tekst">Настройки</span></button></div></header>
-  <aside aria-hidden="true" aria-label="Настройки" class="nastroiki-panel" id="nastroikiPanel"><button aria-label="Закрыть настройки" class="nastroiki-zakryt" id="nastroikiZakryt" type="button"><img alt="" aria-hidden="true" src="img/icons/close.png"/><span class="sr-only">Закрыть</span></button><div class="tema-vybor-blok"><p class="tema-podpis">Тема</p><div class="tema-vybor"><button class="tema-knopka" id="temaSvetlaya" type="button"><img alt="" aria-hidden="true" src="img/icons/sun.png"/><span>Светлая</span></button><button class="tema-knopka" id="temaTemnaya" type="button"><img alt="" aria-hidden="true" src="img/icons/moon.png"/><span>Тёмная</span></button></div></div><div class="nastroiki-akkaunt"><a class="nastroiki-ssylka nastroiki-ssylka--akcent" href="account.html"><img alt="" aria-hidden="true" src="img/icons/user.png"/><span>Личный кабинет</span></a></div><nav aria-label="Навигация" class="nastroiki-navigaciya"><a class="nastroiki-ssylka" href="index.html">Главная</a><a class="nastroiki-ssylka" href="map.html">Карта</a><a class="nastroiki-ssylka" href="faq.html">Вопросы и ответы</a><a class="nastroiki-ssylka" href="games.html">Игры</a><a class="nastroiki-ssylka" href="about.html">О проекте и авторе</a><a class="nastroiki-ssylka" href="feedback.html">Обратная связь</a></nav></aside>
-  <main class="arcade-main" id="arcadeMain">
-    <header class="session-header">
-      <div class="session-heading">
-        <h1 id="sessionTitle" tabindex="-1">Экологический детектив</h1>
-      </div>
-      <button type="button" class="button" id="finishGame" hidden>Завершить</button>
-    </header>
-    <div id="gameStage" class="game-stage"></div>
-    <noscript>Для игр нужен JavaScript. Включите его в браузере и обновите страницу.</noscript>
-    <p class="game-notice" id="gameNotice" role="status" aria-live="polite" aria-atomic="true"></p>
-  </main>
-  <footer aria-label="Подвал сайта" class="podval" data-component="podval"><div class="podval-vnutri"><span class="podval-nazvanie">ЭкоБиоМониторинг</span><span>Кингисепп</span><span>2025-2026</span></div></footer>
-  <script defer src="js/header.js"></script><script defer src="js/cursor.js"></script>
-</body>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1, viewport-fit=cover" name="viewport"/>
+<meta content="Собирайте листья, сортируйте образцы и разбирайте учебные заявки в трёх мини-играх ЭкоБиоМониторинга." name="description"/>
+<title>Экологический детектив | ЭкоБиоМониторинг</title>
+<link href="img/favicon.ico" rel="icon"/>
+<link href="css/variables.css" rel="stylesheet"/>
+<link href="css/components.css" rel="stylesheet"/>
+<link href="css/games.css" rel="stylesheet"/>
+<script src="js/theme.js"></script>
+<script defer="" src="js/games.js"></script>
+<link href="css/refresh.css" rel="stylesheet"/></head>
+<body class="arcade"><a class="skip-link" href="#arcadeMain">К содержанию</a>
+<svg aria-hidden="true" focusable="false" height="0" style="position:absolute;overflow:hidden" width="0"><defs><filter height="140%" id="leafAlphaFilter" width="140%" x="-20%" y="-20%"><fecomponenttransfer><fefunca tablevalues="0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1" type="discrete"></fefunca></fecomponenttransfer></filter></defs></svg>
+<div aria-hidden="true" class="kursor" data-component="kursor"></div><div aria-hidden="true" class="nastroiki-fon" id="nastroikiFon"></div>
+<header class="shapka" data-component="shapka"><a aria-label="ЭкоБиоМониторинг, на главную" class="shapka-logo" href="index.html"><span class="shapka-logo__nazvanie"><span class="shapka-logo__bukva">Э</span><span class="shapka-logo__bukva">к</span><img alt="" aria-hidden="true" class="shapka-logo__list shapka-logo__list--1" src="img/leaf1.png"/><span class="shapka-logo__bukva">Б</span><span class="shapka-logo__bukva">и</span><img alt="" aria-hidden="true" class="shapka-logo__list shapka-logo__list--2" src="img/leaf2.png"/><span class="shapka-logo__bukva">М</span><span class="shapka-logo__bukva">о</span><span class="shapka-logo__bukva">н</span><span class="shapka-logo__bukva">и</span><span class="shapka-logo__bukva">т</span><span class="shapka-logo__bukva">о</span><span class="shapka-logo__bukva">р</span><span class="shapka-logo__bukva">и</span><span class="shapka-logo__bukva">н</span><span class="shapka-logo__bukva">г</span></span></a><div class="shapka-deystviya"><a class="shapka-ssylka" href="account.html"><img alt="" aria-hidden="true" class="shapka-ssylka__ikona" src="img/icons/user.png"/><span>Личный кабинет</span></a><button aria-controls="nastroikiPanel" aria-expanded="false" aria-label="Открыть настройки" class="nastroiki-knopka" id="nastroikiKnopka" type="button"><img alt="" aria-hidden="true" class="nastroiki-knopka__ikona" src="img/icons/gear.png"/><span class="nastroiki-knopka__tekst">Настройки</span></button></div></header>
+<aside aria-hidden="true" aria-label="Настройки" class="nastroiki-panel" id="nastroikiPanel"><button aria-label="Закрыть настройки" class="nastroiki-zakryt" id="nastroikiZakryt" type="button"><img alt="" aria-hidden="true" src="img/icons/close.png"/><span class="sr-only">Закрыть</span></button><div class="tema-vybor-blok"><p class="tema-podpis">Тема</p><div class="tema-vybor"><button class="tema-knopka" id="temaSvetlaya" type="button"><img alt="" aria-hidden="true" src="img/icons/sun.png"/><span>Светлая</span></button><button class="tema-knopka" id="temaTemnaya" type="button"><img alt="" aria-hidden="true" src="img/icons/moon.png"/><span>Тёмная</span></button></div></div><div class="nastroiki-akkaunt"><a class="nastroiki-ssylka nastroiki-ssylka--akcent" href="account.html"><img alt="" aria-hidden="true" src="img/icons/user.png"/><span>Личный кабинет</span></a></div><nav aria-label="Навигация" class="nastroiki-navigaciya"><a class="nastroiki-ssylka" href="index.html">Главная</a><a class="nastroiki-ssylka" href="map.html">Карта</a><a class="nastroiki-ssylka" href="faq.html">Вопросы и ответы</a><a class="nastroiki-ssylka" href="games.html">Игры</a><a class="nastroiki-ssylka" href="about.html">О проекте и авторе</a><a class="nastroiki-ssylka" href="feedback.html">Обратная связь</a></nav></aside>
+<main class="arcade-main" id="arcadeMain">
+<header class="session-header">
+<div class="session-heading">
+<h1 id="sessionTitle" tabindex="-1">Экологический детектив</h1>
+</div>
+<button class="button" hidden="" id="finishGame" type="button">Завершить</button>
+</header>
+<div class="game-stage" id="gameStage"></div>
+<noscript>Для игр нужен JavaScript. Включите его в браузере и обновите страницу.</noscript>
+<p aria-atomic="true" aria-live="polite" class="game-notice" id="gameNotice" role="status"></p>
+</main>
+<footer aria-label="Подвал сайта" class="podval" data-component="podval"><div class="podval-vnutri"><span class="podval-nazvanie">ЭкоБиоМониторинг</span><span>Кингисепп</span><span>2025-2026</span></div></footer>
+<script defer="" src="js/header.js"></script><script defer="" src="js/cursor.js"></script>
+<script defer="" src="js/refresh.js"></script><script defer="" src="js/assistant.js"></script></body>
 </html>

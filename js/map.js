@@ -65,9 +65,14 @@ function showPoint(data) {
     var downloads = document.getElementById('tochkaSkachivanie');
     var excel = document.getElementById('tochkaExcel');
     var pdf = document.getElementById('tochkaPdf');
-    downloads.hidden = !(data.excelUrl || data.pdfUrl);
+    downloads.hidden = !(data.excelUrl || data.pdfUrl || data.resultItem);
     if (data.excelUrl) { excel.href = data.excelUrl; excel.hidden = false; } else excel.hidden = true;
     if (data.pdfUrl) { pdf.href = data.pdfUrl; pdf.hidden = false; } else pdf.hidden = true;
+    pdf.onclick = null;
+    if (data.resultItem) {
+      pdf.hidden = false; pdf.href = '#';
+      pdf.onclick = async function (event) { event.preventDefault(); pdf.textContent = 'Готовим PDF…'; try { await EcoPdf.download(data.resultItem); } catch (_) { pdf.textContent = 'Повторить скачивание PDF'; return; } pdf.textContent = 'Скачать PDF'; };
+    }
 
     panel.hidden = false;
     requestAnimationFrame(function () { panel.classList.remove('smena-tochki'); });
@@ -158,7 +163,8 @@ function showPoint(data) {
     leaves: Number(point.leafCount || files.length),
     photos: [treePhoto].concat(files.map(function (file) { return file.url || file.data; })).filter(Boolean),
     excelUrl: point.excelUrl || '',
-    pdfUrl: point.pdfUrl || ''
+    pdfUrl: point.pdfUrl || '',
+    resultItem: point.aiResult && point.aiResult.leaves ? point : null
   };
 }
 

@@ -92,15 +92,6 @@
       submitButton.textContent = busy ? 'Отправляем...' : 'Отправить';
     }
 
-    function feedbackClient() {
-      var url = String(window.ECO_SUPABASE_URL || '').trim();
-      var key = String(window.ECO_SUPABASE_ANON_KEY || window.ECO_SUPABASE_PUBLISHABLE_KEY || '').trim();
-      if (!url || !key || !window.supabase || typeof window.supabase.createClient !== 'function') return null;
-      return window.supabase.createClient(url, key, {
-        auth: { persistSession: false, autoRefreshToken: false }
-      });
-    }
-
     function validEmail(email) {
       return !email || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
     }
@@ -125,12 +116,6 @@
         return;
       }
 
-      var client = feedbackClient();
-      if (!client) {
-        showMessage('Supabase для обратной связи не настроен: заполните ECO_SUPABASE_URL и ECO_SUPABASE_ANON_KEY в feedback.html.', 'error');
-        return;
-      }
-
       setBusy(true);
       try {
         var payload = {
@@ -141,12 +126,8 @@
           page_url: location.href,
           user_agent: navigator.userAgent
         };
-        var result = await client.from('feedback_messages').insert(payload);
-        if (result.error) throw result.error;
-
-        if (window.EcoAuth && typeof EcoAuth.saveFeedback === 'function') {
-          EcoAuth.saveFeedback(payload);
-        }
+        var response = await fetch('/api/requests/list', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(Object.assign({ action: 'feedback' }, payload)) });
+        if (!response.ok) throw new Error(response.status === 429 ? 'RATE_LIMITED' : 'FEEDBACK_UNAVAILABLE');
         form.reset();
         if (topicInput && topicText && topicOptions.length) {
           topicInput.value = 'idea';
@@ -159,8 +140,7 @@
         }
         showMessage('Сообщение отправлено. Спасибо!', 'success');
       } catch (error) {
-        console.error('feedbackSubmit', error);
-        showMessage('Не удалось отправить сообщение. Проверьте таблицу feedback_messages и RLS-политику.', 'error');
+        showMessage(error.message === 'RATE_LIMITED' ? 'Сообщений слишком много. Попробуйте через час' : 'Сообщение не отправилось. Текст сохранён в форме, попробуйте ещё раз', 'error');
       } finally {
         setBusy(false);
       }

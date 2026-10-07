@@ -137,7 +137,7 @@
   }
 
   async function uploadObservationPhotos(trees) {
-    if (!Array.isArray(trees) || trees.length < 2 || trees.length > 4) throw new Error('INVALID_TREE_COUNT');
+    if (!Array.isArray(trees) || trees.length < 2 || trees.length > 5) throw new Error('INVALID_TREE_COUNT');
     var descriptors = trees.flatMap(function (tree, treeIndex) {
       return [{ clientId: 'tree-' + treeIndex, kind: 'tree', file: tree.treePhoto }].concat(
         tree.files.map(function (file, leafIndex) { return { clientId: 'leaf-' + treeIndex + '-' + leafIndex, kind: 'leaf', file: file }; })
@@ -193,7 +193,7 @@
     saveProfileCity: function (city) { return requestAction('save_profile', { city: city }); }, joinOrganization: function (code) { return requestAction('join_organization', { code: code }); }, leaveOrganization: function (organizationId) { return requestAction('leave_organization', { organizationId: organizationId }); },
     createOrganization: function (data) { return requestAction('create_organization', data); }, createMonitoringProject: function (data) { return requestAction('create_project', data); }, createMonitoringObject: function (data) { return requestAction('create_object', data); }, assignMonitoringObject: function (data) { return requestAction('assign_object', data); },
     uploadObservationPhotos: uploadObservationPhotos, setUserRole: setUserRole,
-    openCertificatePlaceholder: function () { return { available: false, message: 'Обучение пройдено. Сертификат разблокирован, но макет ещё не добавлен.' }; }, openVolunteerCertificate: function () { return false; }, openModeratorCertificate: function () { return false; }, saveFeedback: function () { return true; },
+    openVolunteerCertificate: function () { return window.EcoCertificates.download('participant'); }, openModeratorCertificate: function () { return window.EcoCertificates.download('moderator'); }, 
     requireAuthAsync: requireAuthAsync, isPreview: function () { return Boolean(readSession(PREVIEW_USER, null)); }
   };
 })();

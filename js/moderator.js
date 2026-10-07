@@ -108,6 +108,7 @@
         var precheck = request.photoPrecheck && request.photoPrecheck.passed ? 'пройдена' : 'нет подтверждения';
         var actions = '<a class="knopka-vtorichnaya" href="review.html?id=' + encodeURIComponent(request.id) + '">Проверить и поправить точки</a><button class="knopka-vtorichnaya" data-action="needs_revision" type="button">Вернуть на исправление</button><button class="knopka-vtorichnaya" data-action="rejected" type="button">Отклонить</button><button class="knopka-osnovnaya" data-action="human_approved" type="button">Исходные данные проверены</button>';
         if (request.humanStatus === 'approved' || request.status === 'human_approved') actions += '<button class="knopka-osnovnaya" data-action="analyse" type="button">Рассчитать ФА</button>';
+        if (request.aiResult && request.aiResult.leaves) actions += '<button class="knopka-vtorichnaya" data-action="pdf" type="button">Скачать расчёт PDF</button>';
         if (request.aiStatus === 'checked' && request.status !== 'published') actions += '<button class="knopka-osnovnaya" data-action="publish" type="button">ФА проверена — опубликовать</button>';
         return '<article class="moderaciya-zayavka" data-id="' + esc(request.id) + '"><div class="moderaciya-zayavka__head"><div><p class="sekciya-metka">' + esc(state(request)) + '</p><h2>' + esc(request.title || 'Точка мониторинга') + '</h2></div><span>' + esc(request.collectionDate || 'Дата не указана') + '</span></div><dl class="moderaciya-pasport"><dt>Место</dt><dd>' + esc(request.location || 'не указано') + '</dd><dt>Координаты</dt><dd>' + esc(request.coordinates || 'не указаны') + '</dd><dt>Участник</dt><dd>' + esc(request.userName || request.userEmail || 'не указан') + '</dd><dt>Деревьев</dt><dd>' + Number(request.treeCount || (request.trees || []).length) + '</dd><dt>Листьев</dt><dd>' + Number((request.files || []).length) + '</dd><dt>Расстояние до дороги</dt><dd>' + esc(request.roadDistanceM == null || request.roadDistanceM === '' ? 'не указано' : request.roadDistanceM + ' м') + '</dd><dt>Техническая проверка фото</dt><dd>' + esc(precheck) + '</dd><dt>Чек-лист участника</dt><dd>' + (participantReady ? 'подтверждён' : 'неполный') + '</dd><dt>Точность GPS</dt><dd>' + esc(request.gpsAccuracyM == null ? 'не передана' : Math.round(Number(request.gpsAccuracyM)) + ' м') + '</dd></dl>' + integrity + '<div class="moderaciya-preview">' + requestPhotos(request) + '</div><div class="moderaciya-checklist"><h3>Проверка модератора</h3>' + checks + '</div><label class="pole-podpis">Причина возврата или отклонения<textarea class="pole-vvod" data-comment rows="3">' + esc(request.moderationReason || '') + '</textarea></label>' + faResult(request) + '<div class="moderaciya-deystviya">' + actions + '</div></article>';
       }).join('');
@@ -130,10 +131,10 @@
       var comment = card.querySelector('[data-comment]').value.trim();
       button.disabled = true;
       try {
+        if (action === 'pdf') { await EcoPdf.download(EcoAuth.getRequestById(id)); button.disabled = false; return; }
         if (action === 'analyse') {
           await EcoAuth.startRequestAnalysis(id);
           button.textContent = 'Расчёт…';
-          await new Promise(function (resolve) { setTimeout(resolve, 8200); });
           await EcoAuth.finishRequestAnalysis(id);
         } else if (action === 'publish') {
           await EcoAuth.publishRequest(id);

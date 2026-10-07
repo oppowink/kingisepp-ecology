@@ -40,7 +40,7 @@
     function statusLabel(item) {
       if (item.status === 'published') return 'Опубликована';
       if (item.status === 'rejected') return 'Отклонена';
-      if (item.humanStatus === 'approved') return 'Модератор одобрил, ожидается автопроверка';
+      if (item.humanStatus === 'approved') return 'Исходные данные проверены, ожидается расчёт ФА';
       return 'На первичной модерации';
     }
 
@@ -56,6 +56,20 @@
         : [];
       fillSelect(document.getElementById('obektProekt'), projects, function (row) { return row.title; }, 'Выберите проект');
     }
+
+    function updateAssignmentMembers() {
+      var object = dashboard.objects.find(function (item) { return item.id === document.getElementById('naznachenieObekt').value; });
+      var members = object ? dashboard.members.filter(function (member) { return member.memberRole === 'participant' && member.organizationId === object.organizationId; }) : [];
+      var select = document.getElementById('naznachenieUchastnik');
+      select.replaceChildren(new Option(object ? 'Выберите участника' : 'Сначала выберите территорию', ''));
+      var seen = new Set();
+      members.forEach(function (member) {
+        if (seen.has(member.userId)) return;
+        seen.add(member.userId);
+        select.appendChild(new Option(member.profile?.name || member.profile?.email || member.userId, member.userId));
+      });
+    }
+    document.getElementById('naznachenieObekt').addEventListener('change', updateAssignmentMembers);
 
     function card(title, lines, code) {
       var article = document.createElement('article');
@@ -81,7 +95,7 @@
       var organizations = document.getElementById('organizaciiSpisok');
       organizations.replaceChildren();
       dashboard.organizations.forEach(function (org) {
-        organizations.appendChild(card(org.name, [org.city, org.description], org.joinCode));
+        organizations.appendChild(card(org.name, [org.city, org.address, org.contactEmail, org.description], org.joinCode));
       });
       if (!dashboard.organizations.length) organizations.appendChild(card('Организаций пока нет', ['Создайте первую организацию, чтобы получить код подключения.']));
 
@@ -91,9 +105,7 @@
       fillSelect(document.getElementById('naznachenieObekt'), dashboard.objects, function (row) { return row.title; }, 'Выберите объект');
 
       var participantMembers = dashboard.members.filter(function (member) { return member.memberRole === 'participant'; });
-      fillSelect(document.getElementById('naznachenieUchastnik'), participantMembers, function (row) {
-        return row.profile?.name || row.profile?.email || row.userId;
-      }, 'Выберите участника');
+      updateAssignmentMembers();
 
       var objects = document.getElementById('obektySpisok');
       objects.replaceChildren();
@@ -118,7 +130,7 @@
       });
       if (!participantMembers.length) {
         var tr = document.createElement('tr');
-        var td = document.createElement('td'); td.colSpan = 6; td.textContent = 'Участники появятся после входа по коду организации.'; tr.appendChild(td); membersBody.appendChild(tr);
+        var td = document.createElement('td'); td.colSpan = 6; td.textContent = 'Участники появятся после подключения по коду. Аккаунт создателя остаётся куратором и не становится вторым участником при смене роли.'; tr.appendChild(td); membersBody.appendChild(tr);
       }
 
       var statuses = document.getElementById('statusySpisok');
@@ -147,7 +159,9 @@
       try {
         await EcoAuth.createOrganization({ name: document.getElementById('organizaciyaNazvanie').value,
           type: document.getElementById('organizaciyaTip').value, city: document.getElementById('organizaciyaGorod').value,
-          description: document.getElementById('organizaciyaOpisanie').value });
+          description: document.getElementById('organizaciyaOpisanie').value,
+          address: document.getElementById('organizaciyaAdres').value,
+          contactEmail: document.getElementById('organizaciyaPochta').value });
         orgForm.reset(); await reload(); showMessage('Организация создана. Код подключения показан в карточке.', 'success');
       } catch (_) { showMessage('Не удалось создать организацию.', 'error'); }
     });
@@ -172,9 +186,10 @@
           addressHint: document.getElementById('obektAdres').value, radiusM: document.getElementById('obektRadius').value,
           requiredPoints: document.getElementById('obektTochki').value, dueDate: document.getElementById('obektSrok').value,
           centerLat: document.getElementById('obektShirota').value, centerLng: document.getElementById('obektDolgota').value,
-          visibility: document.getElementById('obektVidimost').value });
-        objectForm.reset(); await reload(); showMessage('Объект создан и доступен участникам по заданным правилам.', 'success');
-      } catch (_) { showMessage('Не удалось создать объект. Проверьте организацию и проект.', 'error'); }
+          visibility: document.getElementById('obektVidimost').value,
+          boundary: window.EcoTerritoryEditor ? EcoTerritoryEditor.coordinates() : [] });
+        objectForm.reset(); if (window.EcoTerritoryEditor) EcoTerritoryEditor.reset(); await reload(); showMessage('Территория создана и доступна участникам', 'success');
+      } catch (error) { showMessage(error.message === 'INVALID_TERRITORY' ? 'Исправьте контур: нужны хотя бы три разные вершины, без самопересечений' : 'Не удалось создать территорию. Проверьте организацию, проект и заполнение полей', 'error'); }
     });
 
     assignmentForm.addEventListener('submit', async function (event) {
@@ -182,7 +197,7 @@
       try {
         await EcoAuth.assignMonitoringObject({ userId: document.getElementById('naznachenieUchastnik').value,
           objectId: document.getElementById('naznachenieObekt').value });
-        showMessage('Объект назначен участнику.', 'success');
+        await reload(); showMessage('Территория назначена участнику', 'success');
       } catch (_) { showMessage('Не удалось назначить объект.', 'error'); }
     });
 

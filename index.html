@@ -1,38 +1,28 @@
-<!doctype html>
+<!DOCTYPE html>
 
 <html lang="ru">
 <head>
-
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1" name="viewport"/>
-
 <meta content="ЭкоБиоМониторинг - платформа гражданского экологического мониторинга малых городов на основе биоиндикации и флуктуирующей асимметрии листьев берёзы" name="description"/>
 <meta content="экологический мониторинг, биоиндикация, флуктуирующая асимметрия, берёза повислая, Кингисепп, гражданская наука, малые города" name="keywords"/>
-
-<meta property="og:title" content="ЭкоБиоМониторинг - экологический скрининг малых городов" />
-<meta property="og:description" content="Платформа для оценки загрязнения воздуха по флуктуирующей асимметрии листьев берёзы с автоматизированным анализом и картой мониторинга." />
-<meta property="og:image" content="https://oppowink.github.io/kingisepp-ecology/img/brand/og-image.png" />
-<meta property="og:url" content="https://oppowink.github.io/kingisepp-ecology/" />
-<meta property="og:type" content="website" />
-<meta property="og:locale" content="ru_RU" />
-
+<meta content="ЭкоБиоМониторинг - экологический скрининг малых городов" property="og:title"/>
+<meta content="Платформа для оценки загрязнения воздуха по флуктуирующей асимметрии листьев берёзы с автоматизированным анализом и картой мониторинга." property="og:description"/>
+<meta content="https://oppowink.github.io/kingisepp-ecology/img/brand/og-image.png" property="og:image"/>
+<meta content="https://oppowink.github.io/kingisepp-ecology/" property="og:url"/>
+<meta content="website" property="og:type"/>
+<meta content="ru_RU" property="og:locale"/>
 <title>ЭкоБиоМониторинг - экологический мониторинг малых городов</title>
-
 <link href="img/favicon.ico" rel="icon"/>
-
 <link href="css/variables.css" rel="stylesheet"/>
 <link href="css/components.css" rel="stylesheet"/>
 <link href="css/home.css" rel="stylesheet"/>
 <link href="css/faq.css" rel="stylesheet"/>
-
 <script src="js/theme.js"></script>
-</head>
-<body>
-
+<link href="css/refresh.css" rel="stylesheet"/></head>
+<body><a class="skip-link" href="#mainContent">К содержанию</a>
 <div aria-hidden="true" class="kursor" data-component="kursor"></div>
-
 <div aria-hidden="true" class="nastroiki-fon" id="nastroikiFon"></div>
-
 <header class="shapka" data-component="shapka">
 <a aria-label="ЭкоБиоМониторинг, на главную" class="shapka-logo" href="index.html">
 <span class="shapka-logo__nazvanie">
@@ -45,7 +35,6 @@
 <span class="shapka-logo__bukva">р</span><span class="shapka-logo__bukva">и</span><span class="shapka-logo__bukva">н</span><span class="shapka-logo__bukva">г</span>
 </span>
 </a>
-
 <div class="shapka-deystviya">
 <a class="shapka-ssylka" href="account.html">
 <img alt="" aria-hidden="true" class="shapka-ssylka__ikona" src="img/icons/user.png"/>
@@ -57,13 +46,11 @@
 </button>
 </div>
 </header>
-
 <aside aria-hidden="true" aria-label="Настройки" class="nastroiki-panel" id="nastroikiPanel">
 <button aria-label="Закрыть настройки" class="nastroiki-zakryt" id="nastroikiZakryt" type="button">
 <img alt="" aria-hidden="true" src="img/icons/close.png"/>
 <span class="sr-only">Закрыть</span>
 </button>
-
 <div class="tema-vybor-blok">
 <p class="tema-podpis">Тема</p>
 <div class="tema-vybor">
@@ -75,13 +62,11 @@
 </button>
 </div>
 </div>
-
 <div class="nastroiki-akkaunt">
 <a class="nastroiki-ssylka nastroiki-ssylka--akcent" href="account.html">
 <img alt="" aria-hidden="true" src="img/icons/user.png"/><span>Личный кабинет</span>
 </a>
 </div>
-
 <nav aria-label="Навигация" class="nastroiki-navigaciya">
 <a class="nastroiki-ssylka" href="index.html">Главная</a>
 <a class="nastroiki-ssylka" href="map.html">Карта</a>
@@ -91,23 +76,19 @@
 <a class="nastroiki-ssylka" href="feedback.html">Обратная связь</a>
 </nav>
 </aside>
-
-<main class="glavnaya">
-
+<main class="glavnaya" id="mainContent">
 <section aria-labelledby="glavnayaZagolovok" class="glavnaya-vvodnaya">
 <div class="glavnaya-vvodnaya__tekst">
 <h1 id="glavnayaZagolovok">ЭкоБиоМониторинг малых городов</h1>
 <p>Мы собираем фотографии листьев берёзы, проверяем их и показываем результаты наблюдений на карте города</p>
 </div>
 </section>
-
 <section class="glavnaya-scena" data-scena="aktualnost">
 <div class="glavnaya-scena__lipkaya">
 <div class="glavnaya-blok glavnaya-blok-aktualnost">
 <h2>Экологический мониторинг малых городов</h2>
 <p>Две соседние улицы могут заметно различаться, но постоянные наблюдения ведут не на каждом участке города. Мы сравниваем листья берёзы по <button class="termin" data-glossary="fluctuating-asymmetry" type="button">флуктуирующей асимметрии</button> и отдельно оцениваем транспортную нагрузку. Затем <button class="termin" data-glossary="correlation-analysis" type="button">корреляционный анализ</button> показывает, меняются ли эти показатели вместе. Это способ найти места для более подробного исследования, а не измерить качество воздуха по одному листу.</p>
 </div>
-
 <div aria-label="Схема: дорога, автомобиль, выхлоп, берёзы и флуктуирующая асимметрия" class="glavnaya-illyustraciya glavnaya-illyustraciya--aktualnost" data-aktualnost-scena="" role="img">
 <img alt="" class="aktualnost-element aktualnost-doroga" src="img/home/aktualnost/doroga.png"/>
 <img alt="" class="aktualnost-element aktualnost-avtomobil" src="img/home/aktualnost/avtomobil-hd.png"/>
@@ -116,14 +97,12 @@
 </div>
 </div>
 </section>
-
 <section class="glavnaya-scena" data-scena="karta">
 <div class="glavnaya-scena__lipkaya">
 <div class="glavnaya-blok glavnaya-blok-karta">
 <h2>Интерактивная карта мониторинга</h2>
 <p>У каждой точки есть место, дата, фотографии и рассчитанное значение <button class="termin" data-glossary="fluctuating-asymmetry" type="button">флуктуирующей асимметрии</button>. Рядом хранится оценка транспортной нагрузки. Эти показатели не смешиваются: один получен по листьям, второй — по наблюдениям за движением. На карте появляются только заявки, которые проверил модератор.</p>
 </div>
-
 <div class="glavnaya-illyustraciya">
 <a aria-label="Перейти к карте экологического мониторинга" class="glavnaya-perehod glavnaya-perehod--karta" href="map.html">
 <span class="glavnaya-perehod__nazvanie">Перейти к карте</span>
@@ -132,7 +111,6 @@
 </div>
 </div>
 </section>
-
 <section class="glavnaya-scena" data-scena="uchastie">
 <div class="glavnaya-scena__lipkaya">
 <div class="glavnaya-blok glavnaya-blok-uchastie">
@@ -140,7 +118,6 @@
 <p class="glavnaya-prizyv jump-in">Начать можно с одной точки</p>
 <p>Вы выбираете деревья, заполняете паспорт места и добавляете снимки. Сайт сразу замечает слишком маленькие фотографии и неподходящий фон. Потом вы ставите 12 контрольных точек на каждом листе. Модератор проверяет материал, программа считает ФА — и только после этого наблюдение может попасть на карту.</p>
 </div>
-
 <div class="glavnaya-illyustraciya">
 <a aria-label="Принять участие в мониторинге" class="glavnaya-perehod glavnaya-perehod--uchastie" href="account.html">
 <span class="glavnaya-perehod__nazvanie">Принять участие</span>
@@ -149,14 +126,12 @@
 </div>
 </div>
 </section>
-
 <section class="glavnaya-scena" data-scena="obuchenie">
 <div class="glavnaya-scena__lipkaya">
 <div class="glavnaya-blok glavnaya-blok-obuchenie">
 <h2>Единая методика сбора данных</h2>
-<p>До первой заявки участник проходит короткое обучение. <button class="termin" data-glossary="methodology" type="button">Методика</button> объясняет, как выбрать 2–4 берёзы, собрать листья без отбора «самых ровных», сделать фотографии и заполнить паспорт точки. Чем точнее соблюдены правила, тем честнее сравнение разных улиц.</p>
+<p>До первой заявки участник проходит короткое обучение. <button class="termin" data-glossary="methodology" type="button">Методика</button> объясняет, как выбрать 2–5 берёзы, собрать листья без отбора «самых ровных», сделать фотографии и заполнить паспорт точки. Чем точнее соблюдены правила, тем честнее сравнение разных улиц.</p>
 </div>
-
 <div class="glavnaya-illyustraciya">
 <a aria-label="Перейти в личный кабинет для прохождения обучения" class="glavnaya-perehod glavnaya-perehod--obuchenie" href="account.html">
 <span class="glavnaya-perehod__nazvanie">Перейти в личный кабинет</span>
@@ -165,7 +140,6 @@
 </div>
 </div>
 </section>
-
 <section class="glavnaya-scena" data-scena="igra">
 <div class="glavnaya-scena__lipkaya">
 <div class="glavnaya-blok glavnaya-blok-igra">
@@ -180,16 +154,15 @@
 </div>
 </div>
 </section>
-
 <section class="glavnaya-scena" data-scena="umnyy-poisk">
 <div class="glavnaya-scena__lipkaya">
 <div class="glavnaya-blok glavnaya-blok-poisk">
 <h2>Поиск по проекту</h2>
-<p>Напишите вопрос своими словами — например, сколько нужно листьев или зачем указывать дорогу. Поиск работает по подготовленным ответам проекта и ничего не отправляет во внешние сервисы.</p>
+<p>Найди нужное в справке или задай вопрос помощнику. Кнопка «Спросить» всегда рядом. В ней можно выбрать текст или фото на странице и уточнить, что они означают.</p>
 <div class="glavnaya-poisk">
 <div class="glavnaya-poisk__stroka"><input aria-label="Вопрос о проекте" autocomplete="off" class="pole-vvod" id="smartSearchInput" placeholder="Например: сколько нужно листьев?" type="search"/><button class="knopka-osnovnaya" id="smartSearchButton" type="button">Найти</button></div>
 <div aria-live="polite" class="glavnaya-poisk__rezultaty" id="smartSearchResults"></div>
-</div>
+<button class="knopka-vtorichnaya" data-open-assistant="" type="button">Задать вопрос помощнику</button></div>
 </div>
 <div class="glavnaya-illyustraciya">
 <a aria-label="Открыть все вопросы и ответы" class="glavnaya-perehod glavnaya-perehod--poisk" href="faq.html">
@@ -199,24 +172,21 @@
 </div>
 </div>
 </section>
-
 <section class="glavnaya-scena glavnaya-scena--poslednyaya" data-scena="obratnaya-svyaz">
 <div class="glavnaya-scena__lipkaya">
 <div class="glavnaya-blok glavnaya-blok-obratnaya-svyaz">
 <h2>Обратная связь</h2>
 <p>Нашли ошибку на карте, запутались в инструкции или придумали, как сделать сайт понятнее? Напишите об этом здесь.</p>
 </div>
-
 <div class="glavnaya-illyustraciya">
 <a aria-label="Открыть форму обратной связи" class="glavnaya-perehod glavnaya-perehod--svyaz" href="feedback.html">
 <span class="glavnaya-perehod__nazvanie">Открыть обратную связь</span>
-<img alt="" class="glavnaya-perehod__list" src="img/leaf4.png"/>
+<img alt="" class="glavnaya-perehod__list" src="img/icons/soobshchenie.png"/>
 </a>
 </div>
 </div>
 </section>
 </main>
-
 <footer aria-label="Подвал сайта" class="podval" data-component="podval">
 <div class="podval-vnutri">
 <span class="podval-nazvanie">ЭкоБиоМониторинг</span>
@@ -224,12 +194,11 @@
 <span>2025-2026</span>
 </div>
 </footer>
-
-<script defer src="js/header.js"></script>
-<script defer src="js/cursor.js"></script>
-<script defer src="js/glossary.js"></script>
-<script defer src="js/faq-data.js"></script>
-<script defer src="js/smart-search.js"></script>
-<script defer src="js/home.js"></script>
-</body>
+<script defer="" src="js/header.js"></script>
+<script defer="" src="js/cursor.js"></script>
+<script defer="" src="js/glossary.js"></script>
+<script defer="" src="js/faq-data.js"></script>
+<script defer="" src="js/smart-search.js"></script>
+<script defer="" src="js/home.js"></script>
+<script defer="" src="js/refresh.js"></script><script defer="" src="js/assistant.js"></script></body>
 </html>

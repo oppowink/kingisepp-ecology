@@ -1,403 +1,217 @@
 (function () {
   'use strict';
-
-  var MAX_PHOTOS = 120;
-  var MAX_PER_TREE = 30;
-
+  var labels = ['Верхушка', 'Основание', 'Левая жилка 1: начало', 'Левая жилка 1: конец', 'Правая жилка 1: начало', 'Правая жилка 1: конец', 'Левая жилка 2: начало', 'Левая жилка 2: конец', 'Правая жилка 2: начало', 'Правая жилка 2: конец', 'Край ширины слева', 'Край ширины справа'];
+  var names = EcoFa.LANDMARK_NAMES;
+  var $ = function (id) { return document.getElementById(id); };
   document.addEventListener('DOMContentLoaded', async function () {
     var user = await EcoAuth.requireAuthAsync();
     if (!user) return;
-
-    var form = document.getElementById('formaNablyudeniya');
-    var locked = document.getElementById('podachaBlokirovka');
-    if (!form || !locked) return;
-
-    var educationDone = EcoAuth.isEducationCompleted(user.email);
-    if (!educationDone && EcoAuth.refreshEducationStatus) educationDone = await EcoAuth.refreshEducationStatus();
-    if (!educationDone) {
-      locked.hidden = false;
-      form.hidden = true;
-      return;
+    if (user.role !== 'participant') { $('podachaBlokirovka').hidden = false; $('podachaBlokirovka').querySelector('p').textContent = 'Заявки отправляются из роли участника'; return; }
+    var trained = EcoAuth.isEducationCompleted(user.email) || await EcoAuth.refreshEducationStatus();
+    if (!trained) { $('podachaBlokirovka').hidden = false; return; }
+    var form = $('formaNablyudeniya'); form.hidden = false;
+    var trees = [], activeTree = 0, activeLeaf = 0, selectedPoint = 0, stage = 'intro', dirty = false, busy = false;
+    var context = { objects: [] }, map = null, marker = null, boundaryShape = null, device = {};
+    var alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789', code = sessionStorage.getItem('eco-field-code');
+    if (!/^[A-Z0-9]{6}$/.test(code || '')) { code = Array.from(crypto.getRandomValues(new Uint8Array(6))).map(function (v) { return alphabet[v % alphabet.length]; }).join(''); sessionStorage.setItem('eco-field-code', code); }
+    $('integrityCode').textContent = code;
+    var today = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 10);
+    $('dataSbora').max = today;
+    labels.forEach(function (label, i) { $('landmarkSelect').add(new Option(label, String(i))); });
+    function error(message) { $('oshibkaPodachi').textContent = message || ''; $('oshibkaPodachi').hidden = !message; if (message) $('oshibkaPodachi').focus(); }
+    function setStage(value) {
+      stage = value; error('');
+      form.querySelectorAll('[data-stage]').forEach(function (node) { node.hidden = node.dataset.stage !== value; });
+      form.querySelectorAll('[data-stage-label]').forEach(function (node) { if (node.dataset.stageLabel === value) node.setAttribute('aria-current', 'step'); else node.removeAttribute('aria-current'); });
+      var heading = form.querySelector('[data-stage="' + value + '"] h2');
+      if (heading) { heading.tabIndex = -1; heading.focus({ preventScroll: true }); heading.scrollIntoView({ block: 'start', behavior: 'auto' }); }
+      if (value === 'point' && map) map.container.fitToViewport();
     }
-    form.hidden = false;
-    locked.hidden = true;
-
-    var treeSetsElement = document.getElementById('treeSets');
-    var addTreeButton = document.getElementById('addTree');
-    var photoError = document.getElementById('oshibkaFoto');
-    var formError = document.getElementById('oshibkaPodachi');
-    var dateInput = document.getElementById('dataSbora');
-    var coordinatesInput = document.getElementById('koordinatyNablyudeniya');
-    var coordinateStatus = document.getElementById('kartaVyborStatus');
-    var objectGroup = document.getElementById('obektNablyudeniyaGruppa');
-    var objectSelect = document.getElementById('obektNablyudeniya');
-    var objectDescription = document.getElementById('obektNablyudeniyaOpisanie');
-    var submitButton = form.querySelector('button[type="submit"]');
-    var selectedFiles = [];
-    var landmarkSets = [];
-    var landmarkPhoto = 0;
-    var landmarkNames = ['apex','base','left_v1_base','left_v1_end','right_v1_base','right_v1_end','left_v2_base','left_v2_end','right_v2_base','right_v2_end','width_left','width_right'];
-    var landmarkLabels = ['верхушка','основание','левая жилка 1: начало','левая жилка 1: конец','правая жилка 1: начало','правая жилка 1: конец','левая жилка 2: начало','левая жилка 2: конец','правая жилка 2: начало','правая жилка 2: конец','край ширины слева','край ширины справа'];
-    var landmarkCanvas = document.getElementById('landmarkCanvas');
-    var landmarkImage = document.getElementById('landmarkImage');
-    var landmarkOverlay = document.getElementById('landmarkOverlay');
-    var landmarkNumber = document.getElementById('landmarkPhotoNumber');
-    var landmarkPointName = document.getElementById('landmarkPointName');
-    var integrityCode = Array.from(crypto.getRandomValues(new Uint8Array(6))).map(function(v){return 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'[v%32];}).join('');
-    document.getElementById('integrityCode').textContent = integrityCode;
-    var devicePosition = {};
-    if (navigator.geolocation) navigator.geolocation.getCurrentPosition(function(pos){devicePosition={deviceLatitude:pos.coords.latitude,deviceLongitude:pos.coords.longitude,gpsAccuracyM:pos.coords.accuracy};},function(){}, {enableHighAccuracy:true,timeout:8000});
-    var participationContext = { memberships: [], projects: [], objects: [] };
-    var pickerMap = null;
-    var pickerMarker = null;
-
-    var now = new Date();
-    var localToday = new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString().slice(0, 10);
-    if (dateInput) dateInput.max = localToday;
-
-    function showError(text) {
-      if (!formError) return;
-      formError.textContent = text || '';
-      formError.dataset.state = text ? 'error' : '';
-      formError.hidden = !text;
+    function checkFields(container) {
+      var invalid = Array.from(container.querySelectorAll('input, select, textarea')).find(function (field) { return !field.checkValidity(); });
+      if (invalid) { invalid.reportValidity(); invalid.focus(); return false; } return true;
     }
-
-    function setBusy(busy, label) {
-      if (!submitButton) return;
-      submitButton.disabled = Boolean(busy);
-      submitButton.textContent = busy ? (label || 'Сохраняем…') : 'Отправить точку на проверку';
+    function coordinates() {
+      var parts = $('koordinatyNablyudeniya').value.trim().split(',').map(function (s) { return s.trim(); });
+      if (parts.length !== 2 || parts.some(function (s) { return !/^-?\d+(?:\.\d+)?$/.test(s); })) return null;
+      var p = parts.map(Number); return Math.abs(p[0]) <= 90 && Math.abs(p[1]) <= 180 ? p : null;
     }
-
-    function validCoordinates(value) {
-      var parts = String(value || '').split(',').map(function (part) { return part.trim(); });
-      if (parts.length !== 2) return false;
-      var latitude = Number(parts[0]);
-      var longitude = Number(parts[1]);
-      return Number.isFinite(latitude) && Number.isFinite(longitude) &&
-        latitude >= -90 && latitude <= 90 && longitude >= -180 && longitude <= 180;
-    }
-
     function setCoordinates(coords) {
-      var latitude = Number(coords[0]);
-      var longitude = Number(coords[1]);
-      if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) return;
-      var value = latitude.toFixed(6) + ', ' + longitude.toFixed(6);
-      coordinatesInput.value = value;
-      coordinateStatus.textContent = 'Выбрано: ' + value;
-      coordinateStatus.dataset.state = 'selected';
-      if (!pickerMarker) {
-        pickerMarker = new ymaps.Placemark([latitude, longitude], {}, {
-          draggable: true,
-          iconLayout: 'default#image',
-          iconImageHref: 'img/icons/map-point-active.png',
-          iconImageSize: [39, 45],
-          iconImageOffset: [-19, -42]
-        });
-        pickerMarker.events.add('dragend', function () { setCoordinates(pickerMarker.geometry.getCoordinates()); });
-        pickerMap.geoObjects.add(pickerMarker);
-      } else {
-        pickerMarker.geometry.setCoordinates([latitude, longitude]);
-      }
+      $('koordinatyNablyudeniya').value = coords.map(function (v) { return Number(v).toFixed(6); }).join(', '); $('kartaVyborStatus').textContent = 'Точка выбрана';
+      if (!map) return;
+      if (marker) marker.geometry.setCoordinates(coords);
+      else { marker = new ymaps.Placemark(coords, {}, { draggable: true, preset: 'islands#darkBlueDotIcon' }); map.geoObjects.add(marker); marker.events.add('dragend', function () { setCoordinates(marker.geometry.getCoordinates()); }); }
     }
-
-    function createCoordinatePicker() {
-      if (typeof ymaps === 'undefined') {
-        coordinateStatus.textContent = 'Карта не загрузилась. Проверьте подключение и ключ Яндекс Карт.';
-        return;
-      }
-      ymaps.ready(function () {
-        pickerMap = new ymaps.Map('kartaVyborKoordinat', {
-          center: [59.378, 28.612],
-          zoom: 13,
-          controls: ['zoomControl', 'geolocationControl', 'fullscreenControl']
-        });
-        pickerMap.events.add('click', function (event) { setCoordinates(event.get('coords')); });
+    function selectedObject() { return context.objects.find(function (object) { return object.id === $('obektNablyudeniya').value; }); }
+    function objectMode() { return form.querySelector('[name="sourceMode"]:checked').value === 'object'; }
+    function pointValid() {
+      if (!checkFields(form.querySelector('[data-stage="point"]'))) return false;
+      var p = coordinates(); if (!p) { error('Введите широту и долготу через запятую или выберите место на карте'); return false; }
+      if ($('dataSbora').value > today) { error('Дата сбора не может быть в будущем'); return false; }
+      var obj = objectMode() && selectedObject();
+      if (objectMode() && !obj) { error('Выберите территорию куратора'); return false; }
+      if (obj && obj.boundary && obj.boundary.length && !EcoTerritory.contains(p, obj.boundary)) { error('Эта точка за пределами назначенной территории'); return false; }
+      return true;
+    }
+    function makeTree() {
+      var block = document.createElement('section'); block.className = 'tree-block';
+      block.innerHTML = '<div class="forma-nablyudeniya__ryad"><label class="pole-gruppa">Состояние кроны<select class="pole-vybor" data-field="treeCondition" required><option value="">Выберите</option><option>Без заметных нарушений</option><option>Есть сухие ветви</option><option>Крона разрежена</option><option>Есть выраженные повреждения</option></select></label><label class="pole-gruppa">Диаметр ствола, см<input class="pole-vvod" data-field="trunkDiameterCm" type="number" min="1" max="300" step="0.1" required></label></div><div class="forma-nablyudeniya__ryad"><label class="pole-gruppa">Примерная высота, м<input class="pole-vvod" data-field="treeHeightEstimateM" type="number" min="1" max="80" step="0.1" required></label><label class="pole-gruppa">Повреждения ствола и кроны<input class="pole-vvod" data-field="treeDamageNotes" maxlength="500" placeholder="Например: не замечены" required></label></div><label class="pole-gruppa">Дерево с кодом <strong>' + code + '</strong><input class="pole-vvod" data-tree-photo type="file" accept="image/jpeg,image/png,image/webp" required></label><p class="pole-podskazka">Одно обзорное фото. Видны дерево и записанный код. Белый фон здесь не нужен</p><label class="pole-gruppa">Листья этой берёзы без кода<input class="pole-vvod" data-tree-leaves type="file" accept="image/jpeg,image/png,image/webp" multiple required></label><p data-tree-count>Выберите от 10 до 30 фотографий</p><div class="photo-preview" data-preview></div><p class="pole-podskazka">Быстрая проверка оценит формат, разрешение и светлый фон. Вид растения и повреждения проверяет модератор</p>';
+      var tree = { block: block, treePhoto: null, files: [], points: new Map(), complete: false };
+      block.addEventListener('change', function (event) {
+        dirty = true; tree.complete = false;
+        if (event.target.matches('[data-tree-photo]')) tree.treePhoto = event.target.files[0] || null;
+        if (event.target.matches('[data-tree-leaves]')) { tree.files = Array.from(event.target.files); tree.points.clear(); block.querySelector('[data-tree-count]').textContent = 'Выбрано листьев: ' + tree.files.length; block.querySelector('[data-preview]').replaceChildren(); if (tree.files.length < 10 || tree.files.length > 30) error('Для одной берёзы нужно от 10 до 30 листьев. Выберите файлы заново'); }
       });
+      trees.push(tree); $('treeSets').appendChild(block); return tree;
     }
-
-    function checkBackground(imageFile) {
-      return new Promise(function (resolve) {
-        var img = new Image();
-        var objectUrl = URL.createObjectURL(imageFile);
-        img.onload = function () {
-          try {
-            var size = 180;
-            var canvas = document.createElement('canvas');
-            var ctx = canvas.getContext('2d', { willReadFrequently: true });
-            canvas.width = size;
-            canvas.height = size;
-            ctx.drawImage(img, 0, 0, size, size);
-            var corners = [[0, 0], [size - 16, 0], [0, size - 16], [size - 16, size - 16]];
-            var total = 0;
-            var count = 0;
-            corners.forEach(function (corner) {
-              var data = ctx.getImageData(corner[0], corner[1], 16, 16).data;
-              for (var i = 0; i < data.length; i += 4) {
-                total += (data[i] + data[i + 1] + data[i + 2]) / 3;
-                count += 1;
-              }
-            });
-            resolve({ light: total / count > 200, width: img.naturalWidth, height: img.naturalHeight });
-          } catch (_) { resolve({ light: null, width: img.naturalWidth, height: img.naturalHeight }); }
-          URL.revokeObjectURL(objectUrl);
-        };
-        img.onerror = function () { URL.revokeObjectURL(objectUrl); resolve({ light: null, width: 0, height: 0 }); };
-        img.src = objectUrl;
-      });
+    function showTree(index) {
+      activeTree = index; if (!trees[index]) makeTree(); activeLeaf = 0;
+      trees.forEach(function (tree, i) { tree.block.hidden = i !== index; });
+      $('treeSetsTitle').textContent = 'Берёза ' + (index + 1); $('treeProgress').textContent = 'Готово деревьев: ' + trees.filter(function (t) { return t.complete; }).length;
+      $('removeTree').hidden = index < 2;
+      $('landmarkStep').hidden = true; $('treeComplete').hidden = true; $('photoActions').hidden = false; $('treeSets').hidden = false; setStage('tree');
     }
-
-    async function prepareMeta(file) {
-      var buffer = await file.arrayBuffer();
-      var digest = await crypto.subtle.digest('SHA-256', buffer);
-      var hash = Array.from(new Uint8Array(digest)).map(function(b){return b.toString(16).padStart(2,'0');}).join('');
-      var image = await checkBackground(file);
-      file._ecoMeta = { sha256: hash, imageWidth: image.width, imageHeight: image.height, bgLight: image.light, precheck: { backgroundLight: image.light, readable: image.width >= 500 && image.height >= 500, birchCandidate: null } };
-      return file._ecoMeta;
-    }
-
-    function renderLandmarks() {
-      if (!selectedFiles.length) { landmarkCanvas.style.display='none'; landmarkNumber.textContent='Фото не выбраны'; landmarkPointName.textContent=''; return; }
-      landmarkCanvas.style.display='block';
-      var set=landmarkSets[landmarkPhoto]||(landmarkSets[landmarkPhoto]={});
-      var file=selectedFiles[landmarkPhoto];
-      var treeIndex=Number(file._ecoTreeIndex||0);
-      var within=selectedFiles.slice(0,landmarkPhoto+1).filter(function(item){return item._ecoTreeIndex===treeIndex;}).length;
-      landmarkNumber.textContent='Дерево '+(treeIndex+1)+' · лист '+within+' · всего '+selectedFiles.length;
-      var count=Object.keys(set).length;
-      landmarkPointName.textContent=count<landmarkNames.length?'Сейчас: '+landmarkLabels[count]:'Все 12 точек отмечены';
-      landmarkOverlay.replaceChildren();
-      landmarkNames.forEach(function(name,index){if(!set[name])return;var dot=document.createElement('span');dot.className='landmark-dot landmark-dot--group-'+(index<2?'axis':index<10?'vein':'width');dot.style.left=(set[name].x*100)+'%';dot.style.top=(set[name].y*100)+'%';dot.title=(index+1)+'. '+landmarkLabels[index];dot.textContent=String(index+1);landmarkOverlay.appendChild(dot);});
-      document.getElementById('landmarkNext').disabled=count<landmarkNames.length;
-      document.getElementById('landmarkNext').textContent=landmarkPhoto===selectedFiles.length-1?'Разметка готова':'Следующий лист';
-    }
-
-    function showLandmarkPhoto(){if(!selectedFiles[landmarkPhoto])return;var old=landmarkImage.dataset.url;if(old)URL.revokeObjectURL(old);var url=URL.createObjectURL(selectedFiles[landmarkPhoto]);landmarkImage.dataset.url=url;landmarkImage.src=url;renderLandmarks();}
-
-    function treeBlocks() { return Array.from(treeSetsElement.querySelectorAll('.tree-block')); }
-    function readTrees() {
-      return treeBlocks().map(function (block, index) {
-        var leaves=Array.from(block.querySelector('[data-tree-leaves]').files||[]);
-        leaves.forEach(function(file){file._ecoTreeIndex=index;});
-        return {
-          treePhoto: block.querySelector('[data-tree-photo]').files[0]||null, files:leaves,
-          treeCondition:block.querySelector('[data-tree-condition]').value,
-          trunkDiameterCm:block.querySelector('[data-tree-diameter]').value,
-          treeHeightEstimateM:block.querySelector('[data-tree-height]').value,
-          treeDamageNotes:block.querySelector('[data-tree-notes]').value.trim()
-        };
-      });
-    }
-    function addTree() {
-      if (treeBlocks().length>=4) return;
-      var number=treeBlocks().length+1;
-      var block=document.createElement('fieldset'); block.className='tree-block';
-      block.innerHTML='<legend>Берёза '+number+'</legend><div class="forma-nablyudeniya__ryad">'+
-        '<label class="pole-gruppa">Состояние кроны<select class="pole-vybor" data-tree-condition required><option value="">Выберите</option><option>Без заметных нарушений</option><option>Есть сухие ветви</option><option>Крона разрежена</option><option>Есть выраженные повреждения</option></select></label>'+
-        '<label class="pole-gruppa">Диаметр ствола, см<input class="pole-vvod" data-tree-diameter type="number" min="1" max="300" step="0.1" required></label></div>'+
-        '<div class="forma-nablyudeniya__ryad"><label class="pole-gruppa">Примерная высота, м<input class="pole-vvod" data-tree-height type="number" min="1" max="80" step="0.1" required></label>'+
-        '<label class="pole-gruppa">Повреждения ствола и кроны<input class="pole-vvod" data-tree-notes placeholder="Если нет — напишите «не замечены»" maxlength="500" required></label></div>'+
-        '<label class="pole-gruppa">Обзорная фотография этого дерева<input class="pole-vvod" data-tree-photo type="file" accept="image/*"></label>'+
-        '<label class="pole-gruppa">Фотографии листьев этого дерева (10–30)<input class="pole-vvod" data-tree-leaves type="file" accept="image/*" multiple></label>'+
-        '<p data-tree-count>Листья ещё не выбраны</p><button class="knopka-tekst" type="button" data-remove-tree>Убрать дерево</button>';
-      treeSetsElement.appendChild(block);
-      addTreeButton.hidden=treeBlocks().length>=4;
-      refreshLeaves();
-    }
-    function refreshLeaves() {
-      var previous=new Map(selectedFiles.map(function(file,index){return [file,landmarkSets[index]||{}];}));
-      selectedFiles=readTrees().flatMap(function(tree){return tree.files;}).slice(0,MAX_PHOTOS);
-      landmarkSets=selectedFiles.map(function(file){return previous.get(file)||{};});
-      landmarkPhoto=Math.min(landmarkPhoto,Math.max(0,selectedFiles.length-1));
-      treeBlocks().forEach(function(block,index){var count=block.querySelector('[data-tree-leaves]').files.length;block.querySelector('[data-tree-count]').textContent='Листьев: '+count+' (нужно от 10 до 30)';block.querySelector('legend').textContent='Берёза '+(index+1);});
-      photoError.hidden=true;
-      if(selectedFiles.length) showLandmarkPhoto(); else renderLandmarks();
-    }
-    addTreeButton.addEventListener('click',addTree);
-    treeSetsElement.addEventListener('change',async function(event){
-      if(event.target.matches('[data-tree-leaves], [data-tree-photo]')) {
-        refreshLeaves();
-        if(event.target.files.length>MAX_PER_TREE && event.target.matches('[data-tree-leaves]')) {photoError.textContent='Для одного дерева допускается не более 30 листьев. Выберите файлы заново.';photoError.hidden=false;return;}
-        var files=Array.from(event.target.files);
-        if(files.length){
-          photoError.textContent='Проверяем выбранные снимки…';photoError.hidden=false;
-          var checks=await Promise.all(files.map(checkBackground));
-          var bad=checks.map(function(info,index){return {info:info,file:files[index]};}).filter(function(item){return !item.info.light||item.info.width<500||item.info.height<500;});
-          if(bad.length){photoError.textContent='Замените '+bad.length+' фото: '+bad.slice(0,3).map(function(item){return item.file.name;}).join(', ')+'. Требуется светлый фон и разрешение от 500 × 500 пикселей.';}
-          else photoError.hidden=true;
+    async function inspect(file, leaf) {
+      if (!file || !['image/jpeg', 'image/png', 'image/webp'].includes(file.type) || file.size > 12582912 || !file.size) throw new Error('Нужен JPEG, PNG или WebP до 12 МБ');
+      if (file._ecoMeta) return file._ecoMeta;
+      var hash = Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256', await file.arrayBuffer()))).map(function (v) { return v.toString(16).padStart(2, '0'); }).join('');
+      var image = new Image(), url = URL.createObjectURL(file);
+      try {
+        await new Promise(function (resolve, reject) { image.onload = resolve; image.onerror = function () { reject(new Error('Снимок не открывается')); }; image.src = url; });
+        if (image.naturalWidth < 500 || image.naturalHeight < 500 || image.naturalWidth > 50000 || image.naturalHeight > 50000) throw new Error('Нужно разрешение от 500 × 500 пикселей');
+        var light = true;
+        if (leaf) {
+          var canvas = document.createElement('canvas'); canvas.width = canvas.height = 100;
+          var ctx = canvas.getContext('2d', { willReadFrequently: true }); ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, 100, 100); ctx.drawImage(image, 0, 0, 100, 100);
+          light = [[0, 0], [90, 0], [0, 90], [90, 90]].filter(function (p) { var pixels = ctx.getImageData(p[0], p[1], 10, 10).data, sum = 0; for (var i = 0; i < pixels.length; i += 4) sum += (pixels[i] + pixels[i + 1] + pixels[i + 2]) / 3; return sum / 100 > 190; }).length >= 3;
+          if (!light) throw new Error('Фон по краям слишком тёмный. Переснимите лист на белой бумаге');
         }
-      }
-    });
-    treeSetsElement.addEventListener('click',function(event){if(!event.target.matches('[data-remove-tree]'))return;if(treeBlocks().length<=2)return;event.target.closest('.tree-block').remove();addTreeButton.hidden=false;refreshLeaves();});
-    addTree(); addTree();
-
-    landmarkOverlay.addEventListener('click',function(event){var set=landmarkSets[landmarkPhoto];var index=Object.keys(set).length;if(index>=landmarkNames.length)return;var rect=landmarkOverlay.getBoundingClientRect();set[landmarkNames[index]]={x:Math.max(0,Math.min(1,(event.clientX-rect.left)/rect.width)),y:Math.max(0,Math.min(1,(event.clientY-rect.top)/rect.height)),visible:true};renderLandmarks();});
-    document.getElementById('landmarkUndo').addEventListener('click',function(){var set=landmarkSets[landmarkPhoto],keys=Object.keys(set);if(keys.length)delete set[keys[keys.length-1]];renderLandmarks();});
-    document.getElementById('landmarkNext').addEventListener('click',function(){if(Object.keys(landmarkSets[landmarkPhoto]||{}).length!==12)return;if(landmarkPhoto<selectedFiles.length-1){landmarkPhoto+=1;showLandmarkPhoto();}else {landmarkPointName.textContent='Разметка завершена. Проверьте паспорт и отправьте заявку.';}});
-
-    function selectedSourceMode() {
-      return form.querySelector('input[name="sourceMode"]:checked')?.value || 'own';
+        file._ecoMeta = { sha256: hash, imageWidth: image.naturalWidth, imageHeight: image.naturalHeight, bgLight: light, precheck: { backgroundLight: light, readable: true, birchCandidate: null } }; return file._ecoMeta;
+      } finally { URL.revokeObjectURL(url); }
     }
-
-    function selectedObject() {
-      return participationContext.objects.find(function (item) { return item.id === objectSelect.value; }) || null;
-    }
-
-    function renderObjects() {
-      objectSelect.replaceChildren(new Option('Выберите объект', ''));
-      participationContext.objects.forEach(function (item) {
-        var organization = (participationContext.memberships || []).find(function (membership) {
-          return membership.organizationId === item.organizationId;
-        });
-        var prefix = item.assigned ? 'Назначено вам' : item.visibility === 'public' ? 'Открытый проект' : 'Ваша организация';
-        var suffix = organization?.organization?.name ? ' · ' + organization.organization.name : '';
-        objectSelect.appendChild(new Option(prefix + ': ' + item.title + suffix, item.id));
-      });
-      var objectRadio = form.querySelector('input[name="sourceMode"][value="object"]');
-      if (objectRadio) objectRadio.disabled = participationContext.objects.length === 0;
-    }
-
-    async function loadParticipationContext() {
+    async function checkTree() {
+      if (busy) return;
+      var tree = trees[activeTree]; error(''); if (!checkFields(tree.block)) return;
+      if (tree.files.length < 10 || tree.files.length > 30) return error('Выберите от 10 до 30 листьев для этой берёзы');
+      busy = true; $('checkTreePhotos').disabled = true; $('oshibkaFoto').hidden = false;
+      var all = [tree.treePhoto].concat(tree.files), preview = tree.block.querySelector('[data-preview]'); preview.replaceChildren();
       try {
-        participationContext = await EcoAuth.getParticipationContext();
-        participationContext.objects = Array.isArray(participationContext.objects) ? participationContext.objects : [];
-        renderObjects();
-      } catch (_) {
-        participationContext = { memberships: [], projects: [], objects: [] };
-        renderObjects();
-      }
+        for (var i = 0; i < all.length; i++) {
+          $('oshibkaFoto').textContent = 'Проверяем снимок ' + (i + 1) + ' из ' + all.length;
+          try { await inspect(all[i], i > 0); } catch (e) { throw new Error(all[i].name + ': ' + e.message); }
+          var card = document.createElement('span'); card.textContent = (i ? 'Лист ' + i : 'Фото дерева') + ': проверен'; preview.appendChild(card);
+        }
+        var known = trees.flatMap(function (t) { return [t.treePhoto].concat(t.files).filter(Boolean).map(function (f) { return f._ecoMeta && f._ecoMeta.sha256; }).filter(Boolean); });
+        if (new Set(known).size !== known.length) throw new Error('Один снимок выбран повторно. Для каждого листа и дерева нужна отдельная фотография');
+        $('oshibkaFoto').hidden = true; $('treeSets').hidden = true; $('photoActions').hidden = true; $('landmarkStep').hidden = false; activeLeaf = 0; showLeaf();
+      } catch (e) { $('oshibkaFoto').textContent = e.message; }
+      finally { busy = false; $('checkTreePhotos').disabled = false; }
     }
-
-    form.querySelectorAll('input[name="sourceMode"]').forEach(function (radio) {
-      radio.addEventListener('change', function () {
-        objectGroup.hidden = selectedSourceMode() !== 'object';
-        objectSelect.required = selectedSourceMode() === 'object';
+    function points() { var tree = trees[activeTree], file = tree.files[activeLeaf]; if (!tree.points.has(file)) tree.points.set(file, {}); return tree.points.get(file); }
+    function leafSet(tree, file, treeIndex) { return { points: tree.points.get(file) || {}, fileName: file.name, fileHash: file._ecoMeta.sha256, imageWidth: file._ecoMeta.imageWidth, imageHeight: file._ecoMeta.imageHeight, treeIndex: treeIndex }; }
+    function showLeaf() {
+      var old = $('landmarkImage').dataset.url; if (old) URL.revokeObjectURL(old);
+      var url = URL.createObjectURL(trees[activeTree].files[activeLeaf]); $('landmarkImage').dataset.url = url; $('landmarkImage').src = url;
+      var missing = names.findIndex(function (n) { return !points()[n]; }); selectedPoint = missing < 0 ? 0 : missing; renderPoints();
+    }
+    function renderPoints() {
+      var set = points(), overlay = $('landmarkOverlay'); overlay.replaceChildren(); $('landmarkCanvas').style.display = 'block';
+      $('landmarkPhotoNumber').textContent = 'Лист ' + (activeLeaf + 1) + ' из ' + trees[activeTree].files.length;
+      $('landmarkPointName').textContent = 'Отмечено ' + Object.keys(set).length + ' из 12'; $('landmarkSelect').value = String(selectedPoint);
+      names.forEach(function (name, index) {
+        if (!set[name]) return;
+        var dot = document.createElement('button'); dot.type = 'button'; dot.className = 'landmark-dot'; dot.dataset.point = String(index); dot.style.left = set[name].x * 100 + '%'; dot.style.top = set[name].y * 100 + '%'; dot.textContent = index + 1;
+        dot.setAttribute('aria-label', labels[index] + '. Передвиньте стрелками'); dot.setAttribute('aria-pressed', String(index === selectedPoint)); overlay.appendChild(dot);
       });
+      $('landmarkPrevious').disabled = activeLeaf === 0; $('landmarkNext').disabled = names.some(function (n) { return !set[n]; });
+      $('landmarkNext').textContent = activeLeaf + 1 === trees[activeTree].files.length ? 'Закончить эту берёзу' : 'Следующий лист';
+    }
+    function position(event) { var r = $('landmarkOverlay').getBoundingClientRect(); return { x: Math.max(0, Math.min(1, (event.clientX - r.left) / r.width)), y: Math.max(0, Math.min(1, (event.clientY - r.top) / r.height)) }; }
+    var drag = null, explicitPoint = false;
+    $('landmarkOverlay').addEventListener('pointerdown', function (event) {
+      if (event.button !== 0) return; var dot = event.target.closest('[data-point]');
+      if (dot && !explicitPoint && points()[names[selectedPoint]]) selectedPoint = Number(dot.dataset.point);
+      drag = { pointer: event.pointerId, index: selectedPoint }; $('landmarkOverlay').setPointerCapture(event.pointerId); event.preventDefault();
     });
-
-    objectSelect.addEventListener('change', function () {
-      var object = selectedObject();
-      if (!object) {
-        objectDescription.textContent = '';
-        return;
-      }
-      objectDescription.textContent = [object.description, object.addressHint, object.dueDate ? 'Срок: ' + object.dueDate : ''].filter(Boolean).join(' · ');
-      var titleInput = document.getElementById('nazvanieNablyudeniya');
-      var locationInput = document.getElementById('mestoNablyudeniya');
-      if (!titleInput.value) titleInput.value = object.title;
-      if (!locationInput.value && object.addressHint) locationInput.value = object.addressHint;
-      if (pickerMap && Number.isFinite(Number(object.centerLat)) && Number.isFinite(Number(object.centerLng))) {
-        pickerMap.setCenter([Number(object.centerLat), Number(object.centerLng)], 16, { duration: 250 });
-        coordinateStatus.textContent = 'Объект найден. Нажмите на точное место дерева внутри территории.';
-        coordinateStatus.dataset.state = '';
-      }
+    $('landmarkOverlay').addEventListener('pointermove', function (event) { if (!drag || drag.pointer !== event.pointerId) return; points()[names[drag.index]] = position(event); renderPoints(); dirty = true; });
+    $('landmarkOverlay').addEventListener('pointerup', function (event) {
+      if (!drag || drag.pointer !== event.pointerId) return;
+      points()[names[drag.index]] = position(event); dirty = true; trees[activeTree].complete = false;
+      var missing = names.findIndex(function (name) { return !points()[name]; }); if (missing >= 0) selectedPoint = missing; drag = null; explicitPoint = false; renderPoints();
     });
-
+    $('landmarkOverlay').addEventListener('pointercancel', function () { drag = null; });
+    $('landmarkOverlay').addEventListener('keydown', function (event) {
+      var dot = event.target.closest('[data-point]'); if (!dot || !['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(event.key)) return;
+      event.preventDefault(); selectedPoint = Number(dot.dataset.point); var p = points()[names[selectedPoint]], step = event.shiftKey ? .01 : .002;
+      if (event.key === 'ArrowUp') p.y -= step; if (event.key === 'ArrowDown') p.y += step; if (event.key === 'ArrowLeft') p.x -= step; if (event.key === 'ArrowRight') p.x += step;
+      p.x = Math.max(0, Math.min(1, p.x)); p.y = Math.max(0, Math.min(1, p.y)); dirty = true; trees[activeTree].complete = false; renderPoints(); $('landmarkOverlay').querySelector('[data-point="' + selectedPoint + '"]').focus();
+    });
+    $('landmarkSelect').addEventListener('change', function () { selectedPoint = Number(this.value); explicitPoint = true; renderPoints(); });
+    $('landmarkUndo').addEventListener('click', function () { delete points()[names[selectedPoint]]; trees[activeTree].complete = false; renderPoints(); });
+    $('landmarkPrevious').addEventListener('click', function () { if (activeLeaf > 0) { activeLeaf--; showLeaf(); } });
+    $('landmarkNext').addEventListener('click', function () {
+      var tree = trees[activeTree];
+      if (!EcoFa.calculateLeaf(leafSet(tree, tree.files[activeLeaf], activeTree), activeLeaf)) return error('По этим точкам не получается расчёт. Проверьте ось листа, начала и концы жилок: парные расстояния не должны одновременно быть нулевыми');
+      error(''); if (activeLeaf < tree.files.length - 1) { activeLeaf++; showLeaf(); return; }
+      tree.complete = true; $('landmarkStep').hidden = true; $('treeComplete').hidden = false;
+      $('treeCompleteText').textContent = 'Размечено листьев: ' + tree.files.length + '. ' + (trees.length < 2 ? 'Теперь нужна ещё одна берёза из этой точки' : 'Можно завершить заявку или добавить ещё дерево');
+      $('addTree').hidden = trees.length >= 5 && activeTree === trees.length - 1; $('addTree').textContent = activeTree < trees.length - 1 ? 'К следующей берёзе' : 'Добавить берёзу';
+      $('finishTrees').hidden = trees.length < 2 || trees.some(function (t) { return !t.complete; });
+    });
+    function allLandmarks() { return trees.flatMap(function (tree, i) { return tree.files.map(function (file) { return leafSet(tree, file, i); }); }); }
+    function draft() { return { title: $('nazvanieNablyudeniya').value, location: $('mestoNablyudeniya').value, collectionDate: $('dataSbora').value, coordinates: $('koordinatyNablyudeniya').value, aiResult: EcoFa.calculateRequestFa(allLandmarks()), status: 'draft' }; }
+    $('beginPoint').addEventListener('click', function () { setStage('point'); });
+    form.querySelectorAll('[data-back]').forEach(function (button) { button.addEventListener('click', function () { setStage(button.dataset.back); }); });
+    $('beginTrees').addEventListener('click', function () { if (pointValid()) showTree(0); });
+    $('treeBack').addEventListener('click', function () { if (activeTree === 0) setStage('point'); else showTree(activeTree - 1); });
+    $('removeTree').addEventListener('click', function () {
+      if (activeTree < 2 || !window.confirm('Убрать эту берёзу и её разметку из текущей заявки?')) return;
+      trees[activeTree].block.remove(); trees.splice(activeTree, 1); dirty = true; showTree(activeTree - 1);
+    });
+    $('checkTreePhotos').addEventListener('click', checkTree);
+    $('changeTreePhotos').addEventListener('click', function () { showTree(activeTree); });
+    $('editTree').addEventListener('click', function () { $('treeComplete').hidden = true; $('landmarkStep').hidden = false; activeLeaf = 0; showLeaf(); });
+    $('addTree').addEventListener('click', function () { if (activeTree < trees.length - 1 || trees.length < 5) showTree(activeTree + 1); });
+    $('finishTrees').addEventListener('click', function () {
+      if (trees.length < 2 || trees.some(function (t) { return !t.complete; })) return;
+      var summary = $('submissionSummary'); summary.replaceChildren(); trees.forEach(function (tree, i) { var row = document.createElement('p'); row.textContent = 'Берёза ' + (i + 1) + ': ' + tree.files.length + ' листьев, разметка готова'; summary.appendChild(row); }); setStage('finish');
+    });
+    $('backToTrees').addEventListener('click', function () { showTree(0); });
+    $('downloadDraft').addEventListener('click', async function () { this.disabled = true; try { await EcoPdf.download(draft()); } catch (_) { error('Не удалось подготовить PDF. Попробуйте ещё раз'); } finally { this.disabled = false; } });
+    form.querySelectorAll('[name="sourceMode"]').forEach(function (radio) { radio.addEventListener('change', function () { $('obektNablyudeniyaGruppa').hidden = !objectMode(); $('obektNablyudeniya').required = objectMode(); }); });
+    $('koordinatyNablyudeniya').addEventListener('change', function () { var p = coordinates(); if (p) { setCoordinates(p); if (map) map.setCenter(p, 16); } });
+    $('useLocation').addEventListener('click', function () {
+      if (!navigator.geolocation) return error('Геолокация недоступна. Введите координаты вручную');
+      navigator.geolocation.getCurrentPosition(function (p) { device = { deviceLatitude: p.coords.latitude, deviceLongitude: p.coords.longitude, gpsAccuracyM: p.coords.accuracy }; setCoordinates([p.coords.latitude, p.coords.longitude]); if (map) map.setCenter([p.coords.latitude, p.coords.longitude], 16); }, function () { error('Местоположение не получено. Выберите точку вручную'); }, { timeout: 10000, enableHighAccuracy: true });
+    });
+    $('obektNablyudeniya').addEventListener('change', function () {
+      var obj = selectedObject(); if (!obj) return;
+      $('obektNablyudeniyaOpisanie').textContent = [obj.description, obj.addressHint, obj.dueDate ? 'До ' + obj.dueDate : ''].filter(Boolean).join('. ');
+      if (!$('nazvanieNablyudeniya').value) $('nazvanieNablyudeniya').value = obj.title; if (!$('mestoNablyudeniya').value) $('mestoNablyudeniya').value = obj.addressHint || '';
+      if (map) { if (boundaryShape) map.geoObjects.remove(boundaryShape); if (obj.boundary && obj.boundary.length) { boundaryShape = new ymaps.Polygon([obj.boundary.concat([obj.boundary[0]])], {}, { fillColor: '#e8b0c244', strokeColor: '#783e53', strokeWidth: 3 }); map.geoObjects.add(boundaryShape); map.setBounds(boundaryShape.geometry.getBounds(), { checkZoomRange: true, zoomMargin: 30 }); } else if (obj.centerLat != null && obj.centerLng != null) map.setCenter([obj.centerLat, obj.centerLng], 16); }
+    });
+    form.addEventListener('input', function () { dirty = true; });
+    window.addEventListener('beforeunload', function (event) { if (dirty) { event.preventDefault(); event.returnValue = ''; } });
     form.addEventListener('submit', async function (event) {
-      event.preventDefault();
-      showError('');
-      photoError.hidden = true;
-
-      var checks = document.querySelectorAll('.checklist-input');
-      var allChecked = Array.from(checks).every(function (checkbox) { return checkbox.checked; });
-      document.getElementById('checklistError').hidden = allChecked;
-      if (!allChecked) return;
-      if (!form.checkValidity()) {
-        showError('Заполните все обязательные поля паспорта территории и дерева.');
-        form.reportValidity();
-        return;
-      }
-
-      var sourceMode = selectedSourceMode();
-      var object = sourceMode === 'object' ? selectedObject() : null;
-      if (sourceMode === 'object' && !object) {
-        showError('Выберите объект, открытый или назначенный куратором.');
-        return;
-      }
-      var coordinates = coordinatesInput.value.trim();
-      if (!validCoordinates(coordinates)) {
-        showError('Выберите местоположение дерева нажатием на карту.');
-        document.getElementById('kartaVyborKoordinat').scrollIntoView({ behavior: 'smooth', block: 'center' });
-        return;
-      }
-      if (dateInput.value > localToday) {
-        showError('Дата сбора не может быть в будущем.');
-        return;
-      }
-      var treeData=readTrees();
-      if (treeData.length<2||treeData.length>4||treeData.some(function(tree){return !tree.treePhoto||tree.files.length<10||tree.files.length>30;})) {
-        photoError.textContent = 'Нужно 2–4 дерева: одно обзорное фото и 10–30 отдельных фотографий листьев для каждого.';
-        photoError.hidden = false;
-        return;
-      }
-      if (landmarkSets.length !== selectedFiles.length || landmarkSets.some(function(set){return Object.keys(set).length!==12;})) { showError('Поставьте 12 контрольных точек на каждом листе.'); document.getElementById('landmarkStep').scrollIntoView({behavior:'smooth'}); return; }
-      await Promise.all(treeData.map(function(tree){return tree.treePhoto;}).concat(selectedFiles).map(prepareMeta));
-      if (selectedFiles.some(function(file){return !file._ecoMeta.precheck.backgroundLight||!file._ecoMeta.precheck.readable;})) { showError('Часть фотографий не прошла проверку фона или разрешения. Замените их перед отправкой.'); return; }
-
+      event.preventDefault(); if (stage !== 'finish' || busy) return;
+      var checks = Array.from(form.querySelectorAll('.checklist-input'));
+      if (!checks.every(function (input) { return input.checked; })) { $('checklistError').hidden = false; return; }
+      $('checklistError').hidden = true;
+      if (!pointValid() || trees.length < 2 || trees.length > 5 || trees.some(function (t) { return !t.complete; })) return error('Проверьте место и завершите разметку каждого дерева');
+      var button = form.querySelector('[type="submit"]'); busy = true; button.disabled = true; button.textContent = 'Загружаем фотографии…'; error('');
       try {
-        setBusy(true, 'Загружаем фотографии…');
-        var uploaded = await EcoAuth.uploadObservationPhotos(treeData);
-        var uploadedTrees=uploaded.trees.map(function(tree,index){return Object.assign({},tree,{
-          treeCondition:treeData[index].treeCondition,
-          trunkDiameterCm:treeData[index].trunkDiameterCm,
-          treeHeightEstimateM:treeData[index].treeHeightEstimateM,
-          treeDamageNotes:treeData[index].treeDamageNotes
-        });});
-        setBusy(true, 'Сохраняем паспорт точки…');
-        var parts = coordinates.split(',').map(Number);
-        var request = await EcoAuth.createRequest({
-          title: document.getElementById('nazvanieNablyudeniya').value.trim(),
-          location: document.getElementById('mestoNablyudeniya').value.trim(),
-          coordinates: coordinates,
-          latitude: parts[0],
-          longitude: parts[1],
-          collectionDate: dateInput.value,
-          comment: document.getElementById('kommentariyNablyudeniya').value.trim(),
-          files: uploaded.files,
-          treePhoto: uploaded.treePhoto,
-          trees: uploadedTrees,
-          treeCount: uploadedTrees.length,
-          leafCount: selectedFiles.length,
-          sourceType: object ? (object.assigned ? 'assigned_object' : 'open_object') : 'own',
-          organizationId: object?.organizationId || null,
-          projectId: object?.projectId || null,
-          objectId: object?.id || null,
-          territoryType: document.getElementById('tipTerritorii').value,
-          landUse: document.getElementById('tipTerritorii').value,
-          nearbySources: document.getElementById('istochnikiVozdeystviya').value.trim(),
-          roadDistanceM: document.getElementById('rasstoyanieDoroga').value,
-          trafficIntensity: document.getElementById('intensivnostDvizheniya').value,
-          surfaceCover: document.getElementById('tipPokrytiya').value,
-          weatherConditions: document.getElementById('pogodaNablyudeniya').value.trim(),
-          treeSpecies: document.getElementById('vidDereva').value,
-          trunkDiameterCm: treeData[0].trunkDiameterCm,
-          treeHeightEstimateM: treeData[0].treeHeightEstimateM,
-          treeCondition: treeData[0].treeCondition,
-          treeDamageNotes: treeData[0].treeDamageNotes,
-          backgroundFlags: uploaded.files.map(function (file) { return file.bgLight; })
-          ,participantChecklist: Array.from(checks).map(function(box){return box.checked;})
-          ,landmarks: landmarkSets.map(function(points,index){var meta=selectedFiles[index]._ecoMeta||{};return {points:points,fileHash:meta.sha256||'',fileName:selectedFiles[index].name,imageWidth:meta.imageWidth||1,imageHeight:meta.imageHeight||1,treeIndex:selectedFiles[index]._ecoTreeIndex};})
-          ,photoPrecheck: { passed: true, checked: selectedFiles.length, method: 'background-and-resolution-v1' }
-          ,integrityCode: integrityCode
-          ,capturedAt: new Date().toISOString()
-          ,deviceLatitude: devicePosition.deviceLatitude
-          ,deviceLongitude: devicePosition.deviceLongitude
-          ,gpsAccuracyM: devicePosition.gpsAccuracyM
-        });
-        sessionStorage.setItem('eco-last-request-id', request.id);
-        location.href = 'my-requests.html';
-      } catch (error) {
-        var messages = {
-          PHOTO_UPLOAD_FAILED: 'Не удалось загрузить фотографии в Supabase Storage.',
-          EDUCATION_REQUIRED: 'Сессия обучения не подтверждена. Вернитесь в личный кабинет.',
-          OBJECT_NOT_AVAILABLE: 'Выбранный объект уже закрыт или недоступен.',
-          REQUESTS_API_FAILED: 'Сервер не смог сохранить заявку. Проверьте, что в Supabase по порядку выполнены миграции 005, 006 и 007.'
-        };
-        showError(messages[error.message] || 'Не удалось сохранить заявку: ' + (error.message || 'неизвестная ошибка'));
-        setBusy(false);
-      }
+        var treeData = trees.map(function (tree) { var out = { treePhoto: tree.treePhoto, files: tree.files }; tree.block.querySelectorAll('[data-field]').forEach(function (field) { out[field.dataset.field] = field.value; }); return out; });
+        var upload = await EcoAuth.uploadObservationPhotos(treeData), uploadedTrees = upload.trees.map(function (item, i) { return Object.assign({}, treeData[i], item); });
+        var obj = objectMode() && selectedObject(), coord = coordinates(); button.textContent = 'Сохраняем заявку…';
+        var payload = { title: $('nazvanieNablyudeniya').value.trim(), location: $('mestoNablyudeniya').value.trim(), coordinates: coord.join(', '), latitude: coord[0], longitude: coord[1], collectionDate: $('dataSbora').value, comment: $('kommentariyNablyudeniya').value.trim(), files: upload.files, treePhoto: upload.treePhoto, trees: uploadedTrees, treeCount: trees.length, leafCount: upload.files.length, sourceType: obj ? (obj.assigned ? 'assigned_object' : 'open_object') : 'own', objectId: obj ? obj.id : null, territoryType: $('tipTerritorii').value, landUse: $('tipTerritorii').value, nearbySources: $('istochnikiVozdeystviya').value.trim(), roadDistanceM: $('rasstoyanieDoroga').value, trafficIntensity: $('intensivnostDvizheniya').value, surfaceCover: $('tipPokrytiya').value, weatherConditions: $('pogodaNablyudeniya').value.trim(), treeSpecies: 'Берёза повислая', trunkDiameterCm: treeData[0].trunkDiameterCm, treeHeightEstimateM: treeData[0].treeHeightEstimateM, treeCondition: treeData[0].treeCondition, treeDamageNotes: treeData[0].treeDamageNotes, participantChecklist: checks.map(function () { return true; }), landmarks: allLandmarks(), photoPrecheck: { passed: true, checked: upload.files.length, method: 'background-resolution-v2' }, integrityCode: code, capturedAt: new Date().toISOString() };
+        Object.assign(payload, device);
+        var result = await EcoAuth.createRequest(payload); dirty = false; sessionStorage.removeItem('eco-field-code'); sessionStorage.setItem('eco-last-request-id', result.id); location.href = 'my-requests.html';
+      } catch (e) { var messages = { RATE_LIMITED: 'Достигнут лимит отправок. Не закрывайте вкладку и попробуйте позже', DUPLICATE_PHOTO: 'Эта фотография уже отправлялась. Используйте новые снимки', OUTSIDE_ASSIGNED_TERRITORY: 'Точка находится вне территории куратора', INVALID_PHOTO_UPLOAD: 'Не все фотографии загрузились. Повторите отправку', AUTH_REQUIRED: 'Сессия закончилась. Войдите снова, сохранив вкладку с заявкой', REQUESTS_API_FAILED: 'Не удалось сохранить заявку. Попробуйте позже или сообщите через обратную связь' }; error(messages[e.message] || 'Не удалось отправить заявку. Проверьте соединение и попробуйте ещё раз'); }
+      finally { busy = false; button.disabled = false; button.textContent = 'Отправить точку на проверку'; }
     });
-
-    createCoordinatePicker();
-    await loadParticipationContext();
+    if (typeof ymaps !== 'undefined') ymaps.ready(function () { map = new ymaps.Map('kartaVyborKoordinat', { center: [59.378, 28.612], zoom: 13, controls: ['zoomControl'] }); map.events.add('click', function (event) { setCoordinates(event.get('coords')); }); });
+    else $('kartaVyborStatus').textContent = 'Карта не загрузилась. Координаты можно ввести ниже';
+    try { context = await EcoAuth.getParticipationContext(); (context.objects || []).forEach(function (obj) { $('obektNablyudeniya').add(new Option(obj.title, obj.id)); }); }
+    catch (_) { $('obektNablyudeniyaOpisanie').textContent = 'Задания пока недоступны. Свою точку можно добавить'; }
   });
 })();

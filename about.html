@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 
 <html lang="ru">
 <head>
@@ -11,11 +11,10 @@
 <link href="css/components.css" rel="stylesheet"/>
 <link href="css/info.css" rel="stylesheet"/>
 <script src="js/theme.js"></script>
-</head>
-<body>
+<link href="css/refresh.css" rel="stylesheet"/></head>
+<body><a class="skip-link" href="#mainContent">К содержанию</a>
 <div aria-hidden="true" class="kursor" data-component="kursor"></div>
 <div aria-hidden="true" class="nastroiki-fon" id="nastroikiFon"></div>
-
 <header class="shapka" data-component="shapka">
 <a aria-label="ЭкоБиоМониторинг, на главную" class="shapka-logo" href="index.html">
 <span class="shapka-logo__nazvanie"><span class="shapka-logo__bukva">Э</span><span class="shapka-logo__bukva">к</span><img alt="" aria-hidden="true" class="shapka-logo__list shapka-logo__list--1" src="img/leaf1.png"/><span class="shapka-logo__bukva">Б</span><span class="shapka-logo__bukva">и</span><img alt="" aria-hidden="true" class="shapka-logo__list shapka-logo__list--2" src="img/leaf2.png"/><span class="shapka-logo__bukva">М</span><span class="shapka-logo__bukva">о</span><span class="shapka-logo__bukva">н</span><span class="shapka-logo__bukva">и</span><span class="shapka-logo__bukva">т</span><span class="shapka-logo__bukva">о</span><span class="shapka-logo__bukva">р</span><span class="shapka-logo__bukva">и</span><span class="shapka-logo__bukva">н</span><span class="shapka-logo__bukva">г</span></span>
@@ -25,7 +24,6 @@
 <button aria-controls="nastroikiPanel" aria-expanded="false" aria-label="Открыть настройки" class="nastroiki-knopka" id="nastroikiKnopka" type="button"><img alt="" aria-hidden="true" class="nastroiki-knopka__ikona" src="img/icons/gear.png"/><span class="nastroiki-knopka__tekst">Настройки</span></button>
 </div>
 </header>
-
 <aside aria-hidden="true" aria-label="Настройки" class="nastroiki-panel" id="nastroikiPanel">
 <button aria-label="Закрыть настройки" class="nastroiki-zakryt" id="nastroikiZakryt" type="button"><img alt="" aria-hidden="true" src="img/icons/close.png"/><span class="sr-only">Закрыть</span></button>
 <div class="tema-vybor-blok"><p class="tema-podpis">Тема</p><div class="tema-vybor"><button class="tema-knopka" id="temaSvetlaya" type="button"><img alt="" aria-hidden="true" src="img/icons/sun.png"/><span>Светлая</span></button><button class="tema-knopka" id="temaTemnaya" type="button"><img alt="" aria-hidden="true" src="img/icons/moon.png"/><span>Тёмная</span></button></div></div>
@@ -39,10 +37,8 @@
 <a class="nastroiki-ssylka" href="feedback.html">Обратная связь</a>
 </nav>
 </aside>
-
-<main class="info-stranica vnutrennyaya-stranica">
-
-<section class="info-geroy" aria-labelledby="authorTitle">
+<main class="info-stranica vnutrennyaya-stranica" id="mainContent">
+<section aria-labelledby="authorTitle" class="info-geroy">
 <div>
 <h1 id="authorTitle">О проекте и обо мне</h1>
 <blockquote>«Я придумала этот проект, потому что хотела понять, как чувствуют себя деревья на улицах моего города»</blockquote>
@@ -50,48 +46,41 @@
 <p>Я собирала листья берёзы, измеряла их и сравнивала улицы Кингисеппа. Результаты отличались. Тогда появился новый вопрос: сможет ли другой школьник повторить мой маршрут и получить данные, которые можно проверить?</p>
 <p>Так появился «ЭкоБиоМониторинг» — с инструкцией, паспортом территории, проверкой заявок и общей картой. Для меня важно, чтобы за каждой опубликованной цифрой оставались фотография листа, дерево и место сбора.</p>
 </div>
-<figure class="info-portret"><img class="info-foto-avtora" src="img/author-polina.png" alt="Полина Панина, автор проекта"><figcaption>Полина Панина · Кингисепп</figcaption></figure>
+<figure class="info-portret"><img alt="Полина Панина, автор проекта" class="info-foto-avtora" src="img/author-polina.png"/><figcaption>Полина Панина · Кингисепп</figcaption></figure>
 </section>
-
-<section class="info-prizyv" aria-labelledby="helpCityTitle">
+<section class="info-razdel study-context"><h2>Сайт вырос из исследования</h2><p>Сначала я сравнивала участки Кингисеппа. По листьям берёзы рассчитывала флуктуирующую асимметрию, отдельно оценивала транспортную нагрузку. Для сопоставления использовала корреляции Спирмена и Пирсона. Они показывают, как изменяются показатели вместе, но не устанавливают причину различий.</p><p>На карте сохранены 18 точек пилотного исследования. Новые наблюдения проходят проверку и не подменяют исходные результаты. Платформа помогает повторить сбор по единой инструкции, организовать своё исследование и подключить других участников.</p><p>В научном описании используется слово «скрининг»: это предварительный поиск участков, требующих внимания. Сайт называется «мониторинг», потому что рассчитан на повторные наблюдения. Опрос о понятности названия оформляется отдельно; его результаты не заменяют научное определение метода.</p></section><section aria-labelledby="helpCityTitle" class="info-prizyv">
 <div><h2 id="helpCityTitle">Город можно изучать вместе</h2><p>Выбери место, собери листья по инструкции и отправь наблюдение. После проверки оно появится на карте.</p></div>
 <a class="ssylka-svechenie" href="account.html">Хочу помочь</a>
 </section>
-
-<section class="info-razdel info-razdel--image" aria-labelledby="screeningTitle">
+<section aria-labelledby="screeningTitle" class="info-razdel info-razdel--image">
 <div><h2 id="screeningTitle">Как читать карту</h2><p>Карта помогает заметить места, которые стоит исследовать подробнее. Высокое значение ФА — повод посмотреть на условия вокруг дерева, но не диагноз качеству воздуха.</p><p>Все наблюдения проходят по одному маршруту: сбор, фотографирование, разметка и проверка. Поэтому видно не только итоговое число, но и откуда оно взялось.</p></div>
-<figure class="info-territoriya"><img src="img/games/tree-street-edited.webp" alt="Берёза на улице Кингисеппа"><figcaption>Берёза на улице Кингисеппа</figcaption></figure>
+<figure class="info-territoriya"><img alt="Берёза на улице Кингисеппа" src="img/games/tree-street-edited.webp"/><figcaption>Берёза на улице Кингисеппа</figcaption></figure>
 </section>
-
-<section class="info-razdel info-razdel--image info-razdel--reverse" aria-labelledby="birchTitle">
+<section aria-labelledby="birchTitle" class="info-razdel info-razdel--image info-razdel--reverse">
 <div><h2 id="birchTitle">Почему именно берёза</h2><p>Берёза повислая встречается в разных частях Кингисеппа. У её листа удобно сопоставлять левую и правую стороны. Небольшие случайные различия между ними называют флуктуирующей асимметрией, или ФА.</p><p>На форму листа влияет не один фактор. Поэтому отдельное значение ничего не доказывает само по себе. Смысл появляется, когда много листьев собраны по одинаковым правилам и результаты сравнивают между точками.</p></div>
-<img class="info-illyustraciya info-illyustraciya--fa" src="img/home/aktualnost/fa.png" alt="Две стороны листа, которые сравнивают при расчёте ФА">
+<img alt="Две стороны листа, которые сравнивают при расчёте ФА" class="info-illyustraciya info-illyustraciya--fa" src="img/home/aktualnost/fa.png"/>
 </section>
-
-<section class="info-razdel" aria-labelledby="stepsTitle">
+<section aria-labelledby="stepsTitle" class="info-razdel">
 <h2 id="stepsTitle">Как присоединиться</h2>
 <div class="info-shagi">
 <article><h3>Сначала разберись</h3><p>Прочитай методическое пособие и пройди обучение. Там есть фотографии подходящих листьев и короткий тест.</p></article>
-<article><h3>Потом выйди в город</h3><p>Выбери 2–4 берёзы в одной точке, сфотографируй деревья и 10–30 листьев с каждого.</p></article>
+<article><h3>Потом выйди в город</h3><p>Выбери от 2 до 5 берёз в одной точке, сфотографируй деревья и 10–30 листьев с каждого.</p></article>
 <article><h3>Поделись наблюдением</h3><p>Укажи место, добавь снимки и поставь точки на листьях. Модератор проверит разметку и заявку.</p></article>
 </div>
 <a class="info-ssylka" href="education.html">Посмотреть инструкцию</a>
 </section>
-
-<section class="info-razdel info-polza" aria-labelledby="resultTitle">
+<section aria-labelledby="resultTitle" class="info-razdel info-polza">
 <div><h2 id="resultTitle">Что получится в итоге</h2></div>
 <p>Вы увидите весь путь своей заявки: отправку, замечания модератора, расчёт и публикацию. Раздел сертификата откроется после обучения; его скачивание появится после утверждения макета.</p>
 </section>
-
-<section class="info-final" aria-labelledby="finalTitle">
-<h2 id="finalTitle">Начни с одной точки своего города</h2>
+<section aria-labelledby="finalTitle" class="info-final">
+<h2 data-converge-title="" id="finalTitle">Начни с одной точки своего города</h2>
 <p>Можно сразу создать аккаунт или сначала посмотреть, как выглядят уже подтверждённые наблюдения.</p>
 <div class="info-final__deystviya"><a class="info-ssylka" href="account.html">Зарегистрироваться</a><a class="info-ssylka" href="map.html">Смотреть карту</a></div>
 </section>
 </main>
-
 <footer aria-label="Подвал сайта" class="podval" data-component="podval"><div class="podval-vnutri"><span class="podval-nazvanie">ЭкоБиоМониторинг</span><span>Кингисепп</span><span>2025-2026</span></div></footer>
-<script defer src="js/header.js"></script>
-<script defer src="js/cursor.js"></script>
-</body>
+<script defer="" src="js/header.js"></script>
+<script defer="" src="js/cursor.js"></script>
+<script defer="" src="js/refresh.js"></script><script defer="" src="js/assistant.js"></script></body>
 </html>
