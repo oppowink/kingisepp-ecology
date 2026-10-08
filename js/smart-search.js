@@ -54,20 +54,27 @@
     var results = document.getElementById('smartSearchResults');
     if (!input || !button || !results || !Array.isArray(window.ECO_FAQ)) return;
 
-    function run() {
+    async function run() {
+      if (button.disabled) return;
       var query = input.value.trim();
       if (!query) {
         results.innerHTML = '<p class="glavnaya-poisk__net">Введите вопрос, например «сколько нужно листьев».</p>';
         return;
       }
-      var found = searchFaq(query);
-      if (!found.length) {
-        results.innerHTML = '<p class="glavnaya-poisk__net">Точного ответа пока нет. Посмотрите <a href="faq.html">все вопросы</a> или напишите через <a href="feedback.html">обратную связь</a>.</p>';
-        return;
-      }
-      results.innerHTML = found.map(function (item) {
-        return '<article class="glavnaya-poisk__rezultat"><h3>' + escapeHtml(item.question) + '</h3><p>' + escapeHtml(item.answer) + '</p></article>';
-      }).join('');
+      button.disabled = true; button.textContent = 'Ищу ответ…';
+      results.setAttribute('aria-busy', 'true');
+      results.innerHTML = '<p class="glavnaya-poisk__net">Готовлю ответ по материалам проекта…</p>';
+      try {
+        if (window.EcoAssistant) {
+          var response = await window.EcoAssistant.ask(query);
+          results.innerHTML = '<article class="glavnaya-poisk__rezultat"><p class="glavnaya-poisk__source">' + escapeHtml(response.source === 'ai' ? 'Ответ ИИ по проекту' : response.notice || 'Материал справки') + '</p><p class="glavnaya-poisk__answer">' + escapeHtml(response.answer) + '</p></article>';
+        } else {
+          var found = searchFaq(query);
+          results.innerHTML = found.length ? found.map(function (item) { return '<article class="glavnaya-poisk__rezultat"><h3>' + escapeHtml(item.question) + '</h3><p>' + escapeHtml(item.answer) + '</p></article>'; }).join('') : '<p>Ответ не найден. Откройте раздел «Вопросы и ответы».</p>';
+        }
+      } catch (_) { results.textContent = 'Не удалось выполнить поиск. Попробуйте ещё раз.'; }
+      finally { button.disabled = false; button.textContent = 'Найти'; results.removeAttribute('aria-busy'); }
+
     }
 
     button.addEventListener('click', run);

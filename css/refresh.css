@@ -1,0 +1,61 @@
+/* Shared UI: keyboard navigation, project assistant and compact search. */
+.skip-link { position: fixed; top: 8px; left: 12px; z-index: 5000; padding: 12px 18px; background: var(--surface); color: var(--text); border: 2px solid var(--accent); transform: translateY(-180%); }
+.skip-link:focus { transform: translateY(0); }
+.assistant-launcher { position: fixed; right: 24px; bottom: max(22px, env(safe-area-inset-bottom)); z-index: 1100; display: flex; align-items: center; gap: 10px; min-height: 48px; padding: 12px 18px; background: var(--accent); color: var(--surface); border: 1px solid var(--accent); border-radius: 14px; box-shadow: var(--shadow-panel); cursor: pointer; }
+.assistant-launcher svg { width: 24px; height: 24px; flex: 0 0 24px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+html.dark .assistant-launcher { color: var(--bg); }
+.assistant-panel { position: fixed; inset: auto 24px 84px auto; margin: 0; width: min(460px, calc(100vw - 32px)); max-height: min(720px, calc(100dvh - 110px)); padding: 0; border: 1px solid var(--line-strong); border-radius: 18px; background: var(--surface); color: var(--text); box-shadow: 0 16px 60px rgba(0,0,0,.16); font-size: 16px; }
+.assistant-panel:not([open]) { display: none; }
+.assistant-panel[open] { display: flex; flex-direction: column; }
+.assistant-panel::backdrop { background: rgba(16,30,20,.25); }
+.assistant-heading { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 18px 18px 8px; }
+.assistant-heading h2 { font-size: 18px; line-height: 1.4; margin: 0; font-weight: 700; }
+.assistant-heading button { width: 44px; height: 44px; flex: 0 0 44px; background: var(--surface-soft); color: var(--text); border: 0; border-radius: 10px; font-size: 28px; cursor: pointer; }
+.assistant-mode { margin: 0 18px 12px; font-size: 12px; color: var(--text-muted); }
+.assistant-messages { overflow-y: auto; min-height: 100px; max-height: 320px; flex: 1 1 auto; padding: 0 18px; overscroll-behavior: contain; }
+.assistant-message { padding: 12px 14px; margin: 0 0 12px; line-height: 1.65; border-radius: 12px; white-space: pre-wrap; overflow-wrap: anywhere; background: var(--surface-soft); }
+.assistant-message--user { background: var(--rose-soft); margin-left: 28px; }
+.assistant-message--notice { border: 1px solid var(--line); font-size: 13px; color: var(--text-muted); }
+.assistant-suggestions { display: flex; gap: 6px; flex-wrap: wrap; padding: 0 18px 12px; }
+.assistant-suggestions button { min-height: 40px; padding: 7px 10px; background: var(--surface); border: 1px solid var(--line-strong); color: var(--text); border-radius: 8px; font-size: 12px; cursor: pointer; }
+.assistant-panel form { display: grid; gap: 8px; padding: 14px 18px 18px; border-top: 1px solid var(--line); background: var(--surface); }
+.assistant-panel label { font-size: 13px; font-weight: 600; }
+.assistant-panel textarea { display: block; width: 100%; min-height: 64px; max-height: 140px; padding: 10px 12px; resize: vertical; background: var(--input); color: var(--text); border: 1px solid var(--line-strong); border-radius: 8px; font-size: 16px; }
+.assistant-panel form > button { min-height: 44px; }
+.assistant-hint { font-size: 11px; line-height: 1.5; color: var(--text-muted); margin: 0; }
+.assistant-selection { margin: 0 18px 10px; padding: 10px; border: 1px solid var(--line); border-radius: 8px; }
+.assistant-selection button, .assistant-wand { background: transparent; color: var(--text-muted); border: 0; text-decoration: underline; font-size: 12px; min-height: 40px; cursor: pointer; }
+.assistant-wand { align-self: flex-start; margin: 0 18px; }
+.assistant-consent { display: flex; align-items: flex-start; gap: 8px; line-height: 1.4; }
+.assistant-consent input { width: 20px; height: 20px; flex: 0 0 20px; }
+.assistant-select-hint { position: fixed; z-index: 4000; inset: auto 16px 20px; margin: auto; max-width: 560px; padding: 12px 16px; background: var(--surface); color: var(--text); border: 2px solid var(--accent); box-shadow: var(--shadow-panel); }
+.assistant-select-hint button { min-height: 44px; margin-left: 12px; }
+.assistant-highlight { outline: 3px solid var(--accent) !important; outline-offset: 5px; }
+.glavnaya-poisk__source { color: var(--text-muted); font-size: 12px; margin: 0 0 8px; }
+.glavnaya-poisk__answer { white-space: pre-wrap; overflow-wrap: anywhere; }
+.glavnaya-poisk__stroka button:disabled, .assistant-panel button:disabled { opacity: .65; cursor: wait; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+@media (max-width: 600px) {
+  .assistant-launcher { right: 14px; bottom: max(14px, env(safe-area-inset-bottom)); padding: 10px 14px; font-size: 14px; }
+  .assistant-panel { inset: auto 8px max(8px, env(safe-area-inset-bottom)) 8px; width: calc(100vw - 16px); max-height: calc(100dvh - 24px); }
+  .assistant-messages { max-height: 34dvh; }
+  .assistant-heading { padding-top: 12px; }
+  .assistant-panel form { padding-bottom: max(16px, env(safe-area-inset-bottom)); }
+  .glavnaya-poisk__stroka { display: flex; flex-direction: column; gap: 10px; }
+}
+.workflow { width: min(1180px, calc(100% - 48px)); margin: 0 auto 80px; padding: 32px 0; }
+.workflow h2 { margin: 0 0 28px; font-family: var(--font-heading); font-size: clamp(1.3rem, 2.5vw, 2rem); font-weight: 500; }
+.workflow-steps { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 26px; padding: 0; list-style: none; }
+.workflow-steps li { padding-top: 16px; border-top: 2px solid var(--line-strong); }
+.workflow-steps li > span { color: var(--rose-ink); font-size: 13px; }
+.workflow-steps h3 { font-size: 17px; margin: 10px 0; }
+.workflow-steps p { margin: 0; color: var(--text-muted); font-size: 15px; line-height: 1.7; }
+.workflow-note { color: var(--text-muted); font-size: 14px; margin: 24px 0; }
+@media (max-width: 800px) { .workflow-steps { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 600px) {
+  .workflow { width: calc(100% - 34px); margin-bottom: 32px; }
+  .workflow-steps { grid-template-columns: 1fr; gap: 22px; }
+  .glavnaya-scena, .glavnaya-scena--poslednyaya { height: auto; min-height: 0; padding: 26px 0; }
+  .glavnaya-scena__lipkaya { position: relative; top: auto; height: auto; min-height: 0; overflow: visible; }
+  .glavnaya-blok { min-height: 0; }
+}

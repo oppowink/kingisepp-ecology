@@ -68,7 +68,7 @@ function splitCoordinates(value) {
 
 function cleanFileList(files) {
   if (!Array.isArray(files)) return [];
-  return files.slice(0, 120).map(function (file) {
+  return files.slice(0, 150).map(function (file) {
     return {
       name: safeText(file.name, 180), size: Number(file.size || 0), type: safeText(file.type, 80),
       bgLight: file.bgLight === true ? true : file.bgLight === false ? false : null,
@@ -169,7 +169,7 @@ async function handleCreate(req, res, admin, body) {
   if (currentUser.role !== 'participant') throw new Error('PARTICIPANT_REQUIRED');
   if (!await hasPassedCourse(admin, currentUser.id, 'participant')) throw new Error('EDUCATION_REQUIRED');
 
-  if (!Array.isArray(body.trees) || body.trees.length < 2 || body.trees.length > 4) throw new Error('TREE_COUNT_REQUIRED');
+  if (!Array.isArray(body.trees) || body.trees.length < 2 || body.trees.length > 5) throw new Error('TREE_COUNT_REQUIRED');
   const trees = body.trees.map(function (tree) {
     return { treePhoto: cleanPhoto(tree.treePhoto), files: cleanFileList(tree.files),
       treeCondition: safeText(tree.treeCondition, 100), trunkDiameterCm: Number(tree.trunkDiameterCm),
@@ -177,7 +177,7 @@ async function handleCreate(req, res, admin, body) {
   });
   const files = trees.flatMap(function (tree) { return tree.files; });
   const treePhoto = trees[0] && trees[0].treePhoto;
-  const landmarks = cleanLandmarkSets(body.landmarks, 120);
+  const landmarks = cleanLandmarkSets(body.landmarks, 150);
   const coordinates = safeText(body.coordinates, 80);
   const parsedCoordinates = splitCoordinates(coordinates);
   const sourceType = SOURCE_TYPES.has(body.sourceType) ? body.sourceType : 'own';
@@ -229,19 +229,19 @@ async function handleCreate(req, res, admin, body) {
     treeSpecies: safeText(body.treeSpecies, 100) || 'Берёза повислая',
     trunkDiameterCm: body.trunkDiameterCm, treeHeightEstimateM: body.treeHeightEstimateM,
     treeCondition: safeText(body.treeCondition, 100), treeDamageNotes: safeText(body.treeDamageNotes, 1000),
-    backgroundFlags: Array.isArray(body.backgroundFlags) ? body.backgroundFlags.slice(0, 120) : [],
+    backgroundFlags: Array.isArray(body.backgroundFlags) ? body.backgroundFlags.slice(0, 150) : [],
     participantChecklist: Array.isArray(body.participantChecklist) ? body.participantChecklist.slice(0, 12).map(Boolean) : [],
     landmarks: landmarks, leafHashes: leafHashes,
     photoPrecheck: body.photoPrecheck && typeof body.photoPrecheck === 'object' ? body.photoPrecheck : {},
     integrityCode: safeText(body.integrityCode, 20).toUpperCase(), capturedAt: body.capturedAt || new Date().toISOString(),
     gpsAccuracyM: body.gpsAccuracyM, deviceLatitude: deviceLatitude, deviceLongitude: deviceLongitude,
     integrityFlags: integrityFlags,
-    aiResult: body.aiResult || null
+    aiResult: null
   };
 
   if (!payload.title || !payload.location || !payload.coordinates || !payload.collectionDate) throw new Error('REQUIRED_FIELDS_MISSING');
   if (!validCoordinates(payload.coordinates)) throw new Error('INVALID_COORDINATES');
-  if (trees.length < 2 || trees.length > 4) throw new Error('TREE_COUNT_REQUIRED');
+  if (trees.length < 2 || trees.length > 5) throw new Error('TREE_COUNT_REQUIRED');
   if (trees.some(function (tree) { return !tree.treePhoto || tree.files.length < 10 || tree.files.length > 30; })) throw new Error('PHOTO_COUNT_REQUIRED');
   if (photos.some(function (photo) { return !photo.file.path.startsWith(currentUser.id + '/') || !photo.file.sha256; })) throw new Error('INVALID_PHOTO_REFERENCE');
   if (files.some(function (file) { return file.bgLight !== true || file.imageWidth < 500 || file.imageHeight < 500; })) throw new Error('PHOTO_PRECHECK_REQUIRED');
@@ -296,7 +296,7 @@ async function requireModerator(req, admin) {
 
 async function handleSaveLandmarks(req, res, admin, body) {
   const user = await requireModerator(req, admin); const id = safeText(body.id, 80);
-  const landmarks = cleanLandmarkSets(body.landmarks, 120);
+  const landmarks = cleanLandmarkSets(body.landmarks, 150);
   if (!id) throw new Error('REQUEST_ID_REQUIRED');
   if (!landmarks.length || landmarks.some(function (set) { return !isCompleteSet(set); })) throw new Error('LANDMARKS_REQUIRED');
   const original = await requests(admin).select('files,trees').eq('id', id).maybeSingle();
@@ -319,7 +319,7 @@ async function handleStartAnalysis(req, res, admin, body) {
   const found = await requests(admin).select('*').eq('id', id).maybeSingle();
   if (found.error) throw found.error; if (!found.data) throw new Error('REQUEST_NOT_FOUND');
   if (found.data.human_status !== 'approved') throw new Error('HUMAN_APPROVAL_REQUIRED');
-  const landmarks = cleanLandmarkSets(found.data.landmarks, 120);
+  const landmarks = cleanLandmarkSets(found.data.landmarks, 150);
   if (!landmarks.length || landmarks.some(function (set) { return !isCompleteSet(set); })) throw new Error('LANDMARKS_REQUIRED');
   if (landmarks.length !== Number(found.data.leaf_count)) throw new Error('LANDMARKS_REQUIRED');
   const now = new Date().toISOString();

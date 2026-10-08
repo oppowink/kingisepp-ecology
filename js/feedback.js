@@ -105,8 +105,8 @@
       var type = document.getElementById('svyazTip').value;
       var text = document.getElementById('svyazTekst').value.trim();
 
-      if (!text) {
-        showMessage('Напишите сообщение', 'error');
+      if (text.length < 3 || text.length > 3000) {
+        showMessage('Напишите сообщение от 3 до 3000 символов', 'error');
         document.getElementById('svyazTekst').focus();
         return;
       }
@@ -126,7 +126,7 @@
           page_url: location.href,
           user_agent: navigator.userAgent
         };
-        var response = await fetch('/api/requests/list', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(Object.assign({ action: 'feedback' }, payload)) });
+        var response = await fetch(String(window.ECO_API_BASE || (location.hostname === 'oppowink.github.io' ? 'https://kingisepp-ecology.vercel.app' : '')).replace(/\/$/, '') + '/api/feedback', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
         if (!response.ok) throw new Error(response.status === 429 ? 'RATE_LIMITED' : 'FEEDBACK_UNAVAILABLE');
         form.reset();
         if (topicInput && topicText && topicOptions.length) {
