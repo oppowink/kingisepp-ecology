@@ -1,0 +1,21 @@
+{
+  "dataset_total": 2160,
+  "class_counts": {
+    "birch_normal": 1080,
+    "birch_damaged": 540,
+    "other_species": 540
+  },
+  "split_counts": {
+    "train": 895,
+    "validation": 191,
+    "test": 194
+  },
+  "test_loss": 0.027037203311920166,
+  "test_accuracy": 0.9845361113548279,
+  "macro_precision": 0.9421296296296297,
+  "macro_recall": 0.9938650306748467,
+  "macro_f1": 0.966543493458504,
+  "weighted_f1": 0.984850622026417,
+  "selected_stage": "fine_tuning",
+  "seed": 42
+}

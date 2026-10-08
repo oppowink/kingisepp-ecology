@@ -26,8 +26,8 @@ test('request FA reports leaf count and positive asymmetry', function () {
   const result = calculateRequestFa([first, second]);
   assert.equal(result.validLeafCount, 2);
   assert.ok(result.meanFa > 0);
-  assert.equal(result.engine, 'landmark-fa-v2');
-  assert.equal(result.leaves[1].fa, Number((result.leaves[1].traits.width / 5).toFixed(6)));
+  assert.equal(result.engine, 'landmark-fa-v3');
+  assert.ok(Math.abs(result.leaves[1].fa - result.leaves[1].traits.width / 5) < 1e-6);
 });
 
 test('all five pairs contribute to the leaf result', function () {
@@ -40,5 +40,15 @@ test('all five pairs contribute to the leaf result', function () {
   assert.ok(result.traits.bases > 0);
   assert.ok(result.traits.ends > 0);
   assert.ok(result.traits.angle > 0);
-  assert.equal(result.fa, Number((Object.values(result.traits).reduce((a,b)=>a+b,0)/5).toFixed(6)));
+  assert.ok(Math.abs(result.fa - Object.values(result.traits).reduce((a,b)=>a+b,0)/5) < 1e-6);
+});
+
+
+test('FA keeps all 150 leaves and rejects invalid geometry instead of dropping it', function () {
+  const leaves = Array.from({length: 150}, (_, i) => Object.assign(symmetricLeaf(), {treeIndex: Math.floor(i/30)}));
+  const result = calculateRequestFa(leaves);
+  assert.equal(result.validLeafCount, 150);
+  assert.equal(result.trees.length, 5);
+  leaves[149].points.apex = leaves[149].points.base;
+  assert.throws(() => calculateRequestFa(leaves), /INVALID_LANDMARK_GEOMETRY/);
 });

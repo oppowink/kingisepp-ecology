@@ -7,7 +7,7 @@
 <meta content="ЭкоБиоМониторинг - платформа гражданского экологического мониторинга малых городов на основе биоиндикации и флуктуирующей асимметрии листьев берёзы" name="description"/>
 <meta content="экологический мониторинг, биоиндикация, флуктуирующая асимметрия, берёза повислая, Кингисепп, гражданская наука, малые города" name="keywords"/>
 <meta content="ЭкоБиоМониторинг - экологический скрининг малых городов" property="og:title"/>
-<meta content="Платформа для оценки загрязнения воздуха по флуктуирующей асимметрии листьев берёзы с автоматизированным анализом и картой мониторинга." property="og:description"/>
+<meta content="Платформа для сбора наблюдений, расчёта асимметрии листьев берёзы и сравнения исследовательских участков на карте." property="og:description"/>
 <meta content="https://oppowink.github.io/kingisepp-ecology/img/brand/og-image.png" property="og:image"/>
 <meta content="https://oppowink.github.io/kingisepp-ecology/" property="og:url"/>
 <meta content="website" property="og:type"/>
@@ -82,6 +82,16 @@
 <h1 id="glavnayaZagolovok">ЭкоБиоМониторинг малых городов</h1>
 <p>Мы собираем фотографии листьев берёзы, проверяем их и показываем результаты наблюдений на карте города</p>
 </div>
+</section>
+<section class="workflow" aria-labelledby="workflowTitle">
+<h2 id="workflowTitle">От листа до точки на карте</h2>
+<ol class="workflow-steps">
+<li><span>01</span><h3>Подготовка</h3><p>Пройдите обучение, выберите место и соберите листья по методике.</p></li>
+<li><span>02</span><h3>Фотографии и разметка</h3><p>Загрузите паспорт и снимки. Поставьте 12 ориентиров на каждом листе.</p></li>
+<li><span>03</span><h3>Проверка и расчёт</h3><p>Модератор проверит материалы. Программа рассчитает ФА по пяти признакам.</p></li>
+<li><span>04</span><h3>Публикация</h3><p>После итоговой проверки наблюдение появится на карте.</p></li>
+</ol><p class="workflow-note">ФА помогает сравнивать участки. Она не является прямым измерением загрязнения воздуха.</p>
+<a class="knopka-osnovnaya" href="education.html">Разобраться в методике</a> <a class="knopka-osnovnaya" href="classifier.html">Проверить лист нейросетью</a>
 </section>
 <section class="glavnaya-scena" data-scena="aktualnost">
 <div class="glavnaya-scena__lipkaya">
@@ -158,7 +168,7 @@
 <div class="glavnaya-scena__lipkaya">
 <div class="glavnaya-blok glavnaya-blok-poisk">
 <h2>Поиск по проекту</h2>
-<p>Найди нужное в справке или задай вопрос помощнику. Кнопка «Спросить» всегда рядом. В ней можно выбрать текст или фото на странице и уточнить, что они означают.</p>
+<p>Задайте вопрос своими словами — помощник объяснит методику, результаты или работу платформы. Для уточняющих вопросов откройте чат кнопкой «Помощник».</p>
 <div class="glavnaya-poisk">
 <div class="glavnaya-poisk__stroka"><input aria-label="Вопрос о проекте" autocomplete="off" class="pole-vvod" id="smartSearchInput" placeholder="Например: сколько нужно листьев?" type="search"/><button class="knopka-osnovnaya" id="smartSearchButton" type="button">Найти</button></div>
 <div aria-live="polite" class="glavnaya-poisk__rezultaty" id="smartSearchResults"></div>

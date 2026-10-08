@@ -46,8 +46,7 @@ begin
     join pg_namespace nsp on nsp.oid = rel.relnamespace
     where nsp.nspname = 'public' and rel.relname = 'monitoring_requests'
       and con.contype = 'c' and (
-        pg_get_constraintdef(con.oid) ilike '%status in%'
-        or pg_get_constraintdef(con.oid) ilike '%ai_status%'
+        pg_get_constraintdef(con.oid) ~* '\m(status|human_status|ai_status)\M'
       )
   loop execute format('alter table public.monitoring_requests drop constraint %I', constraint_name); end loop;
 end $$;

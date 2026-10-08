@@ -1,146 +1,35 @@
-Изменения по сравнению с архивом EcoBioMonitoring_full_2026-09-21(1).zip
-Дата финальной сборки: 22 сентября 2026 года
+Исправления 08.10.2026
 
-Что вошло в доработку
-
-- Единая шапка, сетка, палитра, боковые листья и состояния кнопок на всех страницах.
-- Переработаны страницы «Обо мне», «Вопросы и ответы», «Обратная связь», главная и словарь.
-- Полностью переоформлены три игры; добавлены обработанные фотографии листьев и деревьев, новая дорога и контейнеры.
-- Переработаны личные кабинеты ролей, приветствие, обучение по одному экрану, тесты и ролевые чек-листы.
-- Куратор создаёт организацию и получает код; участник присоединяется по коду; объекты и участники выводятся в кабинете.
-- Для заявки реализованы 2–4 дерева, 10–30 листьев на дерево, паспорт, проверки целостности и ручная расстановка 12 точек.
-- Расширена модерация: паспорт, фотографии, контроль точек, возврат/отклонение с причиной, расчёт ФА и финальная публикация.
-- Добавлена загрузка встроенных исследовательских точек на карту без фиктивных заявок.
-- Добавлен план анализа для Бланда–Альтмана и корреляции участков 3–18.
-- Пояснена миграция Supabase 005 и порядок применения миграций 001–007.
-
-Изменены
-
-CHANGED_FILES.txt
-DELETE_THESE_FILES.txt
-README.md
-about.html
-account.html
-api/education/complete.js
-api/education/status.js
-api/requests/list.js
-css/auth.css
-css/components.css
-css/curator.css
-css/education.css
-css/faq.css
-css/feedback.css
-css/games.css
-css/home.css
-css/info.css
-css/moderator.css
-css/my-requests.css
-css/review.css
-css/submit.css
-css/variables.css
-curator.html
-docs/curator-method-guide.docx
-docs/curator-method-guide.pdf
-docs/moderator-course.md
-docs/moderator-method-guide.docx
-docs/moderator-method-guide.pdf
-docs/volunteer-method-guide.md
-docs/volunteer-method-guide.pdf
-education-curator.html
-education-moderator.html
-education.html
-faq.html
-feedback.html
-games.html
 index.html
-js/account.js
-js/auth.js
-js/course-data.js
-js/course.js
-js/curator.js
-js/faq-data.js
-js/games.js
-js/glossary.js
-js/header.js
-js/map.js
-js/moderator.js
-js/review.js
-js/submit.js
-moderator.html
-my-requests.html
-review.html
-server/fa-analysis.js
-server/participation.js
-server/requests.js
-submit.html
-tests/auth.test.js
+css/refresh.css — новый общий стиль, которого не было в исходном архиве
+js/refresh.js — удалены случайные изображения возле заголовков
+js/assistant.js — чат и вызов GPT через сервер
+js/smart-search.js — поиск с ИИ и честной справкой при недоступности
+js/faq-data.js — согласована формулировка количества деревьев
+js/feedback.js — исправлен маршрут обратной связи
+api/assistant.js — новый маршрут помощника
+api/feedback.js — новый маршрут обратной связи
+api/requests/list.js — согласованы 5 деревьев и 150 листьев, результат участника не принимается
+server/project-assistant.js — GPT-совместимый адаптер из старого проекта и текущие знания
+server/feedback.js — проверка обратной связи
+server/fa-analysis.js — общий с браузером модуль ФА
+supabase/006_training_landmarks_and_integrity.sql — исправление ограничений для новой базы
+supabase/008_status_constraints_repair.sql — исправление существующей базы
+data/assistant-knowledge.json — актуальные материалы для ответов
+.env.example
+README.md
+qa/database.cjs — проверка имеющихся миграций вместо отсутствующих функций
+tests/assistant.test.js
+tests/feedback.test.js
+tests/fa-analysis.test.js
 
-Добавлены
+Отдельно обновлён EcoBioMonitoring_FA_from_CVAT_Colab.ipynb.
 
-MANIFEST.txt
-assets/original-photos/IMG_2673.jpeg
-assets/original-photos/IMG_2723.jpeg
-assets/original-photos/IMG_3071.jpeg
-assets/original-photos/IMG_3086.jpeg
-assets/original-photos/IMG_3087.jpeg
-assets/original-photos/IMG_3089.jpeg
-assets/original-photos/IMG_3090.jpeg
-assets/original-photos/IMG_3092.jpeg
-assets/original-photos/IMG_4968.jpeg
-assets/original-photos/IMG_8609.jpeg
-assets/original-photos/README.txt
-data/research-sites.json
-docs/research-analysis-plan.md
-docs/volunteer-method-guide.docx
-img/author-polina.png
-img/games/birch-leaves.jpg
-img/games/container-damaged.png
-img/games/container-damaged.webp
-img/games/container-normal.png
-img/games/container-normal.webp
-img/games/container-other.png
-img/games/container-other.webp
-img/games/damaged-leaves.jpg
-img/games/damaged1-cutout.png
-img/games/damaged1-cutout.webp
-img/games/damaged2-cutout.png
-img/games/damaged2-cutout.webp
-img/games/damaged3-cutout.png
-img/games/damaged3-cutout.webp
-img/games/leaf-damaged-cutout.png
-img/games/leaf-damaged-cutout.webp
-img/games/leaf-damaged.jpg
-img/games/leaf-good-angle-cutout.png
-img/games/leaf-good-angle-cutout.webp
-img/games/leaf-good-angle.jpg
-img/games/leaf-sideways-cutout.png
-img/games/leaf-sideways-cutout.webp
-img/games/leaf-sideways.jpg
-img/games/normal1-cutout.png
-img/games/normal1-cutout.webp
-img/games/normal2-cutout.png
-img/games/normal2-cutout.webp
-img/games/normal3-cutout.png
-img/games/normal3-cutout.webp
-img/games/other-species.jpg
-img/games/other1-cutout.png
-img/games/other1-cutout.webp
-img/games/other2-cutout.png
-img/games/other2-cutout.webp
-img/games/other3-cutout.png
-img/games/other3-cutout.webp
-img/games/tree-park-edited.png
-img/games/tree-park-edited.webp
-img/games/tree-park.jpg
-img/games/tree-road-generated.png
-img/games/tree-road-generated.webp
-img/games/tree-street-edited.png
-img/games/tree-street-edited.webp
-img/games/tree-street.jpg
-img/home/aktualnost/avtomobil-hd.png
-supabase/007_multitree_requests.sql
-tests/games.test.js
-
-Удалены
-
-Нет.
+classifier.html
+css/classifier.css
+js/leaf-classifier.js
+model/ecobio_leaf_classifier.tflite
+model/model_info.json
+model/metrics.json
+model/classification_report.csv
+model/threshold_analysis.csv

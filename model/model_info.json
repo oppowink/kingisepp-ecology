@@ -1,0 +1,24 @@
+{
+  "model_name": "ecobio_leaf_classifier",
+  "architecture": "MobileNetV2 transfer learning",
+  "class_names_in_output_order": [
+    "birch_normal",
+    "birch_damaged",
+    "other_species"
+  ],
+  "class_titles_ru": [
+    "Нормальный лист берёзы",
+    "Повреждённый лист берёзы",
+    "Лист другого вида"
+  ],
+  "input_shape": [
+    192,
+    192,
+    3
+  ],
+  "resize": "resize_with_pad",
+  "preprocessing": "tf.keras.applications.mobilenet_v2.preprocess_input",
+  "confidence_threshold": null,
+  "threshold_note": "Выбрать по threshold_analysis.csv; не задавать по догадке.",
+  "seed": 42
+}
