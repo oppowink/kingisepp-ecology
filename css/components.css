@@ -84,14 +84,7 @@ img { max-width: 100%; }
 }
 .kursor.vidim { opacity: 1; }
 .kursor.kursor--interaktivny { transform: translate(-22%, -18%) scale(1.12); }
-@media (pointer: fine) {
-  body.kursor-vklyuchen,
-  body.kursor-vklyuchen a,
-  body.kursor-vklyuchen button,
-  body.kursor-vklyuchen input,
-  body.kursor-vklyuchen textarea,
-  body.kursor-vklyuchen select { cursor: none; }
-}
+
 
 
 .shapka {

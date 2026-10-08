@@ -14,13 +14,13 @@
 <meta content="ru_RU" property="og:locale"/>
 <title>ЭкоБиоМониторинг - экологический мониторинг малых городов</title>
 <link href="img/favicon.ico" rel="icon"/>
-<link href="css/variables.css" rel="stylesheet"/>
-<link href="css/components.css" rel="stylesheet"/>
-<link href="css/home.css" rel="stylesheet"/>
-<link href="css/faq.css" rel="stylesheet"/>
-<script src="js/theme.js"></script>
-<link href="css/refresh.css" rel="stylesheet"/></head>
-<body><a class="skip-link" href="#mainContent">К содержанию</a>
+<link href="css/variables.css?v=20261009-ui3" rel="stylesheet"/>
+<link href="css/components.css?v=20261009-ui3" rel="stylesheet"/>
+<link href="css/home.css?v=20261009-ui3" rel="stylesheet"/>
+<link href="css/faq.css?v=20261009-ui3" rel="stylesheet"/>
+<script src="js/theme.js?v=20261009-ui3"></script>
+<link href="css/refresh.css?v=20261009-ui3" rel="stylesheet"/></head>
+<body class="home-clean"><a class="skip-link" href="#mainContent">К содержанию</a>
 <div aria-hidden="true" class="kursor" data-component="kursor"></div>
 <div aria-hidden="true" class="nastroiki-fon" id="nastroikiFon"></div>
 <header class="shapka" data-component="shapka">
@@ -37,34 +37,34 @@
 </a>
 <div class="shapka-deystviya">
 <a class="shapka-ssylka" href="account.html">
-<img alt="" aria-hidden="true" class="shapka-ssylka__ikona" src="img/icons/user.png"/>
+
 <span>Личный кабинет</span>
 </a>
 <button aria-controls="nastroikiPanel" aria-expanded="false" aria-label="Открыть настройки" class="nastroiki-knopka" id="nastroikiKnopka" type="button">
-<img alt="" aria-hidden="true" class="nastroiki-knopka__ikona" src="img/icons/gear.png"/>
+
 <span class="nastroiki-knopka__tekst">Настройки</span>
 </button>
 </div>
 </header>
 <aside aria-hidden="true" aria-label="Настройки" class="nastroiki-panel" id="nastroikiPanel">
 <button aria-label="Закрыть настройки" class="nastroiki-zakryt" id="nastroikiZakryt" type="button">
-<img alt="" aria-hidden="true" src="img/icons/close.png"/>
-<span class="sr-only">Закрыть</span>
+
+<span aria-hidden="true">×</span>
 </button>
 <div class="tema-vybor-blok">
 <p class="tema-podpis">Тема</p>
 <div class="tema-vybor">
 <button class="tema-knopka" id="temaSvetlaya" type="button">
-<img alt="" aria-hidden="true" src="img/icons/sun.png"/><span>Светлая</span>
+<span>Светлая</span>
 </button>
 <button class="tema-knopka" id="temaTemnaya" type="button">
-<img alt="" aria-hidden="true" src="img/icons/moon.png"/><span>Тёмная</span>
+<span>Тёмная</span>
 </button>
 </div>
 </div>
 <div class="nastroiki-akkaunt">
 <a class="nastroiki-ssylka nastroiki-ssylka--akcent" href="account.html">
-<img alt="" aria-hidden="true" src="img/icons/user.png"/><span>Личный кабинет</span>
+<span>Личный кабинет</span>
 </a>
 </div>
 <nav aria-label="Навигация" class="nastroiki-navigaciya">
@@ -83,28 +83,13 @@
 <p>Мы собираем фотографии листьев берёзы, проверяем их и показываем результаты наблюдений на карте города</p>
 </div>
 </section>
-<section class="workflow" aria-labelledby="workflowTitle">
-<h2 id="workflowTitle">От листа до точки на карте</h2>
-<ol class="workflow-steps">
-<li><span>01</span><h3>Подготовка</h3><p>Пройдите обучение, выберите место и соберите листья по методике.</p></li>
-<li><span>02</span><h3>Фотографии и разметка</h3><p>Загрузите паспорт и снимки. Поставьте 12 ориентиров на каждом листе.</p></li>
-<li><span>03</span><h3>Проверка и расчёт</h3><p>Модератор проверит материалы. Программа рассчитает ФА по пяти признакам.</p></li>
-<li><span>04</span><h3>Публикация</h3><p>После итоговой проверки наблюдение появится на карте.</p></li>
-</ol><p class="workflow-note">ФА помогает сравнивать участки. Она не является прямым измерением загрязнения воздуха.</p>
-<a class="knopka-osnovnaya" href="education.html">Разобраться в методике</a> <a class="knopka-osnovnaya" href="classifier.html">Проверить лист нейросетью</a>
-</section>
 <section class="glavnaya-scena" data-scena="aktualnost">
 <div class="glavnaya-scena__lipkaya">
 <div class="glavnaya-blok glavnaya-blok-aktualnost">
 <h2>Экологический мониторинг малых городов</h2>
 <p>Две соседние улицы могут заметно различаться, но постоянные наблюдения ведут не на каждом участке города. Мы сравниваем листья берёзы по <button class="termin" data-glossary="fluctuating-asymmetry" type="button">флуктуирующей асимметрии</button> и отдельно оцениваем транспортную нагрузку. Затем <button class="termin" data-glossary="correlation-analysis" type="button">корреляционный анализ</button> показывает, меняются ли эти показатели вместе. Это способ найти места для более подробного исследования, а не измерить качество воздуха по одному листу.</p>
 </div>
-<div aria-label="Схема: дорога, автомобиль, выхлоп, берёзы и флуктуирующая асимметрия" class="glavnaya-illyustraciya glavnaya-illyustraciya--aktualnost" data-aktualnost-scena="" role="img">
-<img alt="" class="aktualnost-element aktualnost-doroga" src="img/home/aktualnost/doroga.png"/>
-<img alt="" class="aktualnost-element aktualnost-avtomobil" src="img/home/aktualnost/avtomobil-hd.png"/>
-<img alt="" class="aktualnost-element aktualnost-vyhlop" src="img/home/aktualnost/vyhlop.png"/>
-<img alt="" class="aktualnost-element aktualnost-berezy" src="img/home/aktualnost/berezy.png"/>
-</div>
+
 </div>
 </section>
 <section class="glavnaya-scena" data-scena="karta">
@@ -116,7 +101,7 @@
 <div class="glavnaya-illyustraciya">
 <a aria-label="Перейти к карте экологического мониторинга" class="glavnaya-perehod glavnaya-perehod--karta" href="map.html">
 <span class="glavnaya-perehod__nazvanie">Перейти к карте</span>
-<img alt="" class="glavnaya-perehod__list" src="img/leaf1.png"/>
+
 </a>
 </div>
 </div>
@@ -131,7 +116,7 @@
 <div class="glavnaya-illyustraciya">
 <a aria-label="Принять участие в мониторинге" class="glavnaya-perehod glavnaya-perehod--uchastie" href="account.html">
 <span class="glavnaya-perehod__nazvanie">Принять участие</span>
-<img alt="" class="glavnaya-perehod__list" src="img/leaf2.png"/>
+
 </a>
 </div>
 </div>
@@ -145,7 +130,7 @@
 <div class="glavnaya-illyustraciya">
 <a aria-label="Перейти в личный кабинет для прохождения обучения" class="glavnaya-perehod glavnaya-perehod--obuchenie" href="account.html">
 <span class="glavnaya-perehod__nazvanie">Перейти в личный кабинет</span>
-<img alt="" class="glavnaya-perehod__list" src="img/leaf3.png"/>
+
 </a>
 </div>
 </div>
@@ -159,7 +144,7 @@
 <div class="glavnaya-illyustraciya">
 <a aria-label="Открыть экологические игры" class="glavnaya-perehod glavnaya-perehod--igra" href="games.html">
 <span class="glavnaya-perehod__nazvanie">Открыть игры</span>
-<img alt="" class="glavnaya-perehod__list" src="img/leaf3.png"/>
+
 </a>
 </div>
 </div>
@@ -177,7 +162,7 @@
 <div class="glavnaya-illyustraciya">
 <a aria-label="Открыть все вопросы и ответы" class="glavnaya-perehod glavnaya-perehod--poisk" href="faq.html">
 <span class="glavnaya-perehod__nazvanie">Все вопросы и ответы</span>
-<img alt="" class="glavnaya-perehod__list" src="img/icons/soobshchenie.png"/>
+
 </a>
 </div>
 </div>
@@ -191,11 +176,12 @@
 <div class="glavnaya-illyustraciya">
 <a aria-label="Открыть форму обратной связи" class="glavnaya-perehod glavnaya-perehod--svyaz" href="feedback.html">
 <span class="glavnaya-perehod__nazvanie">Открыть обратную связь</span>
-<img alt="" class="glavnaya-perehod__list" src="img/icons/soobshchenie.png"/>
+
 </a>
 </div>
 </div>
 </section>
+<p class="home-classifier-link"><a class="ssylka-svechenie" href="classifier.html">Проверить лист нейросетью</a></p>
 </main>
 <footer aria-label="Подвал сайта" class="podval" data-component="podval">
 <div class="podval-vnutri">
@@ -204,11 +190,11 @@
 <span>2025-2026</span>
 </div>
 </footer>
-<script defer="" src="js/header.js"></script>
-<script defer="" src="js/cursor.js"></script>
-<script defer="" src="js/glossary.js"></script>
-<script defer="" src="js/faq-data.js"></script>
-<script defer="" src="js/smart-search.js"></script>
-<script defer="" src="js/home.js"></script>
-<script defer="" src="js/refresh.js"></script><script defer="" src="js/assistant.js"></script></body>
+<script defer="" src="js/header.js?v=20261009-ui3"></script>
+<script defer="" src="js/cursor.js?v=20261009-ui3"></script>
+<script defer="" src="js/glossary.js?v=20261009-ui3"></script>
+<script defer="" src="js/faq-data.js?v=20261009-ui3"></script>
+<script defer="" src="js/smart-search.js?v=20261009-ui3"></script>
+
+<script defer="" src="js/refresh.js?v=20261009-ui3"></script><script defer="" src="js/assistant.js?v=20261009-ui3"></script></body>
 </html>

@@ -43,19 +43,29 @@ html.dark .assistant-launcher { color: var(--bg); }
   .assistant-panel form { padding-bottom: max(16px, env(safe-area-inset-bottom)); }
   .glavnaya-poisk__stroka { display: flex; flex-direction: column; gap: 10px; }
 }
-.workflow { width: min(1180px, calc(100% - 48px)); margin: 0 auto 80px; padding: 32px 0; }
-.workflow h2 { margin: 0 0 28px; font-family: var(--font-heading); font-size: clamp(1.3rem, 2.5vw, 2rem); font-weight: 500; }
-.workflow-steps { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 26px; padding: 0; list-style: none; }
-.workflow-steps li { padding-top: 16px; border-top: 2px solid var(--line-strong); }
-.workflow-steps li > span { color: var(--rose-ink); font-size: 13px; }
-.workflow-steps h3 { font-size: 17px; margin: 10px 0; }
-.workflow-steps p { margin: 0; color: var(--text-muted); font-size: 15px; line-height: 1.7; }
-.workflow-note { color: var(--text-muted); font-size: 14px; margin: 24px 0; }
-@media (max-width: 800px) { .workflow-steps { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-@media (max-width: 600px) {
-  .workflow { width: calc(100% - 34px); margin-bottom: 32px; }
-  .workflow-steps { grid-template-columns: 1fr; gap: 22px; }
-  .glavnaya-scena, .glavnaya-scena--poslednyaya { height: auto; min-height: 0; padding: 26px 0; }
-  .glavnaya-scena__lipkaya { position: relative; top: auto; height: auto; min-height: 0; overflow: visible; }
-  .glavnaya-blok { min-height: 0; }
-}
+
+/* Compact home page: no injected pictures, scroll scenes or extra process section. */
+.assistant-panel [hidden] { display:none !important; }
+.assistant-panel { box-sizing:border-box; overflow:hidden; max-height:calc(100dvh - 110px); }
+.assistant-panel textarea { box-sizing:border-box; }
+.assistant-panel .assistant-messages { min-height:0; flex:1 1 auto; }
+.assistant-panel .assistant-heading,.assistant-panel .assistant-mode,.assistant-panel form,.assistant-panel .assistant-suggestions { flex-shrink:0; }
+.assistant-panel,.assistant-panel::backdrop { cursor:auto; }
+.assistant-panel button { cursor:pointer; }
+.assistant-panel textarea { cursor:text; }
+.assistant-launcher { font:500 14px/1.4 var(--font-body); box-shadow:none; border-radius:10px; }
+.kursor,.bokovye-listya { display:none !important; }
+.home-clean main { padding-bottom:50px; }
+.home-clean .glavnaya-scena { height:auto; min-height:0; padding:48px 0; border-top:1px solid var(--line); }
+.home-clean .glavnaya-scena__lipkaya { position:static; height:auto; min-height:0; overflow:visible; max-width:1100px; width:calc(100% - 48px); margin:auto; display:grid; grid-template-columns:minmax(0, 2fr) minmax(0, 1fr); gap:48px; align-items:center; padding:0; }
+.home-clean .glavnaya-blok { width:auto; max-width:760px; min-height:0; opacity:1; transform:none; grid-column:1; }
+.home-clean .glavnaya-illyustraciya { width:auto; min-height:0; opacity:1; transform:none; justify-self:end; }
+.home-clean .glavnaya-perehod { min-height:48px; width:auto; padding:12px 0; text-align:left; align-items:flex-start; text-decoration:underline; text-underline-offset:6px; }
+.home-clean .glavnaya-perehod__nazvanie { transform:none; }
+.home-clean .jump-in { opacity:1; transform:none; animation:none; }
+.home-classifier-link { width:calc(100% - 48px); max-width:1100px; margin:32px auto; }
+@media(max-width:760px) { .home-clean .glavnaya-scena { padding:30px 0; } .home-clean .glavnaya-scena__lipkaya { grid-template-columns:1fr; gap:16px; width:calc(100% - 32px); } .home-clean .glavnaya-illyustraciya { grid-column:1; justify-self:start; } }
+@media(max-height:650px) { .assistant-panel { inset:8px 8px auto auto; max-height:calc(100dvh - 16px); } .assistant-suggestions { display:none; } .assistant-panel form { padding:8px 14px; } .assistant-panel textarea { min-height:48px; } }
+
+.nastroiki-knopka__tekst { display:inline !important; }
+.nastroiki-zakryt { font-size:28px; min-width:44px; min-height:44px; }
