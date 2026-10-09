@@ -19,7 +19,9 @@
 <link href="css/home.css?v=20261009-ui3" rel="stylesheet"/>
 <link href="css/faq.css?v=20261009-ui3" rel="stylesheet"/>
 <script src="js/theme.js?v=20261009-ui3"></script>
-<link href="css/refresh.css?v=20261009-ui3" rel="stylesheet"/></head>
+<link href="css/refresh.css?v=20261009-ui3" rel="stylesheet"/><link href="css/hero-intro.css?v=20261009-hero1" rel="stylesheet">
+<link rel="preload" href="fonts/Comfortaa-Regular.ttf" as="font" type="font/ttf" crossorigin>
+</head>
 <body class="home-clean"><a class="skip-link" href="#mainContent">К содержанию</a>
 <div aria-hidden="true" class="kursor" data-component="kursor"></div>
 <div aria-hidden="true" class="nastroiki-fon" id="nastroikiFon"></div>
@@ -77,10 +79,15 @@
 </nav>
 </aside>
 <main class="glavnaya" id="mainContent">
-<section aria-labelledby="glavnayaZagolovok" class="glavnaya-vvodnaya">
-<div class="glavnaya-vvodnaya__tekst">
-<h1 id="glavnayaZagolovok">ЭкоБиоМониторинг малых городов</h1>
-<p>Мы собираем фотографии листьев берёзы, проверяем их и показываем результаты наблюдений на карте города</p>
+<section aria-labelledby="glavnayaZagolovok" class="glavnaya-vvodnaya hero-intro" data-hero-intro>
+<div class="glavnaya-vvodnaya__tekst hero-intro__content">
+<div class="hero-intro__leaves" aria-hidden="true">
+<img class="hero-intro__leaf hero-intro__leaf--pass-a" src="img/games/leaf-good-angle-cutout.png" alt="" width="36" height="48" decoding="async">
+<img class="hero-intro__leaf hero-intro__leaf--pass-b" src="img/games/leaf-good-angle-cutout.png" alt="" width="30" height="40" decoding="async">
+<img class="hero-intro__leaf hero-intro__leaf--stay" src="img/games/leaf-good-angle-cutout.png" alt="" width="34" height="45" decoding="async">
+</div>
+<h1 id="glavnayaZagolovok" class="hero-intro__heading" aria-label="ЭкоБиоМониторинг малых городов"><span class="hero-intro__name" aria-hidden="true"><span class="hero-intro__word">ЭкоБио</span><wbr><span class="hero-intro__word">Мониторинг</span></span><span class="hero-intro__place" aria-hidden="true">малых городов</span></h1>
+<p class="hero-intro__tagline">Ещё один шаг к заботе о природе</p>
 </div>
 </section>
 <section class="glavnaya-scena" data-scena="aktualnost">
@@ -196,5 +203,6 @@
 <script defer="" src="js/faq-data.js?v=20261009-ui3"></script>
 <script defer="" src="js/smart-search.js?v=20261009-ui3"></script>
 
-<script defer="" src="js/refresh.js?v=20261009-ui3"></script><script defer="" src="js/assistant.js?v=20261009-ui3"></script></body>
+<script defer="" src="js/refresh.js?v=20261009-ui3"></script><script defer="" src="js/assistant.js?v=20261009-ui3"></script><script defer src="js/hero-intro.js?v=20261009-hero1"></script>
+</body>
 </html>
