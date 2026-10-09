@@ -156,7 +156,7 @@
   z-index: 2;
   color: var(--text);
   font-weight: 500;
-  transition: color var(--transition-fast), transform var(--transition-fast), text-shadow var(--transition-base);
+  transition: color var(--transition-fast), transform var(--transition-fast);
 }
 .glavnaya-perehod__list {
   width: min(295px, 100%);
@@ -317,8 +317,8 @@ html.dark .glavnaya-perehod:focus-visible .glavnaya-perehod__nazvanie {
   font-weight: 650;
   line-height: inherit;
   text-align: inherit;
-  text-decoration: none;
-  border-bottom: 1px dotted currentColor;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
   text-underline-offset: .16em;
   text-decoration-color: currentColor;
   cursor: pointer;
@@ -336,8 +336,7 @@ html.dark .termin--aktivny { color: var(--accent-soft); }
   display: block;
   width: min(100%, 46rem);
   margin: .65em 0 .9em;
-  padding: .35em 0 .35em 1.1em;
-  border-left: 2px solid var(--accent);
+  padding: .35em 0;
   color: var(--text-muted);
   font-size: .87em;
   line-height: 1.55;

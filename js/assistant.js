@@ -5,15 +5,15 @@
     var endpoint = base + '/api/assistant';
     var launcher = document.createElement('button');
     launcher.type = 'button'; launcher.className = 'assistant-launcher';
-    launcher.setAttribute('aria-label', 'Открыть помощника по проекту');
+    launcher.setAttribute('aria-label', 'Задать вопрос');
     launcher.setAttribute('aria-controls', 'projectAssistant'); launcher.setAttribute('aria-expanded', 'false');
-    launcher.textContent = 'Задать вопрос';
+    launcher.innerHTML = '<img src="img/icons/gear.png" alt="" aria-hidden="true" width="26" height="26" decoding="async"><span>Задать вопрос</span>';
     var panel = document.createElement('dialog'); panel.id = 'projectAssistant'; panel.className = 'assistant-panel';
     panel.setAttribute('aria-labelledby', 'assistantTitle');
-    panel.innerHTML = '<div class="assistant-heading"><h2 id="assistantTitle">Помощник по проекту</h2><button type="button" data-close aria-label="Закрыть помощника">×</button></div><p class="assistant-mode" data-mode>Ответы по материалам проекта</p><div class="assistant-messages" role="log" aria-live="polite" aria-label="Переписка с помощником"></div><div class="assistant-suggestions"><button type="button">Как работает платформа?</button><button type="button">Как собрать листья?</button><button type="button">Что такое ФА?</button></div><form><label for="assistantQuestion">Вопрос о проекте</label><textarea id="assistantQuestion" maxlength="1500" rows="2" required placeholder="Например: чем ФА отличается от классификации?"></textarea><button type="submit" class="knopka-osnovnaya">Спросить</button><p class="assistant-hint">Вопрос обрабатывает сервис ИИ. Не указывайте личные данные. Ответы стоит проверять по методике.</p></form>';
+    panel.innerHTML = '<div class="assistant-heading"><h2 id="assistantTitle">Задать вопрос</h2><button type="button" data-close aria-label="Закрыть чат"><img src="img/icons/close.png" alt="" aria-hidden="true" width="24" height="24" decoding="async"></button></div><p class="assistant-mode" data-mode>Ответы по материалам проекта</p><div class="assistant-messages" role="log" aria-live="polite" aria-label="Переписка с помощником"></div><div class="assistant-suggestions"><button type="button">Как работает платформа?</button><button type="button">Как собрать листья?</button><button type="button">Что такое ФА?</button></div><form><label for="assistantQuestion">Вопрос о проекте</label><textarea id="assistantQuestion" maxlength="1500" rows="2" required placeholder="Например: сколько нужно листьев?"></textarea><button type="submit" class="knopka-osnovnaya">Спросить</button><p class="assistant-hint">Ответы проверяйте по методике</p></form>';
     document.body.append(launcher, panel);
     var messages = panel.querySelector('.assistant-messages'), input = panel.querySelector('#assistantQuestion'), form = panel.querySelector('form');
-    var enabled = true, history = [], busy = false;
+    var enabled = true, history = [], busy = false, previousFocus = null;
     var knowledgePromise = fetch('data/assistant-knowledge.json').then(function (r) { if (!r.ok) throw new Error(); return r.json(); }).catch(function () { return {}; });
     function timeout(ms) { var controller = new AbortController(); setTimeout(function () { controller.abort(); }, ms); return controller.signal; }
     var capabilities = fetch(endpoint, { signal: timeout(8000) }).then(function (r) { if (!r.ok) throw new Error(); return r.json(); }).then(function (data) {
@@ -24,11 +24,30 @@
       var p = document.createElement('p'); p.className = 'assistant-message assistant-message--' + role;
       p.textContent = text; messages.appendChild(p); messages.scrollTop = messages.scrollHeight;
     }
-    message('Здравствуйте! Помогу разобраться в методике, результатах и работе сайта. Можно задать вопрос своими словами или выбрать один из примеров.', 'answer');
-    function open(question) { if (!panel.open) panel.showModal(); launcher.setAttribute('aria-expanded', 'true'); if (question) input.value = question; input.focus(); }
-    function close() { panel.close(); launcher.setAttribute('aria-expanded', 'false'); launcher.focus(); }
+    message('Спросите о сборе листьев, ФА или работе сайта', 'answer');
+    function open(question) {
+      if (!panel.open) { previousFocus = document.activeElement; panel.showModal(); }
+      launcher.setAttribute('aria-expanded', 'true');
+      if (question) input.value = question;
+      input.focus();
+    }
+    function close() { if (panel.open) panel.close(); }
     launcher.addEventListener('click', function () { open(); }); panel.querySelector('[data-close]').addEventListener('click', close);
-    panel.addEventListener('close', function () { launcher.setAttribute('aria-expanded', 'false'); launcher.focus(); });
+    panel.addEventListener('close', function () {
+      launcher.setAttribute('aria-expanded', 'false');
+      var target = previousFocus instanceof HTMLElement && previousFocus.isConnected && !previousFocus.disabled ? previousFocus : launcher;
+      target.focus();
+      previousFocus = null;
+    });
+    panel.addEventListener('keydown', function (event) {
+      if (event.key !== 'Tab') return;
+      var items = Array.from(panel.querySelectorAll('button:not([disabled]), textarea:not([disabled]), a[href], [tabindex="0"]'))
+        .filter(function (node) { return node.getClientRects().length > 0; });
+      if (!items.length) return;
+      var first = items[0], last = items[items.length - 1];
+      if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+      else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+    });
     panel.addEventListener('click', function (event) { if (event.target === panel) { var r = panel.getBoundingClientRect(); if (event.clientX < r.left || event.clientX > r.right || event.clientY < r.top || event.clientY > r.bottom) close(); } });
     function normalized(text) { return String(text).toLowerCase().replace(/ё/g, 'е'); }
     async function localAnswer(question) {

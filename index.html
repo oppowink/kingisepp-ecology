@@ -15,15 +15,14 @@
 <title>ЭкоБиоМониторинг - экологический мониторинг малых городов</title>
 <link href="img/favicon.ico" rel="icon"/>
 <link href="css/variables.css?v=20261009-ui3" rel="stylesheet"/>
-<link href="css/components.css?v=20261009-ui3" rel="stylesheet"/>
-<link href="css/home.css?v=20261009-ui3" rel="stylesheet"/>
+<link href="css/components.css?v=20261010-home1" rel="stylesheet"/>
+<link href="css/home.css?v=20261010-home1" rel="stylesheet"/>
 <link href="css/faq.css?v=20261009-ui3" rel="stylesheet"/>
 <script src="js/theme.js?v=20261009-ui3"></script>
-<link href="css/refresh.css?v=20261009-ui3" rel="stylesheet"/><link href="css/hero-intro.css?v=20261009-hero1" rel="stylesheet">
+<link href="css/refresh.css?v=20261010-home1" rel="stylesheet"/><link href="css/hero-intro.css?v=20261009-hero1" rel="stylesheet">
 <link rel="preload" href="fonts/Comfortaa-Regular.ttf" as="font" type="font/ttf" crossorigin>
 </head>
-<body class="home-clean"><a class="skip-link" href="#mainContent">К содержанию</a>
-<div aria-hidden="true" class="kursor" data-component="kursor"></div>
+<body class="home"><a class="skip-link" href="#mainContent">К содержанию</a>
 <div aria-hidden="true" class="nastroiki-fon" id="nastroikiFon"></div>
 <header class="shapka" data-component="shapka">
 <a aria-label="ЭкоБиоМониторинг, на главную" class="shapka-logo" href="index.html">
@@ -38,34 +37,36 @@
 </span>
 </a>
 <div class="shapka-deystviya">
-<a class="shapka-ssylka" href="account.html">
-
+<a aria-label="Личный кабинет" class="shapka-ssylka" href="account.html">
+<img alt="" aria-hidden="true" class="shapka-ssylka__ikona" src="img/icons/user.png" width="29" height="29" decoding="async"/>
 <span>Личный кабинет</span>
 </a>
 <button aria-controls="nastroikiPanel" aria-expanded="false" aria-label="Открыть настройки" class="nastroiki-knopka" id="nastroikiKnopka" type="button">
-
+<img alt="" aria-hidden="true" class="nastroiki-knopka__ikona" src="img/icons/gear.png" width="29" height="29" decoding="async"/>
 <span class="nastroiki-knopka__tekst">Настройки</span>
 </button>
 </div>
 </header>
 <aside aria-hidden="true" aria-label="Настройки" class="nastroiki-panel" id="nastroikiPanel">
 <button aria-label="Закрыть настройки" class="nastroiki-zakryt" id="nastroikiZakryt" type="button">
-
-<span aria-hidden="true">×</span>
+<img alt="" aria-hidden="true" src="img/icons/close.png" width="28" height="28" decoding="async"/>
 </button>
 <div class="tema-vybor-blok">
 <p class="tema-podpis">Тема</p>
 <div class="tema-vybor">
 <button class="tema-knopka" id="temaSvetlaya" type="button">
+<img alt="" aria-hidden="true" src="img/icons/sun.png" width="31" height="31" decoding="async"/>
 <span>Светлая</span>
 </button>
 <button class="tema-knopka" id="temaTemnaya" type="button">
+<img alt="" aria-hidden="true" src="img/icons/moon.png" width="31" height="31" decoding="async"/>
 <span>Тёмная</span>
 </button>
 </div>
 </div>
 <div class="nastroiki-akkaunt">
 <a class="nastroiki-ssylka nastroiki-ssylka--akcent" href="account.html">
+<img alt="" aria-hidden="true" src="img/icons/user.png" width="31" height="31" decoding="async"/>
 <span>Личный кабинет</span>
 </a>
 </div>
@@ -82,9 +83,9 @@
 <section aria-labelledby="glavnayaZagolovok" class="glavnaya-vvodnaya hero-intro" data-hero-intro>
 <div class="glavnaya-vvodnaya__tekst hero-intro__content">
 <div class="hero-intro__leaves" aria-hidden="true">
-<img class="hero-intro__leaf hero-intro__leaf--pass-a" src="img/games/leaf-good-angle-cutout.png" alt="" width="36" height="48" decoding="async">
+<img class="hero-intro__leaf hero-intro__leaf--pass-a" src="img/leaf1.png" alt="" width="36" height="48" decoding="async">
 <img class="hero-intro__leaf hero-intro__leaf--pass-b" src="img/games/leaf-good-angle-cutout.png" alt="" width="30" height="40" decoding="async">
-<img class="hero-intro__leaf hero-intro__leaf--stay" src="img/games/leaf-good-angle-cutout.png" alt="" width="34" height="45" decoding="async">
+<img class="hero-intro__leaf hero-intro__leaf--stay" src="img/leaf1.png" alt="" width="34" height="45" decoding="async">
 </div>
 <h1 id="glavnayaZagolovok" class="hero-intro__heading" aria-label="ЭкоБиоМониторинг малых городов"><span class="hero-intro__name" aria-hidden="true"><span class="hero-intro__word">ЭкоБио</span><wbr><span class="hero-intro__word">Мониторинг</span></span><span class="hero-intro__place" aria-hidden="true">малых городов</span></h1>
 <p class="hero-intro__tagline">Ещё один шаг к заботе о природе</p>
@@ -94,9 +95,9 @@
 <div class="glavnaya-scena__lipkaya">
 <div class="glavnaya-blok glavnaya-blok-aktualnost">
 <h2>Экологический мониторинг малых городов</h2>
-<p>Две соседние улицы могут заметно различаться, но постоянные наблюдения ведут не на каждом участке города. Мы сравниваем листья берёзы по <button class="termin" data-glossary="fluctuating-asymmetry" type="button">флуктуирующей асимметрии</button> и отдельно оцениваем транспортную нагрузку. Затем <button class="termin" data-glossary="correlation-analysis" type="button">корреляционный анализ</button> показывает, меняются ли эти показатели вместе. Это способ найти места для более подробного исследования, а не измерить качество воздуха по одному листу.</p>
+<p>Проект сравнивает <button class="termin" data-glossary="fluctuating-asymmetry" type="button">ФА листьев берёзы</button> и транспортную нагрузку на участках Кингисеппа. <button class="termin" data-glossary="correlation-analysis" type="button">Корреляционный анализ</button> показывает, меняются ли эти показатели вместе. ФА помогает выбрать участки для дальнейшего исследования, но не измеряет загрязнение воздуха.</p>
 </div>
-
+<img alt="" aria-hidden="true" class="home-section-decor" src="img/leaf3.png" width="68" height="89" loading="lazy" decoding="async"/>
 </div>
 </section>
 <section class="glavnaya-scena" data-scena="karta">
@@ -108,7 +109,7 @@
 <div class="glavnaya-illyustraciya">
 <a aria-label="Перейти к карте экологического мониторинга" class="glavnaya-perehod glavnaya-perehod--karta" href="map.html">
 <span class="glavnaya-perehod__nazvanie">Перейти к карте</span>
-
+<img alt="" aria-hidden="true" class="home-action-icon" src="img/icons/strelka.png" width="28" height="28" loading="lazy" decoding="async"/>
 </a>
 </div>
 </div>
@@ -117,12 +118,11 @@
 <div class="glavnaya-scena__lipkaya">
 <div class="glavnaya-blok glavnaya-blok-uchastie">
 <h2>Участие в мониторинге</h2>
-<p class="glavnaya-prizyv jump-in">Начать можно с одной точки</p>
 <p>Вы выбираете деревья, заполняете паспорт места и добавляете снимки. Сайт сразу замечает слишком маленькие фотографии и неподходящий фон. Потом вы ставите 12 контрольных точек на каждом листе. Модератор проверяет материал, программа считает ФА — и только после этого наблюдение может попасть на карту.</p>
 </div>
 <div class="glavnaya-illyustraciya">
-<a aria-label="Принять участие в мониторинге" class="glavnaya-perehod glavnaya-perehod--uchastie" href="account.html">
-<span class="glavnaya-perehod__nazvanie">Принять участие</span>
+<a aria-label="Создать аккаунт" class="glavnaya-perehod glavnaya-perehod--uchastie" href="account.html">
+<span class="glavnaya-perehod__nazvanie">Создать аккаунт</span>
 
 </a>
 </div>
@@ -132,9 +132,10 @@
 <div class="glavnaya-scena__lipkaya">
 <div class="glavnaya-blok glavnaya-blok-obuchenie">
 <h2>Единая методика сбора данных</h2>
-<p>До первой заявки участник проходит короткое обучение. <button class="termin" data-glossary="methodology" type="button">Методика</button> объясняет, как выбрать 2–5 берёзы, собрать листья без отбора «самых ровных», сделать фотографии и заполнить паспорт точки. Чем точнее соблюдены правила, тем честнее сравнение разных улиц.</p>
+<p>До первой заявки участник проходит короткое обучение. <button class="termin" data-glossary="methodology" type="button">Методика</button> объясняет, как выбрать от 2 до 5 берёз, собрать листья без отбора «самых ровных», сделать фотографии и заполнить паспорт точки. Собирайте листья по одной инструкции, чтобы сравнивать участки.</p>
 </div>
 <div class="glavnaya-illyustraciya">
+<img alt="" aria-hidden="true" class="home-section-decor" src="img/leaf4.png" width="68" height="89" loading="lazy" decoding="async"/>
 <a aria-label="Перейти в личный кабинет для прохождения обучения" class="glavnaya-perehod glavnaya-perehod--obuchenie" href="account.html">
 <span class="glavnaya-perehod__nazvanie">Перейти в личный кабинет</span>
 
@@ -145,13 +146,13 @@
 <section class="glavnaya-scena" data-scena="igra">
 <div class="glavnaya-scena__lipkaya">
 <div class="glavnaya-blok glavnaya-blok-igra">
-<h2>Попробуйте сначала в игре</h2>
-<p>Здесь можно ошибиться без последствий. Соберите игровые образцы, разложите листья по контейнерам и решите, какие заявки стоит принять. После выбора появится короткое объяснение.</p>
+<h2>Учебные игры</h2>
+<p>Соберите игровые образцы, разложите листья по контейнерам и решите, какие заявки стоит принять. После выбора появится короткое объяснение.</p>
 </div>
 <div class="glavnaya-illyustraciya">
 <a aria-label="Открыть экологические игры" class="glavnaya-perehod glavnaya-perehod--igra" href="games.html">
 <span class="glavnaya-perehod__nazvanie">Открыть игры</span>
-
+<img alt="" aria-hidden="true" class="home-action-icon" src="img/icons/stars.png" width="28" height="28" loading="lazy" decoding="async"/>
 </a>
 </div>
 </div>
@@ -160,11 +161,11 @@
 <div class="glavnaya-scena__lipkaya">
 <div class="glavnaya-blok glavnaya-blok-poisk">
 <h2>Поиск по проекту</h2>
-<p>Задайте вопрос своими словами — помощник объяснит методику, результаты или работу платформы. Для уточняющих вопросов откройте чат кнопкой «Помощник».</p>
+<p>Задайте вопрос о сборе листьев, расчёте ФА или работе сайта. Откройте чат кнопкой «Задать вопрос».</p>
 <div class="glavnaya-poisk">
 <div class="glavnaya-poisk__stroka"><input aria-label="Вопрос о проекте" autocomplete="off" class="pole-vvod" id="smartSearchInput" placeholder="Например: сколько нужно листьев?" type="search"/><button class="knopka-osnovnaya" id="smartSearchButton" type="button">Найти</button></div>
 <div aria-live="polite" class="glavnaya-poisk__rezultaty" id="smartSearchResults"></div>
-<button class="knopka-vtorichnaya" data-open-assistant="" type="button">Задать вопрос помощнику</button></div>
+<button class="knopka-vtorichnaya home-question-button" data-open-assistant="" type="button"><img alt="" aria-hidden="true" class="home-action-icon" src="img/icons/gear.png" width="26" height="26" loading="lazy" decoding="async"/><span>Задать вопрос</span></button></div>
 </div>
 <div class="glavnaya-illyustraciya">
 <a aria-label="Открыть все вопросы и ответы" class="glavnaya-perehod glavnaya-perehod--poisk" href="faq.html">
@@ -188,7 +189,7 @@
 </div>
 </div>
 </section>
-<p class="home-classifier-link"><a class="ssylka-svechenie" href="classifier.html">Проверить лист нейросетью</a></p>
+<p class="home-classifier-link"><a class="ssylka-svechenie" href="classifier.html"><img alt="" aria-hidden="true" class="home-action-icon" src="img/icons/upload.png" width="28" height="28" loading="lazy" decoding="async"/><span>Проверить фотографию листа</span></a></p>
 </main>
 <footer aria-label="Подвал сайта" class="podval" data-component="podval">
 <div class="podval-vnutri">
@@ -198,11 +199,10 @@
 </div>
 </footer>
 <script defer="" src="js/header.js?v=20261009-ui3"></script>
-<script defer="" src="js/cursor.js?v=20261009-ui3"></script>
 <script defer="" src="js/glossary.js?v=20261009-ui3"></script>
 <script defer="" src="js/faq-data.js?v=20261009-ui3"></script>
 <script defer="" src="js/smart-search.js?v=20261009-ui3"></script>
 
-<script defer="" src="js/refresh.js?v=20261009-ui3"></script><script defer="" src="js/assistant.js?v=20261009-ui3"></script><script defer src="js/hero-intro.js?v=20261009-hero1"></script>
+<script defer="" src="js/assistant.js?v=20261010-home1"></script><script defer src="js/hero-intro.js?v=20261009-hero1"></script>
 </body>
 </html>
