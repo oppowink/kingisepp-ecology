@@ -4,6 +4,7 @@
   const ASSETS = {
     roadTree: { path: 'img/games/tree-street.jpg', alt: 'Берёза у дороги, игровая фотография', detail: 'Берёза у дороги.' },
     parkTree: { path: 'img/games/tree-park.jpg', alt: 'Берёза в зелёной зоне Кингисеппа, игровая версия снимка', detail: 'Берёза в зелёной зоне.' },
+    treePreview: { path: 'img/games/tree-road-cutout.png', alt: 'Берёза', detail: 'Берёза.' },
     normal1: { path: 'img/games/normal1-cutout.webp', leaf: true, alt: 'Первый целый лист берёзы', detail: 'Край листа целый и различим.' },
     normal2: { path: 'img/games/normal2-cutout.webp', leaf: true, alt: 'Второй целый лист берёзы', detail: 'Жилки и контур видны.' },
     normal3: { path: 'img/games/normal3-cutout.webp', leaf: true, alt: 'Третий целый лист берёзы', detail: 'Пластинка расправлена.' },
@@ -13,8 +14,8 @@
     other1: { path: 'img/games/other1-cutout.webp', leaf: true, alt: 'Неберёзовый узкий лист', detail: 'Форма и край не подходят под берёзу повислую.' },
     other2: { path: 'img/games/other2-cutout.webp', leaf: true, alt: 'Неберёзовый ярко-зелёный лист', detail: 'Это лист другого растения.' },
     other3: { path: 'img/games/other3-cutout.webp', leaf: true, alt: 'Крупный кленовый лист', detail: 'Лист клёна, а не берёзы.' },
-    goodPhoto: { path: 'img/games/leaf-good-angle-cutout.webp', alt: 'Лист на удачном учебном снимке', detail: 'Виден весь контур листа и фон съёмки.' },
-    normalPhoto: { path: 'img/games/birch-leaves.jpg', alt: 'Листья берёзы на исходном фоне съёмки', detail: 'Исходный снимок сохраняет условия фотографирования.' },
+    goodPhoto: { path: 'img/games/leaf-good-angle-cutout.webp', leaf: true, alt: 'Лист на удачном учебном снимке', detail: 'Виден весь контур листа.' },
+    normalPhoto: { path: 'img/games/normal2-cutout.webp', leaf: true, alt: 'Целый лист берёзы', detail: 'Контур листа сохранён полностью.' },
     blurred: { path: 'img/games/leaf-sideways-cutout.webp', alt: 'Исходный снимок листа под неудобным углом', detail: 'Положение листа на снимке не подходит для разметки.' },
     cropped: { path: 'img/games/leaf-damaged-cutout.webp', alt: 'Сильно повреждённый лист на фоне съёмки', detail: 'Повреждение искажает контур.' },
     containerNormal: { path: 'img/games/container-cutout.png', alt: 'Пластиковый контейнер для подходящих листьев', detail: 'Контейнер для подходящих листьев.' },
@@ -63,7 +64,24 @@
   const CATEGORY_ASSETS = { normal: 'containerNormal', damaged: 'containerDamaged', other: 'containerOther' };
   const ORDER = ['road', 'leaves', 'moderator'];
   const TITLES = { road: 'Детектив у дороги', leaves: 'Сортировщик листьев', moderator: 'Модератор на час' };
-  const GAME_PREVIEWS = { road: 'roadTree', leaves: 'containerNormal', moderator: 'normal1' };
+  const GAME_PREVIEWS = { road: 'treePreview', leaves: 'containerNormal', moderator: 'goodPhoto' };
+
+  class GameProgress {
+    constructor(storage) {
+      this.storage = storage;
+      this.completed = new Set();
+      try {
+        const saved = JSON.parse(storage.getItem('eco-games-completed-v1') || '[]');
+        if (Array.isArray(saved)) saved.forEach(game => { if (ORDER.includes(game)) this.completed.add(game); });
+      } catch (_) {}
+    }
+    mark(game) {
+      if (!ORDER.includes(game)) return;
+      this.completed.add(game);
+      try { this.storage.setItem('eco-games-completed-v1', JSON.stringify(Array.from(this.completed))); } catch (_) {}
+    }
+    has(game) { return this.completed.has(game); }
+  }
 
   class RoadGame {
     constructor() { this.counts = { road: 0, park: 0 }; this.waiting = { road: 0, park: 0 }; this.passports = {}; this.active = null; this.samples = []; this.concluded = false; }
@@ -82,12 +100,17 @@
       return true;
     }
     collect() {
-      if (!this.active || this.complete) return false;
+      if (!this.active || !this.waiting[this.active] || this.complete) return false;
       const site = this.active;
       this.counts[site] += 1;
       this.samples.push({ id: site + '-' + this.counts[site], site, passport: { ...this.passports[site] } });
       this.waiting[site] -= 1;
       this.active = this.waiting.road ? 'road' : this.waiting.park ? 'park' : null;
+      return true;
+    }
+    selectSample(site) {
+      if (!SITES[site] || !this.waiting[site]) return false;
+      this.active = site;
       return true;
     }
     conclude(value) {
@@ -136,7 +159,7 @@
     }
     advance() { if (!this.resolved) return false; this.index += 1; return true; }
   }
-  if (typeof module !== 'undefined' && module.exports) module.exports = { RoadGame, SortGame, ModeratorGame, ASSETS, SITES, LEAVES, APPLICATIONS };
+  if (typeof module !== 'undefined' && module.exports) module.exports = { RoadGame, SortGame, ModeratorGame, GameProgress, ASSETS, SITES, LEAVES, APPLICATIONS };
   if (typeof document === 'undefined') return;
 
   const stage = document.getElementById('gameStage');
@@ -149,7 +172,6 @@
   const motion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   let currentGame = '';
   let model = null;
-  let playAll = false;
   let selected = false;
   let editingSite = '';
   let passportDraft = {};
@@ -159,6 +181,9 @@
   let suppressClickUntil = 0;
   let viewVersion = 0;
   let ended = false;
+  let storage = null;
+  try { storage = window.localStorage; } catch (_) {}
+  const progress = new GameProgress(storage);
 
   function escapeHTML(value) {
     return String(value).replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char]);
@@ -171,15 +196,15 @@
       '<span class="asset-fallback"' + (asset.icon ? ' aria-hidden="true"' : '') + '>' + placeholder + '</span></span>';
   }
   function preloadAssets() {
-    Object.values(ASSETS).forEach(asset => {
+    Object.values(GAME_PREVIEWS).map(key => ASSETS[key]).forEach(asset => {
       if (!asset.path) return;
       const image = new Image();
       image.decoding = 'async';
       image.src = asset.path;
     });
   }
-  function hydrateAssets() {
-    stage.querySelectorAll('img[data-asset]').forEach(img => {
+  function hydrateAssets(root = stage) {
+    root.querySelectorAll('img[data-asset]:not([src])').forEach(img => {
       const asset = ASSETS[img.dataset.asset];
       if (!asset.path || missingAssets.has(asset.path)) return;
       img.addEventListener('load', () => { img.hidden = false; img.parentElement.classList.add('asset-loaded'); }, { once: true });
@@ -190,6 +215,7 @@
   function message(text, tone = '') { notice.textContent = text; notice.dataset.tone = tone; }
   function show(markup, focus = false) {
     if (cancelDrag) cancelDrag();
+    cancelDrag = null;
     window.clearTimeout(animationTimer);
     viewVersion += 1;
     stage.innerHTML = markup;
@@ -201,24 +227,33 @@
     if (node) node.focus({ preventScroll: true });
   }
   function updateTitle() {
-    title.textContent = TITLES[currentGame] || 'Экологический детектив';
-    if (label) { label.classList.add('game-intro'); label.textContent = !currentGame ? 'Попробуй весь путь наблюдения: собрать, проверить, разобраться' : currentGame === 'road' ? 'Изучите условия, в которых растут деревья, и заполните паспорта. Затем соберите листья и перенесите их в контейнер' : currentGame === 'leaves' ? 'После сбора листья надо перепроверить. Отделите целые листья берёзы от повреждённых и других видов' : 'Теперь вы модератор. Проверьте снимки и паспорт каждой учебной заявки, затем примите решение'; }
+    title.textContent = TITLES[currentGame] || 'Игры';
+    if (label) {
+      label.classList.add('game-intro');
+      label.hidden = ended;
+      label.textContent = !currentGame ? 'От сбора листьев до проверки заявки.' : currentGame === 'road' ?
+        'Изучите условия точек, где растут деревья, и заполните паспорта для заявок. Затем соберите листья в контейнер.' +
+        (model && Object.keys(model.passports).length ? ' Собирайте по методике: с разной доступной высоты и из разных частей кроны.' : '') :
+        currentGame === 'leaves' ? 'После сбора листья нужно перепроверить. Отделите целые листья берёзы от повреждённых и листьев других видов.' :
+        'Представьте, что вы модератор: проверьте паспорт и фотографии каждой учебной заявки. Решите, какие заявки принять, а какие вернуть на исправление.';
+    }
     finishButton.hidden = !currentGame || ended;
   }
   function lobby() {
-    currentGame = ''; model = null; ended = false; selected = false; playAll = false;
+    currentGame = ''; model = null; ended = false; selected = false;
     updateTitle();
-    const descriptions = { road: 'Соберите образцы с двух деревьев и заполните паспорта.', leaves: 'Перенесите девять листьев в подходящие контейнеры.', moderator: 'Изучите фотографии и разложите три заявки по стопкам.' };
+    const descriptions = { road: 'Заполните паспорта двух точек и соберите листья.', leaves: 'Проверьте листья перед измерениями.', moderator: 'Разберите три учебные заявки.' };
     show('<section class="lobby" aria-label="Выбор игры">' +
-      '<div class="game-catalog">' + ORDER.map(game => '<button class="game-choice" data-start="' + game + '" type="button">' +
+      '<div class="game-catalog">' + ORDER.map(game => '<button class="game-choice' + (progress.has(game) ? ' game-choice--completed' : '') + '" data-start="' + game + '" type="button">' +
         '<span class="choice-media">' + assetMarkup(GAME_PREVIEWS[game]) + '</span><span class="choice-copy"><span class="choice-title">' + TITLES[game] + '</span>' +
-        '<span class="choice-description">' + descriptions[game] + '</span><span class="choice-action">Играть</span></span></button>').join('') + '</div>' +
+        '<span class="choice-description">' + descriptions[game] + '</span><span class="choice-action">' + (progress.has(game) ? 'Ещё раз' : 'Играть') + '</span>' +
+        (progress.has(game) ? '<span class="choice-status">Пройдено</span>' : '') + '</span></button>').join('') + '</div>' +
       '</section>', true);
     message('На телефоне перетаскивайте пальцем. Без перетаскивания: выберите предмет, затем место назначения.');
   }
-  function start(game, all = false) {
+  function start(game) {
     if (!ORDER.includes(game)) return;
-    currentGame = game; playAll = all; ended = false; selected = false; editingSite = ''; activePhoto = 0;
+    currentGame = game; ended = false; selected = false; editingSite = ''; activePhoto = 0;
     model = game === 'road' ? new RoadGame() : game === 'leaves' ? new SortGame() : new ModeratorGame();
     updateTitle();
     if (game === 'road') renderRoad();
@@ -228,82 +263,131 @@
   }
 
   function bindDrag(onDrop) {
-    const item = stage.querySelector('[data-draggable]');
-    if (!item || item.disabled) return;
-    let pointer = null;
-    function clearTargets() { stage.querySelectorAll('.drop-hover').forEach(node => node.classList.remove('drop-hover')); }
-    function targetAt(x, y) {
-      return Array.from(stage.querySelectorAll('[data-drop]:not(:disabled)')).find(node => {
-        const rect = node.getBoundingClientRect();
-        return x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom;
+    const resets = [];
+    let activePointer = null;
+    stage.querySelectorAll('[data-draggable]').forEach(item => {
+      if (item.disabled) return;
+      let pointer = null;
+      function clearTargets() { stage.querySelectorAll('.drop-hover').forEach(node => node.classList.remove('drop-hover')); }
+      function targetAt(x, y) {
+        return Array.from(stage.querySelectorAll('[data-drop]:not(:disabled)')).find(node => {
+          const rect = node.getBoundingClientRect();
+          return x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom;
+        });
+      }
+      function reset() {
+        if (!pointer) return;
+        const id = pointer.id;
+        pointer = null; activePointer = null;
+        clearTargets();
+        item.classList.remove('dragging');
+        item.classList.add('returning');
+        item.style.removeProperty('transform');
+        if (item.hasPointerCapture && item.hasPointerCapture(id)) item.releasePointerCapture(id);
+      }
+      resets.push(reset);
+      item.addEventListener('pointerdown', event => {
+        if (item.disabled || activePointer !== null || event.isPrimary === false || (event.pointerType === 'mouse' && event.button !== 0)) return;
+        if (currentGame === 'road' && !model.selectSample(item.dataset.sampleSite)) return;
+        pointer = { id: event.pointerId, x: event.clientX, y: event.clientY, moved: false };
+        activePointer = event.pointerId;
+        item.classList.remove('returning', 'arrived');
+        item.focus({ preventScroll: true });
+        item.setPointerCapture(event.pointerId);
       });
-    }
-    function reset() {
-      if (!pointer) return;
-      const id = pointer.id;
-      pointer = null;
-      clearTargets();
-      item.classList.remove('dragging');
-      item.classList.add('returning');
-      item.style.removeProperty('transform');
-      if (item.hasPointerCapture && item.hasPointerCapture(id)) item.releasePointerCapture(id);
-    }
-    cancelDrag = reset;
-    item.addEventListener('pointerdown', event => {
-      if (item.disabled || pointer || event.isPrimary === false || (event.pointerType === 'mouse' && event.button !== 0)) return;
-      pointer = { id: event.pointerId, x: event.clientX, y: event.clientY, moved: false };
-      item.classList.remove('returning', 'arrived');
-      item.focus({ preventScroll: true });
-      item.setPointerCapture(event.pointerId);
+      item.addEventListener('pointermove', event => {
+        if (!pointer || pointer.id !== event.pointerId) return;
+        const dx = event.clientX - pointer.x, dy = event.clientY - pointer.y;
+        if (Math.hypot(dx, dy) < 6 && !pointer.moved) return;
+        pointer.moved = true;
+        item.classList.add('dragging');
+        item.style.transform = 'translate(' + dx + 'px,' + dy + 'px)';
+        clearTargets();
+        const target = targetAt(event.clientX, event.clientY);
+        if (target) target.classList.add('drop-hover');
+        event.preventDefault();
+      });
+      item.addEventListener('pointerup', event => {
+        if (!pointer || pointer.id !== event.pointerId) return;
+        const moved = pointer.moved, target = targetAt(event.clientX, event.clientY);
+        reset();
+        if (!moved) return;
+        suppressClickUntil = Date.now() + 250;
+        if (target) onDrop(target.dataset.drop, target, item);
+        else message('Лист вернулся на место. Перенесите его в контейнер.');
+      });
+      item.addEventListener('pointercancel', reset);
+      item.addEventListener('lostpointercapture', reset);
     });
-    item.addEventListener('pointermove', event => {
-      if (!pointer || pointer.id !== event.pointerId) return;
-      const dx = event.clientX - pointer.x;
-      const dy = event.clientY - pointer.y;
-      if (Math.hypot(dx, dy) < 6 && !pointer.moved) return;
-      pointer.moved = true;
-      item.classList.add('dragging');
-      item.style.transform = 'translate(' + dx + 'px,' + dy + 'px)';
-      clearTargets();
-      const target = targetAt(event.clientX, event.clientY);
-      if (target) target.classList.add('drop-hover');
-      event.preventDefault();
-    });
-    item.addEventListener('pointerup', event => {
-      if (!pointer || pointer.id !== event.pointerId) return;
-      const moved = pointer.moved;
-      const target = targetAt(event.clientX, event.clientY);
-      reset();
-      if (!moved) return;
-      suppressClickUntil = Date.now() + 250;
-      if (target) onDrop(target.dataset.drop, target);
-      else message('Образец вернулся на стол. Перенесите его внутрь контейнера.');
-    });
-    item.addEventListener('pointercancel', reset);
-    item.addEventListener('lostpointercapture', reset);
+    cancelDrag = () => resets.forEach(reset => reset());
   }
   function chooseItem(button) {
-    selected = !selected;
+    if (currentGame === 'road' && !model.selectSample(button.dataset.sampleSite)) return;
+    const wasSelected = button.getAttribute('aria-pressed') === 'true';
+    stage.querySelectorAll('[data-draggable]').forEach(node => {
+      node.classList.remove('selected');
+      node.setAttribute('aria-pressed', 'false');
+    });
+    selected = !wasSelected;
     button.classList.toggle('selected', selected);
     button.setAttribute('aria-pressed', String(selected));
-    message(selected ? 'Образец выбран. Нажмите нужный контейнер.' : 'Выбор образца отменён.');
+    message(selected ? 'Лист выбран. Нажмите нужный контейнер.' : 'Выбор листа отменён.');
   }
 
-  function renderRoad() {
-    if (model.complete) { renderComparison(); return; }
+  function pendingLeaves() {
+    return Object.keys(SITES).map(site => Array.from({ length: model.waiting[site] }, (_, index) =>
+      '<button class="leaf-token drag-item" type="button" data-draggable data-action="select-item" data-sample-site="' + site +
+      '" aria-pressed="false" aria-label="Выбрать лист ' + (model.counts[site] + index + 1) + ': ' + SITES[site].name.toLowerCase() + '">' +
+      assetMarkup('normal1') + '<span>' + SITES[site].name + '</span></button>').join('')).join('') ||
+      '<p class="caption">' + (model.complete ? 'Все листья в контейнере.' : 'Нажимайте на берёзу: листья появятся здесь.') + '</p>';
+  }
+  function updateRoadCollection() {
+    if (cancelDrag) cancelDrag();
     selected = false;
-    const area = site => '<section class="map-area" aria-label="' + SITES[site].name + '"><p>' + SITES[site].description + '</p>' +
-      '<button class="tree-button" type="button" data-tree="' + site + '"' + (model.counts[site] + model.waiting[site] >= 5 ? ' disabled' : '') + '>' + assetMarkup(SITES[site].asset) +
-      '<span class="tree-title">' + SITES[site].name + ' · собрано ' + model.counts[site] + '/5</span></button><div class="tree-meta"><span>' +
-      (model.passports[site] ? 'Паспорт готов' : 'Нет паспорта') + '</span><button type="button" class="passport-link" data-passport="' + site + '">Паспорт</button></div></section>';
-    const token = model.active ? '<button class="leaf-token drag-item" type="button" data-draggable data-action="select-item" aria-pressed="false" aria-label="Выбрать лист ' + SITES[model.active].name.toLowerCase() + '">' +
-      assetMarkup('normal1') + '<span>Лист ' + (model.counts[model.active] + 1) + '<br>' + SITES[model.active].name + '<br>Ожидает: ' + (model.waiting.road + model.waiting.park) + '</span></button>' : '<p class="caption">Здесь появятся собранные листья</p>';
-    show('<section class="road-scene" aria-label="Сбор образцов"><div class="scene-toolbar"><p>Учебная схема города</p><p>Собрано ' + model.total + '/10</p></div>' +
-      '<div class="map-board">' + area('road') + '<div class="map-road">Дорога</div>' + area('park') + '</div>' +
-      '<p class="collection-method">' + (Object.keys(model.passports).length ? 'Собирайте листья с разных доступных высот и частей кроны. Нажимайте на дерево: каждый клик добавляет лист. В игре нужно по пять, в полевом наборе от 10 до 30 с каждого дерева' : 'Сначала заполните паспорт дерева. Сбор откроется после проверки условий') + '</p><div class="collection-dock"><div class="sample-bay">' + token + '</div><button type="button" class="drop-zone" data-drop="basket" aria-label="Положить выбранный лист в контейнер">' +
-      assetMarkup('containerNormal') + '<strong>Контейнер · ' + model.total + '/10</strong><span>Дорога ' + model.counts.road + ' · парк ' + model.counts.park + '</span></button></div></section>');
+    const tray = stage.querySelector('.sample-bay');
+    tray.innerHTML = pendingLeaves();
+    hydrateAssets(tray);
+    Object.keys(SITES).forEach(site => {
+      stage.querySelector('[data-tree="' + site + '"]').disabled = model.counts[site] + model.waiting[site] >= 5;
+      stage.querySelector('[data-tree-count="' + site + '"]').textContent = 'Снято ' + (model.counts[site] + model.waiting[site]) + ' из 5';
+    });
+    stage.querySelector('[data-collected-total]').textContent = 'В контейнере: ' + model.total + ' из 10';
+    stage.querySelector('[data-collected-sites]').textContent = 'У дороги: ' + model.counts.road + ' · в парке: ' + model.counts.park;
+    stage.querySelector('.container-fill').innerHTML = model.samples.map((sample, index) =>
+      '<img src="img/leaf1.png" alt="" style="--leaf-x:' + (index % 5 * 17) + '%;--leaf-y:' + (Math.floor(index / 5) * 16) + 'px' + ';--leaf-turn:' + (index % 2 ? 18 : -16) + 'deg">').join('');
+    stage.querySelector('[data-action="compare-sites"]').hidden = !model.complete;
+    stage.querySelector('.collection-dock').classList.toggle('collection-dock--complete', model.complete);
     bindDrag(dropRoad);
-    message(model.active ? 'Перенесите лист в контейнер. Или выберите лист и нажмите контейнер.' : 'Соберите по пять игровых листьев с каждого дерева. Паспорт сохраняет место сбора.');
+  }
+  function fallingLeaf(source) {
+    if (motion) return;
+    const leaf = document.createElement('img');
+    leaf.className = 'falling-leaf'; leaf.src = 'img/leaf1.png'; leaf.alt = '';
+    leaf.width = 32; leaf.height = 42; leaf.setAttribute('aria-hidden', 'true');
+    leaf.style.left = (25 + Math.random() * 45) + '%';
+    leaf.style.top = (14 + Math.random() * 28) + '%';
+    leaf.style.setProperty('--fall-x', (-45 + Math.random() * 90) + 'px');
+    leaf.style.setProperty('--fall-turn', (-80 + Math.random() * 160) + 'deg');
+    leaf.addEventListener('animationend', () => leaf.remove(), { once: true });
+    source.appendChild(leaf);
+  }
+  function renderRoad() {
+    updateTitle();
+    const unlocked = Object.keys(model.passports).length > 0;
+    const area = site => '<section class="map-area" aria-label="' + SITES[site].name + '"><h2>' + SITES[site].name + '</h2>' +
+      '<ul class="site-facts">' + SITES[site].description.split(' · ').map(fact => '<li>' + fact + '</li>').join('') + '</ul>' +
+      '<button class="tree-button" type="button" data-tree="' + site + '">' + assetMarkup(SITES[site].asset) +
+      '<span class="tree-title" data-tree-count="' + site + '"></span></button><div class="tree-meta"><span>' +
+      (model.passports[site] ? 'Паспорт заполнен' : 'Сначала заполните паспорт') + '</span><button type="button" class="passport-link" data-passport="' + site + '">Паспорт точки</button></div></section>';
+    show('<section class="road-scene" aria-label="Сбор листьев"><div class="map-board">' + area('road') + area('park') + '</div>' +
+      '<div class="collection-dock"' + (unlocked ? '' : ' hidden') + '><h2>Сбор листьев</h2><p class="collection-method">Нажмите на дерево несколько раз. Соберите по 5 игровых листьев с каждой берёзы и перенесите их в контейнер.</p>' +
+      '<div class="sample-bay" aria-label="Листья для переноса"></div><button type="button" class="drop-zone collection-container" data-drop="basket" aria-label="Положить выбранный лист в контейнер">' +
+      '<span class="container-picture">' + assetMarkup('containerNormal') + '<span class="container-fill" aria-hidden="true"></span></span>' +
+      '<strong data-collected-total></strong><span data-collected-sites></span></button>' +
+      '<p class="caption">В игре — 5 листьев с каждого дерева. В полевой работе — от 10 до 30.</p>' +
+      '<button class="button button-primary" type="button" data-action="compare-sites" hidden>Набор готов — сравнить точки</button></div></section>');
+    updateRoadCollection();
+    message(unlocked ? 'Можно собрать несколько листьев подряд. Затем перетащите каждый в контейнер или выберите лист и нажмите контейнер.' : 'Откройте паспорт точки, сравните условия с фотографией и заполните три поля.');
   }
   function openPassport(site) {
     if (!SITES[site]) return;
@@ -330,22 +414,20 @@
     if (wrong.length) { message('Все поля заполнены, но со сценой не совпадает: ' + wrong.map(key => fieldNames[key]).join(', ') + '. Сверьтесь с фотографией и подписью.', 'error'); return; }
     if (!model.savePassport(editingSite, passportDraft)) { message('Паспорт не удалось сохранить. Откройте его ещё раз.', 'error'); return; }
 
+    const site = editingSite;
     editingSite = '';
     renderRoad();
-    focusElement('[data-draggable]');
+    focusElement('[data-tree="' + site + '"]');
   }
   function dropRoad(target) {
-    if (target !== 'basket' || !model.collect()) { message('Сначала возьмите лист с дерева.'); return; }
-    selected = false;
-    renderRoad();
-    if (!model.complete) {
-      message('Лист в контейнере. Место сбора сохранено. Нажмите на дерево для следующего образца.', 'success');
-      focusElement('[data-tree]:not(:disabled)');
-    } else title.focus({ preventScroll: true });
+    if (target !== 'basket' || !model.collect()) { message('Сначала выберите лист с дерева.'); return; }
+    updateRoadCollection();
+    message(model.complete ? 'Все 10 листьев в контейнере. Теперь можно сравнить две точки.' : 'Лист в контейнере. Его место сбора сохранено.', 'success');
+    focusElement(model.complete ? '[data-action="compare-sites"]' : '[data-draggable], [data-tree]:not(:disabled)');
   }
   function renderComparison() {
     show('<section class="comparison"><h2>Два места, разные условия</h2><div class="comparison-grid">' +
-      Object.keys(SITES).map(site => '<div><h3>' + SITES[site].name + '</h3><p>Собрано: ' + model.counts[site] + ' игровых листьев</p><p>' + SITES[site].description + '</p></div>').join('') +
+      Object.keys(SITES).map(site => '<div>' + assetMarkup(SITES[site].asset) + '<h3>' + SITES[site].name + '</h3><strong>' + model.counts[site] + ' листьев</strong><p>' + SITES[site].description + '</p></div>').join('') +
       '</div><p>Сбор закончен, но ФА не измерена. Достаточно ли этих наблюдений, чтобы назвать дорогу причиной изменений?</p>' +
       '<div class="actions"><button class="button" type="button" data-conclusion="cause">Дорога влияет</button>' +
       '<button class="button button-primary" type="button" data-conclusion="more">Нужно больше данных</button></div><p class="caption">Это сравнение условий учебной схемы, а не экологические результаты Кингисеппа.</p></section>');
@@ -357,10 +439,10 @@
     selected = false;
     show('<section class="sorter-scene" aria-label="Сортировка листьев">' +
       '<div class="progress-track" role="progressbar" aria-label="Отсортировано листьев" aria-valuemin="0" aria-valuemax="9" aria-valuenow="' + model.sorted + '"><div class="progress-value" style="width:' + (model.sorted / 9 * 100) + '%"></div></div>' +
-      '<div class="sorting-table"><button class="sorting-leaf drag-item" type="button" data-draggable data-action="select-item" aria-pressed="false" aria-label="Выбрать текущий лист">' +
+      '<p class="sort-count" aria-hidden="true">Проверено <strong data-sorted-count>' + model.sorted + '</strong> из 9</p><div class="sorting-table"><button class="sorting-leaf drag-item" type="button" data-draggable data-action="select-item" aria-pressed="false" aria-label="Выбрать текущий лист">' +
       assetMarkup(model.current.asset) + '</button></div>' +
       '<div class="sorting-zones">' + Object.keys(CATEGORY_LABELS).map(category => '<button class="drop-zone specimen-bin" type="button" data-drop="' + category + '" aria-label="' + CATEGORY_LABELS[category] + ', в контейнере ' + model.bins[category] + '">' +
-        assetMarkup(CATEGORY_ASSETS[category]) + '<strong class="specimen-bin__label">' + CATEGORY_LABELS[category] + '</strong></button>').join('') + '</div>' +
+        assetMarkup(CATEGORY_ASSETS[category]) + '<strong class="specimen-bin__label">' + CATEGORY_LABELS[category] + '</strong><span class="bin-count" data-bin-count="' + category + '">Листьев: ' + model.bins[category] + '</span></button>').join('') + '</div>' +
       '<div class="sort-footer"><button class="button button-primary" data-action="next-leaf" type="button" hidden>Следующий лист</button></div></section>');
     bindDrag(dropSorter);
     message('Смотрите на целостность края и различие сторон. Ошибочный перенос можно исправить.');
@@ -376,6 +458,8 @@
       return;
     }
     target.classList.add('drop-correct');
+    target.querySelector('[data-bin-count]').textContent = 'Листьев: ' + model.bins[category];
+    stage.querySelector('[data-sorted-count]').textContent = model.sorted;
     target.setAttribute('aria-label', CATEGORY_LABELS[category] + ', в контейнере ' + model.bins[category]);
     const item = stage.querySelector('[data-draggable]');
     item.disabled = true; item.classList.remove('selected', 'returning');
@@ -436,30 +520,35 @@
 
   function results(completed) {
     ended = true;
+    if (completed) progress.mark(currentGame);
     updateTitle();
-    let facts;
-    let result;
+    let facts, metrics, heading;
     if (currentGame === 'road') {
-      result = 'Собрано ' + model.total + ' из 10 игровых листьев.';
-      facts = ['Паспорт связывает каждый образец с местом сбора.', 'Различие условий не доказывает влияние дороги: нужны измерения, повторы и сравнение.', 'В заявке 2–5 дерева и по 10–30 фотографий листьев с каждого.'];
+      heading = 'Листья собраны';
+      metrics = [[model.total + '/10', 'листьев в контейнере'], [model.counts.road, 'у дороги'], [model.counts.park, 'в парке']];
+      facts = ['Паспорт связывает каждый лист с местом сбора.', 'Разные условия дают повод для исследования. Влияние дороги ещё нужно проверить измерениями.', 'В полевой заявке — от 2 до 5 деревьев и от 10 до 30 фотографий листьев с каждого.'];
     } else if (currentGame === 'leaves') {
-      result = 'Разложено ' + model.sorted + '/9. С первого раза: ' + model.firstTry + '. Ошибочных переносов: ' + model.errors + '.';
-      facts = ['Другой вид и повреждённая берёза исключаются из измерения ФА.', 'Целые асимметричные листья не отбрасывают ради красивого результата.', 'Пригодность материала проверяют до расчёта ФА по размеченным точкам.'];
+      heading = 'Листья проверены';
+      metrics = [[model.sorted + '/9', 'листьев распределено'], [model.firstTry, 'верно без исправлений'], [model.errors, 'ошибочных переносов']];
+      facts = ['Повреждённые листья берёзы и листья других видов не используют для измерения ФА берёзы.', 'Целые асимметричные листья сохраняют. Отбор только симметричных листьев исказит результат.', 'Материал перепроверяют до разметки и расчёта ФА.'];
     } else {
-      result = 'Проверено ' + model.decisions.length + '/3. Обоснованных решений: ' + model.score + '.';
+      heading = 'Заявки разобраны';
+      metrics = [[model.decisions.length + '/3', 'заявок проверено'], [model.score, 'решений по методике'], [model.decisions.length - model.score, 'решений стоит пересмотреть']];
       facts = model.decisions.map(entry => {
         const application = APPLICATIONS[entry.index];
-        return application.name + ': ' + (application.expected === 'approve' ? 'принимаем. ' : 'возвращаем. ') + application.summary;
+        return application.name + ': ' + (application.expected === 'approve' ? 'принимаем. ' : 'возвращаем на исправление. ') + application.summary;
       });
-      if (!facts.length) facts.push('До решения нужно проверить паспорт, комплект и качество фотографий.');
+      if (!facts.length) facts.push('До решения проверьте паспорт, комплект и качество фотографий.');
     }
     const nextGame = ORDER[ORDER.indexOf(currentGame) + 1];
-    show('<section class="result-scene" aria-label="Результат игры"><div class="result-board"><div class="result-board__place"><img src="img/leaf1.png" alt="" aria-hidden="true"><span>Практика</span></div><div class="result-board__summary"><h2>' + (completed ? (currentGame === 'road' ? 'Образцы собраны' : currentGame === 'leaves' ? 'Материал проверен' : 'Решения приняты') : 'Можно продолжить в новом раунде') + '</h2><p>' + result + '</p></div></div>' +
-      '<div class="result-facts">' + facts.map(fact => '<div><p>' + escapeHTML(fact) + '</p></div>').join('') + '</div>' +
-      '<div class="actions"><button class="button button-primary" type="button" data-action="replay">Играть снова</button>' +
-      (completed && nextGame ? '<button class="button" type="button" data-next-game="' + nextGame + '">Следующая игра</button>' : '') +
-      '<button class="button" type="button" data-action="lobby">К выбору игр</button></div></section>', true);
-    message('Результат относится только к этому раунду. Обучение, сертификаты и настоящие заявки не изменены.');
+    show('<section class="result-scene" aria-label="Итоги игры"><div class="result-board"><img src="img/leaf1.png" width="62" height="81" alt="" aria-hidden="true">' +
+      '<div><p class="result-state">' + (completed ? 'Пройдено' : 'Раунд завершён') + '</p><h2>' + (completed ? heading : 'Можно попробовать ещё раз') + '</h2></div></div>' +
+      '<div class="result-metrics">' + metrics.map(([value, name]) => '<div><strong>' + value + '</strong><span>' + name + '</span></div>').join('') + '</div>' +
+      '<div class="result-facts">' + facts.map(fact => '<p>' + escapeHTML(fact) + '</p>').join('') + '</div>' +
+      '<div class="actions"><button class="button button-primary" type="button" data-action="replay">Ещё раз</button>' +
+      (completed && nextGame ? '<button class="button" type="button" data-next-game="' + nextGame + '">Дальше: ' + TITLES[nextGame] + '</button>' : '') +
+      '<button class="button" type="button" data-action="lobby">К играм</button></div></section>', true);
+    message(completed ? 'Игра отмечена как пройденная.' : 'Этот раунд не отмечен как пройденный.');
   }
 
   stage.addEventListener('click', event => {
@@ -467,11 +556,10 @@
     const button = event.target.closest('button');
     if (!button || button.disabled || !stage.contains(button)) return;
     if (button.dataset.start) { start(button.dataset.start); return; }
-    if (button.dataset.nextGame) { start(button.dataset.nextGame, true); return; }
+    if (button.dataset.nextGame) { start(button.dataset.nextGame); return; }
     const action = button.dataset.action;
-    if (action === 'start-all') { start(ORDER[0], true); return; }
     if (action === 'lobby') { lobby(); return; }
-    if (action === 'replay') { start(currentGame, playAll); return; }
+    if (action === 'replay') { start(currentGame); return; }
     if (!model || ended) return;
     if (action === 'select-item') { chooseItem(button); return; }
     if (button.dataset.drop) {
@@ -485,13 +573,19 @@
         const site = button.dataset.tree;
 
         if (!model.passports[site]) { openPassport(site); return; }
-        if (model.pick(site)) { renderRoad(); var source = stage.querySelector('[data-tree="' + site + '"]'); if (source && !motion) { var falling = document.createElement('img'); falling.className = 'falling-leaf'; falling.src = 'img/leaf1.png'; falling.alt = ''; source.appendChild(falling); setTimeout(function () { falling.remove(); }, 650); } }
+        if (model.pick(site)) {
+          fallingLeaf(button);
+          updateRoadCollection();
+          message('Лист снят с дерева. Можно снять ещё или перенести собранные листья в контейнер.', 'success');
+          if (button.disabled) focusElement('[data-draggable]');
+        }
       }
       if (button.dataset.passport) openPassport(button.dataset.passport);
       if (button.dataset.field) {
         passportDraft[button.dataset.field] = button.dataset.value;
         stage.querySelectorAll('[data-field="' + button.dataset.field + '"]').forEach(node => node.setAttribute('aria-pressed', String(node === button)));
       }
+      if (action === 'compare-sites' && model.complete) { renderComparison(); title.focus({ preventScroll: true }); }
       if (action === 'save-passport') savePassport();
       if (action === 'back-map') { editingSite = ''; renderRoad(); focusElement('[data-tree]:not(:disabled)'); }
       if (button.dataset.conclusion) {
@@ -517,8 +611,9 @@
     if (event.key !== 'Escape') return;
     if (cancelDrag) cancelDrag();
     selected = false;
-    const item = stage.querySelector('[data-draggable]');
-    if (item) { item.classList.remove('selected'); item.setAttribute('aria-pressed', 'false'); }
+    stage.querySelectorAll('[data-draggable]').forEach(item => {
+      item.classList.remove('selected'); item.setAttribute('aria-pressed', 'false');
+    });
   });
   window.addEventListener('resize', () => { if (cancelDrag) cancelDrag(); });
 

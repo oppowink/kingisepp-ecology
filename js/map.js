@@ -12,6 +12,7 @@
   var activeIconOffset = [-19, -42];
   var badgeLayout = null;
   var openCard = null;
+  var openPoint = null;
 
   function api(path) {
     var base = String(window.ECO_API_BASE || '').replace(/\/$/, '');
@@ -56,6 +57,12 @@
       return node;
     }
     if (data.date) text('p', data.date, 'tochka-data');
+    var close = document.createElement('button');
+    close.type = 'button'; close.className = 'karta-balloon__close';
+    close.setAttribute('aria-label', 'Закрыть сведения о точке');
+    close.setAttribute('data-map-close', '');
+    close.textContent = '×';
+    card.appendChild(close);
     text('h2', data.title);
     if (data.address) text('p', data.address, 'tochka-adres');
     var assessment = text('p', '', 'tochka-ocenka');
@@ -118,15 +125,7 @@
     if (data.resultItem && !data.pdfUrl) {
       var pdf = document.createElement('button');
       pdf.type = 'button'; pdf.textContent = 'Скачать PDF';
-      pdf.addEventListener('click', async function () {
-        pdf.disabled = true; pdf.textContent = 'Готовим PDF…';
-        try {
-          await window.EcoPdf.download(data.resultItem);
-          pdf.textContent = 'Скачать PDF';
-        } catch (_) {
-          pdf.textContent = 'Повторить скачивание PDF';
-        } finally { pdf.disabled = false; }
-      });
+      pdf.setAttribute('data-map-pdf', '');
       downloads.appendChild(pdf);
     }
     if (downloads.childElementCount) card.appendChild(downloads);
@@ -141,7 +140,9 @@
     setSelected(placemark);
     var card = createPointCard(data);
     openCard = card;
-    mapInstance.balloon.open(coords, card, {
+    openPoint = null;
+    document.getElementById('kartaStatus').hidden = true;
+    mapInstance.balloon.open(coords, { contentBody: card.outerHTML }, {
       panelMaxMapArea: 0,
       maxWidth: 370,
       shadow: false,
@@ -149,9 +150,12 @@
       autoPanDuration: 0,
       autoPanMargin: 24,
       offset: [0, -42],
-      closeButton: true
+      closeButton: false
     }).then(function () {
-      if (openCard === card) card.focus({ preventScroll: true });
+      if (openCard !== card) return;
+      openPoint = data;
+      openCard = document.querySelector('#karta .karta-balloon');
+      if (openCard) openCard.focus({ preventScroll: true });
     }, function () {
       var status = document.getElementById('kartaStatus');
       status.textContent = 'Не удалось открыть сведения о точке. Нажмите на неё ещё раз.';
@@ -199,8 +203,8 @@
         hasBalloon: false,
         iconLayout: 'default#imageWithContent',
         iconContentLayout: badgeLayout,
-        iconContentOffset: [22, 21],
-        iconContentSize: [24, 24],
+        iconContentOffset: [24, 23],
+        iconContentSize: [20, 20],
         iconImageHref: normalIcon,
         iconImageSize: normalIconSize,
         iconImageOffset: normalIconOffset
@@ -307,7 +311,21 @@
         container.focus({ preventScroll: true });
       }
       openCard = null;
+      openPoint = null;
     });
+    container.addEventListener('click', async function (event) {
+      var button = event.target.closest('[data-map-close], [data-map-pdf]');
+      if (!button || !container.contains(button)) return;
+      if (button.hasAttribute('data-map-close')) { mapInstance.balloon.close(); return; }
+      if (!openPoint || !openPoint.resultItem || button.disabled) return;
+      var item = openPoint.resultItem;
+      button.disabled = true; button.textContent = 'Готовим PDF…';
+      try {
+        await window.EcoPdf.download(item);
+        button.textContent = 'Скачать PDF';
+      } catch (_) { button.textContent = 'Повторить скачивание PDF'; }
+      finally { button.disabled = false; }
+    }, true);
     document.addEventListener('keydown', function (event) {
       if (event.key === 'Escape' && mapInstance.balloon.isOpen()) {
         event.preventDefault();

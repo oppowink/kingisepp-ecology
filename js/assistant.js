@@ -13,7 +13,7 @@
     panel.innerHTML = '<div class="assistant-heading"><h2 id="assistantTitle">Задать вопрос</h2><button type="button" data-close aria-label="Закрыть чат"><img src="img/icons/close.png" alt="" aria-hidden="true" width="24" height="24" decoding="async"></button></div><div class="assistant-messages" role="log" aria-live="polite" aria-label="Переписка с помощником"></div><div class="assistant-suggestions"><button type="button">Как работает платформа?</button><button type="button">Как собрать листья?</button><button type="button">Что такое ФА?</button></div><form><label for="assistantQuestion">Вопрос о проекте</label><textarea id="assistantQuestion" maxlength="1500" rows="2" required placeholder="Например: сколько нужно листьев?"></textarea><button type="submit" class="knopka-osnovnaya">Спросить</button></form>';
     document.body.appendChild(launcher);
     document.body.appendChild(panel);
-    var footer = document.querySelector('.home .podval, .map-page .podval');
+    var footer = document.querySelector('.home .podval, .map-page .podval, .arcade .podval');
     if (footer) {
       var footerFrame = null;
       function positionLauncher() {
@@ -27,6 +27,7 @@
       positionLauncher();
       window.addEventListener('scroll', schedulePosition, { passive: true });
       window.addEventListener('resize', schedulePosition);
+      if (window.ResizeObserver) new window.ResizeObserver(schedulePosition).observe(document.body);
     }
     var messages = panel.querySelector('.assistant-messages'), input = panel.querySelector('#assistantQuestion'), form = panel.querySelector('form');
     var enabled = true, history = [], busy = false, previousFocus = null;

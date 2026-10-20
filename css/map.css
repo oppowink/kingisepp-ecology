@@ -11,23 +11,24 @@
 .karta-legend h2 { display:flex; align-items:center; gap:12px; margin:0 0 14px; }
 .karta-legend h2 img { width:32px; height:40px; object-fit:contain; flex:0 0 32px; }
 .karta-legend p { max-width:74ch; margin:12px 0 0; font-size:.9rem; }
-.karta-legend .karta-legend__sovet { color:var(--text-muted); font-size:.82rem; }
 .karta-shkala { display:flex; flex-wrap:wrap; gap:10px 20px; margin:22px 0 0; padding:0; list-style:none; }
 .karta-shkala li { display:flex; align-items:center; gap:8px; font-size:.76rem; }
 
-.karta-fa-badge { display:inline-flex; align-items:center; justify-content:center; width:24px; height:24px; flex:0 0 24px; border:1px solid rgba(48,53,31,.32); border-radius:50%; background:#f5efe0; color:#30351f; font:700 12px/1 var(--font-body); }
-.karta-fa-badge--I { background:#a8c99a; }
-.karta-fa-badge--II { background:#d6e2cc; }
-.karta-fa-badge--III { background:#e3d2a5; }
-.karta-fa-badge--IV { background:#f4c7c3; }
-.karta-fa-badge--V { background:#c38b9c; color:#2a1d23; }
+.karta-fa-badge { display:inline-flex; align-items:center; justify-content:center; width:20px; height:20px; flex:0 0 20px; border:0; border-radius:50%; background:#555b40; color:#fff; font:700 12px/1 Georgia, 'Times New Roman', serif; }
+.karta-fa-badge--I { background:#2e5d3a; }
+.karta-fa-badge--II { background:#4b6a2b; }
+.karta-fa-badge--III { background:#89651e; }
+.karta-fa-badge--IV { background:#9b4f21; }
+.karta-fa-badge--V { background:#94364f; }
 
 .map-page [class*="balloon__layout"], .map-page [class*="balloon__content"] { border-radius:2px; background:var(--surface); color:var(--text); box-shadow:none; }
 .map-page [class*="balloon__content"] { margin:0; padding:18px 22px 18px 16px; }
 .map-page [class*="balloon__tail"]::after { background:var(--surface); box-shadow:none; }
 html.dark .map-page [class*="balloon__close-button"] { filter:invert(1); }
-.karta-balloon { width:min(330px, calc(100vw - 112px)); max-height:min(440px, 46dvh); overflow-y:auto; overscroll-behavior:contain; padding:2px; color:var(--text); font:400 14px/1.55 var(--font-body); overflow-wrap:anywhere; }
-.karta-balloon h2 { margin:6px 0 10px; font:700 17px/1.4 var(--font-heading); }
+.karta-balloon { position:relative; width:min(330px, calc(100vw - 112px)); max-height:min(440px, 46dvh); overflow-y:auto; overscroll-behavior:contain; padding:2px; color:var(--text); font:400 14px/1.55 var(--font-body); overflow-wrap:anywhere; }
+.karta-balloon h2 { margin:6px 38px 10px 0; font:700 17px/1.4 var(--font-heading); }
+.karta-balloon__close { position:absolute; top:0; right:0; display:grid; place-items:center; width:44px; height:44px; padding:0; border:0; border-radius:0; background:var(--surface); color:var(--text); font:700 28px/1 Arial, sans-serif; cursor:pointer; }
+.karta-balloon__close:hover { color:var(--rose-ink); }
 .karta-balloon p { margin:8px 0; }
 .karta-balloon .tochka-data { margin:0 0 6px; font-size:12px; color:var(--text-muted); }
 .tochka-adres { color:var(--text-muted); }
