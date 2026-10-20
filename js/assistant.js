@@ -7,13 +7,27 @@
     launcher.type = 'button'; launcher.className = 'assistant-launcher';
     launcher.setAttribute('aria-label', 'Задать вопрос');
     launcher.setAttribute('aria-controls', 'projectAssistant'); launcher.setAttribute('aria-expanded', 'false');
-    launcher.innerHTML = '<img src="img/icons/gear.png" alt="" aria-hidden="true" width="26" height="26" decoding="async"><span>Задать вопрос</span>';
+    launcher.textContent = 'Задать вопрос';
     var panel = document.createElement('dialog'); panel.id = 'projectAssistant'; panel.className = 'assistant-panel';
     panel.setAttribute('aria-labelledby', 'assistantTitle');
     panel.innerHTML = '<div class="assistant-heading"><h2 id="assistantTitle">Задать вопрос</h2><button type="button" data-close aria-label="Закрыть чат"><img src="img/icons/close.png" alt="" aria-hidden="true" width="24" height="24" decoding="async"></button></div><div class="assistant-messages" role="log" aria-live="polite" aria-label="Переписка с помощником"></div><div class="assistant-suggestions"><button type="button">Как работает платформа?</button><button type="button">Как собрать листья?</button><button type="button">Что такое ФА?</button></div><form><label for="assistantQuestion">Вопрос о проекте</label><textarea id="assistantQuestion" maxlength="1500" rows="2" required placeholder="Например: сколько нужно листьев?"></textarea><button type="submit" class="knopka-osnovnaya">Спросить</button></form>';
-    var dock = document.querySelector('[data-assistant-launcher]');
-    (dock || document.body).appendChild(launcher);
+    document.body.appendChild(launcher);
     document.body.appendChild(panel);
+    var footer = document.body.classList.contains('home') && document.querySelector('.podval');
+    if (footer) {
+      var footerFrame = null;
+      function positionLauncher() {
+        footerFrame = null;
+        var overlap = Math.max(0, window.innerHeight - footer.getBoundingClientRect().top);
+        launcher.style.setProperty('--assistant-footer-offset', Math.ceil(overlap) + 'px');
+      }
+      function schedulePosition() {
+        if (footerFrame === null) footerFrame = window.requestAnimationFrame(positionLauncher);
+      }
+      positionLauncher();
+      window.addEventListener('scroll', schedulePosition, { passive: true });
+      window.addEventListener('resize', schedulePosition);
+    }
     var messages = panel.querySelector('.assistant-messages'), input = panel.querySelector('#assistantQuestion'), form = panel.querySelector('form');
     var enabled = true, history = [], busy = false, previousFocus = null;
     var knowledgePromise = fetch('data/assistant-knowledge.json').then(function (r) { if (!r.ok) throw new Error(); return r.json(); }).catch(function () { return {}; });

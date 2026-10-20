@@ -3,7 +3,6 @@
 :focus-visible { outline:2px solid var(--accent); outline-offset:3px; }
 
 .assistant-launcher { position:fixed; right:24px; bottom:max(22px, env(safe-area-inset-bottom)); z-index:1100; display:inline-flex; align-items:center; gap:10px; min-height:48px; max-width:calc(100vw - 32px); padding:10px 16px; background:var(--rose-soft); color:var(--text); border:1px solid var(--line-strong); border-radius:2px; font:500 14px/1.4 var(--font-body); cursor:pointer; }
-.assistant-launcher img { width:26px; height:26px; flex:0 0 26px; object-fit:contain; pointer-events:none; }
 .assistant-launcher:hover { border-color:var(--accent); }
 .assistant-panel { position:fixed; inset:auto 24px 86px auto; margin:0; width:min(460px, calc(100vw - 32px)); max-height:min(720px, calc(100dvh - 110px)); padding:0; overflow-y:auto; border:1px solid var(--line-strong); border-radius:2px; background:var(--surface); color:var(--text); font:400 16px/1.5 var(--font-body); cursor:auto; }
 .assistant-panel:not([open]) { display:none; }
@@ -33,6 +32,7 @@
   position:relative;
   isolation:isolate;
   --home-leaf-ink:var(--text);
+  --home-leaf-halo:#f5efe0;
 }
 html.dark .home { --home-leaf-ink:var(--bg); }
 .home::before,
@@ -50,6 +50,7 @@ html.dark .home::after {
 .home main { padding-bottom:28px; }
 .home .glavnaya-scena { height:auto; min-height:0; padding:48px 0; }
 .home .glavnaya-scena__lipkaya { position:static; height:auto; min-height:0; max-width:1100px; width:calc(100% - 48px); margin:auto; display:grid; grid-template-columns:minmax(0, 2fr) minmax(0, 1fr); gap:48px; align-items:center; padding:0; overflow:visible; }
+.home [data-scena="aktualnost"] .glavnaya-scena__lipkaya { max-width:1320px; width:calc(100% - 64px); grid-template-columns:repeat(2, minmax(0, 1fr)); gap:clamp(24px, 4vw, 56px); }
 .home .glavnaya-blok { grid-column:1; width:auto; max-width:760px; min-height:0; opacity:1; transform:none; }
 .home .glavnaya-illyustraciya { width:100%; min-height:0; display:grid; place-items:center; opacity:1; transform:none; justify-self:center; }
 .home .glavnaya-perehod {
@@ -83,9 +84,10 @@ html.dark .home::after {
   transform:translateY(-50%);
   margin:0;
   color:var(--home-leaf-ink);
-  font-size:clamp(1rem, 1.35vw, 1.2rem);
-  font-weight:600;
+  font-size:clamp(1.0625rem, 1.5vw, 1.3rem);
+  font-weight:700;
   line-height:1.45;
+  text-shadow:0 0 2px var(--home-leaf-halo), 0 0 6px var(--home-leaf-halo), 0 0 11px var(--home-leaf-halo);
   text-align:center;
   text-wrap:balance;
   text-decoration:none;
@@ -107,17 +109,17 @@ html.dark .home .glavnaya-perehod:is(:hover, :focus-visible) .glavnaya-perehod__
 .home .glavnaya-illyustraciya.home-scene {
   position:relative;
   display:block;
-  width:min(100%, 340px);
+  width:min(100%, 620px);
   height:auto;
-  aspect-ratio:1.35;
+  aspect-ratio:1.65;
   overflow:visible;
   pointer-events:none;
 }
 .home-scene img { position:absolute; display:block; height:auto; pointer-events:none; }
 .home-scene__road { z-index:1; width:100%; left:0; bottom:0; }
-.home-scene__trees { z-index:0; width:58%; left:36%; bottom:15%; }
-.home-scene__car { z-index:3; width:32%; left:60%; bottom:15%; }
-.home-scene__exhaust { z-index:2; width:30%; left:26%; bottom:18%; transform:scaleX(-1); }
+.home-scene__trees { z-index:3; width:56%; left:1%; bottom:16%; }
+.home-scene__car { z-index:4; width:34%; left:64%; bottom:17%; }
+.home-scene__exhaust { z-index:2; width:34%; left:32%; bottom:17%; transform:scaleX(-1); }
 .home-scene--waiting img { opacity:0; }
 .home-scene--playing .home-scene__road { animation:home-road 420ms cubic-bezier(.22,1,.36,1) both; }
 .home-scene--playing .home-scene__trees { animation:home-trees 480ms cubic-bezier(.22,1,.36,1) 180ms both; }
@@ -140,26 +142,26 @@ html.dark .home .glavnaya-perehod:is(:hover, :focus-visible) .glavnaya-perehod__
   from { opacity:0; transform:translateX(12px) scaleX(-1) scale(.7); }
   to { opacity:1; transform:translateX(0) scaleX(-1) scale(1); }
 }
-.home .home-action-icon { width:28px; height:28px; flex:0 0 28px; object-fit:contain; pointer-events:none; }
 .home .home-question-button { min-height:48px; gap:10px; padding:8px 0; border:0; border-radius:0; background:transparent; color:var(--text); text-decoration:underline; text-decoration-color:var(--line-strong); text-underline-offset:6px; }
 .home .home-question-button:hover { color:var(--accent); text-decoration-color:currentColor; }
-.home-chat { position:relative; z-index:2; display:flex; justify-content:flex-end; width:min(1100px, calc(100% - 48px)); margin:0 auto; padding:8px 0 26px; }
-.home .home-chat .assistant-launcher { position:static; z-index:auto; min-height:48px; padding:8px 0; border:0; border-radius:0; background:transparent; box-shadow:none; color:var(--text); font-size:.88rem; font-weight:400; }
-.home .home-chat .assistant-launcher span { text-decoration:underline; text-decoration-color:var(--line-strong); text-underline-offset:6px; }
-.home .home-chat .assistant-launcher:hover span { color:var(--accent); text-decoration-color:currentColor; }
+.home .assistant-launcher { right:max(12px, env(safe-area-inset-right)); bottom:calc(max(16px, env(safe-area-inset-bottom)) + var(--assistant-footer-offset, 0px)); z-index:1001; gap:0; background:var(--surface); font-weight:600; box-shadow:none; }
+.home .assistant-launcher:hover { background:var(--rose-soft); }
 .home .nastroiki-panel:not(.otkryta) { visibility:hidden; }
 .home .podval { padding-bottom:max(24px, env(safe-area-inset-bottom)); }
 .nastroiki-zakryt { min-width:44px; min-height:44px; }
 
+@media(max-width:980px) {
+  .home [data-scena="aktualnost"] .glavnaya-scena__lipkaya { grid-template-columns:minmax(0, 1fr); width:calc(100% - 48px); gap:20px; }
+}
 @media(max-width:760px) {
   .home .glavnaya-scena { padding:30px 0; }
-  .home .glavnaya-scena__lipkaya { grid-template-columns:minmax(0, 1fr); gap:16px; width:calc(100% - 32px); }
+  .home .glavnaya-scena__lipkaya,
+  .home [data-scena="aktualnost"] .glavnaya-scena__lipkaya { grid-template-columns:minmax(0, 1fr); gap:16px; width:calc(100% - 32px); }
   .home .glavnaya-blok { min-width:0; padding:28px 20px; }
   .home .glavnaya-illyustraciya { grid-column:1; justify-self:center; align-self:center; }
   .home .glavnaya-perehod { width:min(220px, 72vw); }
   .home .glavnaya-perehod .glavnaya-perehod__list { width:100%; }
-  .home .glavnaya-illyustraciya.home-scene { width:min(320px, 100%); }
-  .home-chat { width:calc(100% - 32px); }
+  .home .glavnaya-illyustraciya.home-scene { width:min(520px, 100%); }
 }
 @media(max-width:680px) {
   .home .shapka-ssylka, .home .nastroiki-knopka { width:44px; min-height:44px; justify-content:center; padding:0; flex:0 0 44px; }
