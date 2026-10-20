@@ -10,16 +10,17 @@
     launcher.innerHTML = '<img src="img/icons/gear.png" alt="" aria-hidden="true" width="26" height="26" decoding="async"><span>Задать вопрос</span>';
     var panel = document.createElement('dialog'); panel.id = 'projectAssistant'; panel.className = 'assistant-panel';
     panel.setAttribute('aria-labelledby', 'assistantTitle');
-    panel.innerHTML = '<div class="assistant-heading"><h2 id="assistantTitle">Задать вопрос</h2><button type="button" data-close aria-label="Закрыть чат"><img src="img/icons/close.png" alt="" aria-hidden="true" width="24" height="24" decoding="async"></button></div><p class="assistant-mode" data-mode>Ответы по материалам проекта</p><div class="assistant-messages" role="log" aria-live="polite" aria-label="Переписка с помощником"></div><div class="assistant-suggestions"><button type="button">Как работает платформа?</button><button type="button">Как собрать листья?</button><button type="button">Что такое ФА?</button></div><form><label for="assistantQuestion">Вопрос о проекте</label><textarea id="assistantQuestion" maxlength="1500" rows="2" required placeholder="Например: сколько нужно листьев?"></textarea><button type="submit" class="knopka-osnovnaya">Спросить</button><p class="assistant-hint">Ответы проверяйте по методике</p></form>';
-    document.body.append(launcher, panel);
+    panel.innerHTML = '<div class="assistant-heading"><h2 id="assistantTitle">Задать вопрос</h2><button type="button" data-close aria-label="Закрыть чат"><img src="img/icons/close.png" alt="" aria-hidden="true" width="24" height="24" decoding="async"></button></div><div class="assistant-messages" role="log" aria-live="polite" aria-label="Переписка с помощником"></div><div class="assistant-suggestions"><button type="button">Как работает платформа?</button><button type="button">Как собрать листья?</button><button type="button">Что такое ФА?</button></div><form><label for="assistantQuestion">Вопрос о проекте</label><textarea id="assistantQuestion" maxlength="1500" rows="2" required placeholder="Например: сколько нужно листьев?"></textarea><button type="submit" class="knopka-osnovnaya">Спросить</button></form>';
+    var dock = document.querySelector('[data-assistant-launcher]');
+    (dock || document.body).appendChild(launcher);
+    document.body.appendChild(panel);
     var messages = panel.querySelector('.assistant-messages'), input = panel.querySelector('#assistantQuestion'), form = panel.querySelector('form');
     var enabled = true, history = [], busy = false, previousFocus = null;
     var knowledgePromise = fetch('data/assistant-knowledge.json').then(function (r) { if (!r.ok) throw new Error(); return r.json(); }).catch(function () { return {}; });
     function timeout(ms) { var controller = new AbortController(); setTimeout(function () { controller.abort(); }, ms); return controller.signal; }
     var capabilities = fetch(endpoint, { signal: timeout(8000) }).then(function (r) { if (!r.ok) throw new Error(); return r.json(); }).then(function (data) {
       enabled = data.enabled === true;
-      panel.querySelector('[data-mode]').textContent = enabled ? 'ИИ · ответы по материалам проекта' : 'Справка проекта · ИИ пока недоступен';
-    }).catch(function () { enabled = false; panel.querySelector('[data-mode]').textContent = 'Справка проекта · ИИ пока недоступен'; });
+    }).catch(function () { enabled = false; });
     function message(text, role) {
       var p = document.createElement('p'); p.className = 'assistant-message assistant-message--' + role;
       p.textContent = text; messages.appendChild(p); messages.scrollTop = messages.scrollHeight;
@@ -67,15 +68,15 @@
           var response = await fetch(endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, signal: timeout(27000), body: JSON.stringify({ question: question, context: options.context || '', consent: options.consent === true, history: options.history || [] }) });
           var data = await response.json(); if (!response.ok || typeof data.answer !== 'string' || !data.answer.trim()) throw new Error(data.error || 'UNAVAILABLE');
           return { answer: data.answer, source: 'ai', provider: data.provider };
-        } catch (_) { return { answer: await localAnswer(question), source: 'local', notice: 'ИИ сейчас не ответил. Ниже — найденный материал справки.' }; }
+        } catch (_) { return { answer: await localAnswer(question), source: 'local', notice: 'Сервис ответов недоступен. Найдено в справке:' }; }
       }
-      return { answer: await localAnswer(question), source: 'local', notice: 'ИИ пока недоступен. Ниже — найденный материал справки.' };
+      return { answer: await localAnswer(question), source: 'local', notice: 'Ответ из справки проекта:' };
     }
     window.EcoAssistant = { open: open, ask: ask };
     form.addEventListener('submit', async function (event) {
       event.preventDefault(); if (busy) return;
       var question = input.value.trim(); if (!question) return;
-      busy = true; var button = form.querySelector('[type="submit"]'); button.disabled = true; button.textContent = 'Готовлю ответ…';
+      busy = true; var button = form.querySelector('[type="submit"]'); button.disabled = true; button.textContent = 'Отправка…';
       message(question, 'user'); input.value = ''; messages.setAttribute('aria-busy', 'true');
       try {
         var result = await ask(question, { history: history });
