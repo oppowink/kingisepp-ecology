@@ -31,23 +31,6 @@
     }).filter(function (match) { return match.score > 0; }).sort(function (a, b) { return b.score - a.score; }).slice(0, 3).map(function (match) { return match.item; });
   }
 
-  function initAccordion() {
-    var list = document.getElementById('faqList');
-    if (!list || !Array.isArray(window.ECO_FAQ)) return;
-    list.innerHTML = window.ECO_FAQ.map(function (item, index) {
-      var answerId = 'faqAnswer' + index;
-      return '<article class="faq-element"><h2><button aria-controls="' + answerId + '" aria-expanded="false" class="faq-vopros" type="button">' + escapeHtml(item.question) + '</button></h2><div class="faq-otvet" hidden id="' + answerId + '"><p>' + escapeHtml(item.answer) + '</p></div></article>';
-    }).join('');
-    list.querySelectorAll('.faq-vopros').forEach(function (button) {
-      button.addEventListener('click', function () {
-        var answer = document.getElementById(button.getAttribute('aria-controls'));
-        var expanded = button.getAttribute('aria-expanded') === 'true';
-        button.setAttribute('aria-expanded', String(!expanded));
-        if (answer) answer.hidden = expanded;
-      });
-    });
-  }
-
   function initHomeSearch() {
     var input = document.getElementById('smartSearchInput');
     var button = document.getElementById('smartSearchButton');
@@ -70,7 +53,7 @@
           results.innerHTML = '<article class="glavnaya-poisk__rezultat"><p class="glavnaya-poisk__source">' + escapeHtml(response.source === 'ai' ? 'Ответ ИИ по проекту' : response.notice || 'Материал справки') + '</p><p class="glavnaya-poisk__answer">' + escapeHtml(response.answer) + '</p></article>';
         } else {
           var found = searchFaq(query);
-          results.innerHTML = found.length ? found.map(function (item) { return '<article class="glavnaya-poisk__rezultat"><h3>' + escapeHtml(item.question) + '</h3><p>' + escapeHtml(item.answer) + '</p></article>'; }).join('') : '<p>Ответ не найден. Откройте раздел «Вопросы и ответы».</p>';
+          results.innerHTML = found.length ? found.map(function (item) { return '<article class="glavnaya-poisk__rezultat"><h3>' + escapeHtml(item.question) + '</h3><p>' + escapeHtml(item.answer) + '</p></article>'; }).join('') : '<p>Ответ не найден. Уточните вопрос или откройте чат кнопкой «Задать вопрос».</p>';
         }
       } catch (_) { results.textContent = 'Не удалось выполнить поиск. Попробуйте ещё раз.'; }
       finally { button.disabled = false; button.textContent = 'Найти'; results.removeAttribute('aria-busy'); }
@@ -82,7 +65,6 @@
   }
 
   document.addEventListener('DOMContentLoaded', function () {
-    initAccordion();
     initHomeSearch();
   });
 })();

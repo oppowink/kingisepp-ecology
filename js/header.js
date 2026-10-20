@@ -22,7 +22,7 @@
       newPanel.id = 'nastroikiPanel';
       newPanel.setAttribute('aria-label', 'Настройки');
       newPanel.setAttribute('aria-hidden', 'true');
-      newPanel.innerHTML = '<button aria-label="Закрыть настройки" class="nastroiki-zakryt" id="nastroikiZakryt" type="button"><span aria-hidden="true">×</span></button><div class="tema-vybor-blok"><p class="tema-podpis">Тема</p><div class="tema-vybor"><button class="tema-knopka" id="temaSvetlaya" type="button"><span>Светлая</span></button><button class="tema-knopka" id="temaTemnaya" type="button"><span>Тёмная</span></button></div></div><div class="nastroiki-akkaunt"><a class="nastroiki-ssylka nastroiki-ssylka--akcent" href="account.html"><span>Личный кабинет</span></a></div><nav aria-label="Навигация" class="nastroiki-navigaciya"><a class="nastroiki-ssylka" href="index.html">Главная</a><a class="nastroiki-ssylka" href="map.html">Карта</a><a class="nastroiki-ssylka" href="classifier.html">Проверка листа</a><a class="nastroiki-ssylka" href="faq.html">Вопросы и ответы</a><a class="nastroiki-ssylka" href="games.html">Игры</a><a class="nastroiki-ssylka" href="about.html">О проекте и авторе</a><a class="nastroiki-ssylka" href="feedback.html">Обратная связь</a></nav>';
+      newPanel.innerHTML = '<button aria-label="Закрыть настройки" class="nastroiki-zakryt" id="nastroikiZakryt" type="button"><span aria-hidden="true">×</span></button><div class="tema-vybor-blok"><p class="tema-podpis">Тема</p><div class="tema-vybor"><button class="tema-knopka" id="temaSvetlaya" type="button"><span>Светлая</span></button><button class="tema-knopka" id="temaTemnaya" type="button"><span>Тёмная</span></button></div></div><div class="nastroiki-akkaunt"><a class="nastroiki-ssylka nastroiki-ssylka--akcent" href="account.html"><span>Личный кабинет</span></a></div><nav aria-label="Навигация" class="nastroiki-navigaciya"><a class="nastroiki-ssylka" href="index.html">Главная</a><a class="nastroiki-ssylka" href="map.html">Карта</a><a class="nastroiki-ssylka" href="classifier.html">Проверка листа</a><a class="nastroiki-ssylka" href="games.html">Игры</a><a class="nastroiki-ssylka" href="about.html">О проекте и авторе</a><a class="nastroiki-ssylka" href="feedback.html">Обратная связь</a></nav>';
       document.body.appendChild(newPanel);
     }
 
@@ -52,7 +52,6 @@
       var before = nav.querySelector(beforeSelector || '[href="feedback.html"]');
       nav.insertBefore(link, before || null);
     }
-    insertNavLink('faq.html', 'Вопросы и ответы', '', '[href="about.html"], [href="feedback.html"]');
     insertNavLink('games.html', 'Игры', '', '[href="about.html"], [href="feedback.html"]');
     insertNavLink('about.html', 'О проекте и авторе');
 

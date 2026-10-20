@@ -10,6 +10,8 @@
   var normalIconOffset = [-20, -42];
   var activeIconSize = [39, 45];
   var activeIconOffset = [-19, -42];
+  var badgeLayout = null;
+  var openCard = null;
 
   function api(path) {
     var base = String(window.ECO_API_BASE || '').replace(/\/$/, '');
@@ -22,18 +24,51 @@
     return !['localhost', '127.0.0.1'].includes(location.hostname);
   }
 
-function showPoint(data) {
-  var panel = document.getElementById('tochkaInformaciya');
-  if (!panel || !data) return;
+  function publicUrl(value, image) {
+    if (typeof value !== 'string' || !value.trim()) return '';
+    if (image && /^data:image\/(png|jpe?g|webp|gif|avif);base64,/i.test(value)) return value;
+    try {
+      var url = new URL(value, location.href);
+      return ['http:', 'https:'].includes(url.protocol) ? url.href : '';
+    } catch (_) { return ''; }
+  }
 
-  panel.classList.add('smena-tochki');
-  window.setTimeout(function () {
-    document.getElementById('tochkaData').textContent = data.date || '';
-    document.getElementById('tochkaUroven').textContent = data.title || '';
-    document.getElementById('tochkaAdres').textContent = data.address || '';
+  function number(value) {
+    return value == null || value === '' ? NaN : Number(value);
+  }
 
-    var pasport = document.getElementById('tochkaPasport');
-    pasport.innerHTML = '';
+  function faValue(point) {
+    var value = number(point.aiResult && point.aiResult.meanFa);
+    if (!Number.isFinite(value)) value = number(point.fa);
+    return Number.isFinite(value) && value >= 0 && value <= 1 ? value : NaN;
+  }
+
+  function createPointCard(data) {
+    var card = document.createElement('article');
+    card.className = 'karta-balloon';
+    card.tabIndex = -1;
+    card.setAttribute('aria-label', data.title);
+    function text(tag, value, className) {
+      var node = document.createElement(tag);
+      if (className) node.className = className;
+      node.textContent = value;
+      card.appendChild(node);
+      return node;
+    }
+    if (data.date) text('p', data.date, 'tochka-data');
+    text('h2', data.title);
+    if (data.address) text('p', data.address, 'tochka-adres');
+    var assessment = text('p', '', 'tochka-ocenka');
+    var badge = document.createElement('span');
+    badge.className = 'karta-fa-badge karta-fa-badge--' + data.grade;
+    badge.textContent = data.grade === 'none' ? '—' : data.grade;
+    assessment.appendChild(badge);
+    var label = document.createElement('span');
+    label.textContent = data.grade === 'none' ? 'ФА ещё не рассчитана' : data.levelLabel;
+    assessment.appendChild(label);
+
+    var pasport = document.createElement('dl');
+    pasport.className = 'tochka-pasport';
     var rows = [
       ['ФА', data.faText],
       ['Территория', data.territory],
@@ -43,7 +78,7 @@ function showPoint(data) {
       ['Листьев', data.leaves]
     ];
     rows.forEach(function (row) {
-      if (!row[1]) return;
+      if (row[1] == null || row[1] === '') return;
       var dt = document.createElement('dt');
       dt.textContent = row[0];
       var dd = document.createElement('dd');
@@ -52,32 +87,77 @@ function showPoint(data) {
       pasport.appendChild(dd);
     });
 
-    var photos = document.getElementById('tochkaFotografii');
-    photos.innerHTML = '';
-    (data.photos || []).forEach(function (src) {
+    card.appendChild(pasport);
+    if (data.explanation) text('p', data.explanation, 'tochka-primechanie');
+    var photos = document.createElement('div');
+    photos.className = 'tochka-fotografii';
+    data.photos.forEach(function (src, index) {
+      var link = document.createElement('a');
+      link.href = src;
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
       var image = document.createElement('img');
       image.src = src;
-      image.alt = 'Фотография наблюдения';
+      image.alt = 'Фотография наблюдения ' + (index + 1);
       image.loading = 'lazy';
-      photos.appendChild(image);
+      image.width = 144; image.height = 104;
+      link.appendChild(image);
+      photos.appendChild(link);
     });
+    if (data.photos.length) card.appendChild(photos);
+    else text('p', 'Фотографии пока не добавлены.', 'tochka-primechanie');
 
-    var downloads = document.getElementById('tochkaSkachivanie');
-    var excel = document.getElementById('tochkaExcel');
-    var pdf = document.getElementById('tochkaPdf');
-    downloads.hidden = !(data.excelUrl || data.pdfUrl || data.resultItem);
-    if (data.excelUrl) { excel.href = data.excelUrl; excel.hidden = false; } else excel.hidden = true;
-    if (data.pdfUrl) { pdf.href = data.pdfUrl; pdf.hidden = false; } else pdf.hidden = true;
-    pdf.onclick = null;
-    if (data.resultItem) {
-      pdf.hidden = false; pdf.href = '#';
-      pdf.onclick = async function (event) { event.preventDefault(); pdf.textContent = 'Готовим PDF…'; try { await EcoPdf.download(data.resultItem); } catch (_) { pdf.textContent = 'Повторить скачивание PDF'; return; } pdf.textContent = 'Скачать PDF'; };
+    var downloads = document.createElement('div');
+    downloads.className = 'tochka-skachivanie';
+    [['Excel', data.excelUrl], ['PDF', data.pdfUrl]].forEach(function (file) {
+      if (!file[1]) return;
+      var link = document.createElement('a');
+      link.href = file[1]; link.download = ''; link.textContent = 'Скачать ' + file[0];
+      downloads.appendChild(link);
+    });
+    if (data.resultItem && !data.pdfUrl) {
+      var pdf = document.createElement('button');
+      pdf.type = 'button'; pdf.textContent = 'Скачать PDF';
+      pdf.addEventListener('click', async function () {
+        pdf.disabled = true; pdf.textContent = 'Готовим PDF…';
+        try {
+          await window.EcoPdf.download(data.resultItem);
+          pdf.textContent = 'Скачать PDF';
+        } catch (_) {
+          pdf.textContent = 'Повторить скачивание PDF';
+        } finally { pdf.disabled = false; }
+      });
+      downloads.appendChild(pdf);
     }
+    if (downloads.childElementCount) card.appendChild(downloads);
+    return card;
+  }
 
-    panel.hidden = false;
-    requestAnimationFrame(function () { panel.classList.remove('smena-tochki'); });
-  }, panel.hidden ? 0 : 130);
-}
+  function showPoint(data, placemark) {
+    if (!mapInstance || !data) return;
+    if (!data.faText) data = preparePoint(data);
+    var coords = placemark ? placemark.geometry.getCoordinates() : data.coordinates;
+    if (!coords || !coords.every(Number.isFinite)) return;
+    setSelected(placemark);
+    var card = createPointCard(data);
+    openCard = card;
+    mapInstance.balloon.open(coords, card, {
+      panelMaxMapArea: 0,
+      maxWidth: 370,
+      shadow: false,
+      autoPan: true,
+      autoPanDuration: 0,
+      autoPanMargin: 24,
+      offset: [0, -42],
+      closeButton: true
+    }).then(function () {
+      if (openCard === card) card.focus({ preventScroll: true });
+    }, function () {
+      var status = document.getElementById('kartaStatus');
+      status.textContent = 'Не удалось открыть сведения о точке. Нажмите на неё ещё раз.';
+      status.hidden = false;
+    });
+  }
 
   function applyMarkerState(placemark, active) {
     if (!placemark) return;
@@ -111,62 +191,69 @@ function showPoint(data) {
       if (point.id) renderedPointIds.add(point.id);
       var prepared = preparePoint(point);
 
-      var placemark = new ymaps.Placemark([latitude, longitude], {}, {
+      var placemark = new ymaps.Placemark([latitude, longitude], {
+        faGrade: prepared.grade,
+        iconContent: prepared.grade === 'none' ? '—' : prepared.grade
+      }, {
         openBalloonOnClick: false,
         hasBalloon: false,
-        iconLayout: 'default#image',
+        iconLayout: 'default#imageWithContent',
+        iconContentLayout: badgeLayout,
+        iconContentOffset: [22, 21],
+        iconContentSize: [24, 24],
         iconImageHref: normalIcon,
         iconImageSize: normalIconSize,
         iconImageOffset: normalIconOffset
       });
       placemark.events.add('click', function () {
-        setSelected(placemark);
-        showPoint(prepared);
+        showPoint(prepared, placemark);
       });
       mapInstance.geoObjects.add(placemark);
     });
   }
 
   function parseCoordinates(point) {
-    if (Number.isFinite(Number(point.latitude)) && Number.isFinite(Number(point.longitude))) {
-      return { latitude: Number(point.latitude), longitude: Number(point.longitude) };
+    if (Number.isFinite(number(point.latitude)) && Number.isFinite(number(point.longitude))) {
+      return { latitude: number(point.latitude), longitude: number(point.longitude) };
     }
     var parts = String(point.coordinates || '').split(',').map(function (part) { return part.trim(); });
     return {
-      latitude: Number(parts[0]),
-      longitude: Number(parts[1])
+      latitude: number(parts[0]),
+      longitude: number(parts[1])
     };
   }
 
- function preparePoint(point) {
-  var files = Array.isArray(point.files) ? point.files : [];
-  var treePhoto = point.treePhoto && (point.treePhoto.url || point.treePhoto.data);
-
-  var faText = '';
-  if (point.aiResult && Number.isFinite(Number(point.aiResult.meanFa))) {
-    faText = Number(point.aiResult.meanFa).toFixed(4);
-  } else if (point.fa != null) {
-    faText = Number(point.fa).toFixed(4);
-  } else {
-    faText = 'в обработке';
+  function preparePoint(point) {
+    var files = Array.isArray(point.files) ? point.files : [];
+    var treePhoto = point.treePhoto;
+    var photos = [treePhoto].concat(files, Array.isArray(point.photos) ? point.photos : []).map(function (file) {
+      return publicUrl(typeof file === 'string' ? file : file && (file.url || file.data), true);
+    }).filter(Boolean);
+    var fa = faValue(point);
+    var level = window.EcoPdf.level(fa);
+    var coordinates = parseCoordinates(point);
+    var distance = number(point.roadDistanceM);
+    var date = point.collectionDate || point.date || '';
+    return {
+      coordinates: [coordinates.latitude, coordinates.longitude],
+      grade: level.grade === '?' ? 'none' : level.grade,
+      levelLabel: level.label,
+      date: /^\d{4}-\d{2}-\d{2}$/.test(date) ? date.split('-').reverse().join('.') : date,
+      title: point.title || 'Подтверждённая точка',
+      address: point.address || point.location || '',
+      faText: Number.isFinite(fa) ? fa.toFixed(4).replace('.', ',') : 'в обработке',
+      territory: point.territoryType || '',
+      roadDistance: Number.isFinite(distance) ? distance + ' м' : '',
+      treeCondition: point.treeCondition || '',
+      trees: Number(point.treeCount || 0),
+      leaves: Number(point.leafCount || files.length),
+      photos: Array.from(new Set(photos)),
+      explanation: point.explanation || '',
+      excelUrl: publicUrl(point.excelUrl),
+      pdfUrl: publicUrl(point.pdfUrl),
+      resultItem: point.aiResult && point.aiResult.leaves ? point : null
+    };
   }
-
-  return {
-    date: point.collectionDate || point.date || '',
-    title: point.title || 'Подтверждённая точка',
-    address: point.address || point.location || '',
-    faText: faText,
-    territory: point.territoryType || '',
-    roadDistance: Number.isFinite(Number(point.roadDistanceM)) ? Number(point.roadDistanceM) + ' м' : '',
-    treeCondition: point.treeCondition || '',
-    trees: Number(point.treeCount || 0),
-    leaves: Number(point.leafCount || files.length),
-    photos: [treePhoto].concat(files.map(function (file) { return file.url || file.data; })).filter(Boolean),
-    excelUrl: point.excelUrl || '',
-    pdfUrl: point.pdfUrl || '',
-    resultItem: point.aiResult && point.aiResult.leaves ? point : null
-  };
-}
 
   function applyCityFromData() {
     fetch('data/cities.json')
@@ -204,6 +291,7 @@ function showPoint(data) {
   function createMap() {
     var container = document.getElementById('karta');
     if (!container) return;
+    badgeLayout = ymaps.templateLayoutFactory.createClass('<span class="karta-fa-badge karta-fa-badge--$[properties.faGrade]">$[properties.iconContent]</span>');
     mapInstance = new ymaps.Map('karta', {
       center: [59.378, 28.612],
       zoom: 13,
@@ -212,6 +300,20 @@ function showPoint(data) {
     function applyTheme(){container.classList.toggle('karta--temnaya',document.documentElement.dataset.theme==='dark'||document.body.dataset.theme==='dark');}
     applyTheme();
     new MutationObserver(applyTheme).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme','class']});
+    mapInstance.balloon.events.add('close', function () {
+      applyMarkerState(selectedPlacemark, false);
+      selectedPlacemark = null;
+      if (openCard && (openCard.contains(document.activeElement) || container.contains(document.activeElement) || document.activeElement === document.body)) {
+        container.focus({ preventScroll: true });
+      }
+      openCard = null;
+    });
+    document.addEventListener('keydown', function (event) {
+      if (event.key === 'Escape' && mapInstance.balloon.isOpen()) {
+        event.preventDefault();
+        mapInstance.balloon.close();
+      }
+    });
 
     window.EcoKarta = {
       getMap: function () { return mapInstance; },
@@ -224,7 +326,12 @@ function showPoint(data) {
   }
 
   document.addEventListener('DOMContentLoaded', function () {
-    if (typeof ymaps === 'undefined') return;
+    if (typeof ymaps === 'undefined') {
+      var status = document.getElementById('kartaStatus');
+      status.textContent = 'Не удалось загрузить карту. Обновите страницу.';
+      status.hidden = false;
+      return;
+    }
     ymaps.ready(createMap);
   });
 })();

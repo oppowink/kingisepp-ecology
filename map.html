@@ -16,14 +16,14 @@
 <title>Карта экологического мониторинга | ЭкоБиоМониторинг</title>
 <link href="img/favicon.ico" rel="icon"/>
 <link href="css/variables.css?v=20261009-ui3" rel="stylesheet"/>
-<link href="css/components.css?v=20261009-ui3" rel="stylesheet"/>
-<link href="css/map.css?v=20261009-ui3" rel="stylesheet"/>
+<link href="css/components.css?v=20261010-home1" rel="stylesheet"/>
+<link href="css/map.css?v=20261020-map1" rel="stylesheet"/>
 <link href="https://api-maps.yandex.ru" rel="preconnect"/>
 <script src="https://api-maps.yandex.ru/2.1/?apikey=188ac128-4a13-4cd1-b53a-cdf0eb730641&amp;lang=ru_RU"></script>
 <script src="js/theme.js?v=20261009-ui3"></script>
-<link href="css/refresh.css?v=20261009-ui3" rel="stylesheet"/></head>
-<body><a class="skip-link" href="#mainContent">К содержанию</a>
-<div aria-hidden="true" class="kursor" data-component="kursor"></div>
+<link href="css/refresh.css?v=20261020-map1" rel="stylesheet"/></head>
+<body class="map-page"><a class="skip-link" href="#mainContent">К содержанию</a>
+
 <div aria-hidden="true" class="nastroiki-fon" id="nastroikiFon"></div>
 <header class="shapka" data-component="shapka">
 <a aria-label="ЭкоБиоМониторинг, на главную" class="shapka-logo" href="index.html">
@@ -38,41 +38,42 @@
 </span>
 </a>
 <div class="shapka-deystviya">
-<a class="shapka-ssylka" href="account.html">
-
+<a aria-label="Личный кабинет" class="shapka-ssylka" href="account.html">
+<img alt="" aria-hidden="true" class="shapka-ssylka__ikona" src="img/icons/user.png" width="29" height="29" decoding="async"/>
 <span>Личный кабинет</span>
 </a>
 <button aria-controls="nastroikiPanel" aria-expanded="false" aria-label="Открыть настройки" class="nastroiki-knopka" id="nastroikiKnopka" type="button">
-
+<img alt="" aria-hidden="true" class="nastroiki-knopka__ikona" src="img/icons/gear.png" width="29" height="29" decoding="async"/>
 <span class="nastroiki-knopka__tekst">Настройки</span>
 </button>
 </div>
 </header>
 <aside aria-hidden="true" aria-label="Настройки" class="nastroiki-panel" id="nastroikiPanel">
 <button aria-label="Закрыть настройки" class="nastroiki-zakryt" id="nastroikiZakryt" type="button">
-
-<span aria-hidden="true">×</span>
+<img alt="" aria-hidden="true" src="img/icons/close.png" width="28" height="28" decoding="async"/>
 </button>
 <div class="tema-vybor-blok">
 <p class="tema-podpis">Тема</p>
 <div class="tema-vybor">
 <button class="tema-knopka" id="temaSvetlaya" type="button">
+<img alt="" aria-hidden="true" src="img/icons/sun.png" width="31" height="31" decoding="async"/>
 <span>Светлая</span>
 </button>
 <button class="tema-knopka" id="temaTemnaya" type="button">
+<img alt="" aria-hidden="true" src="img/icons/moon.png" width="31" height="31" decoding="async"/>
 <span>Тёмная</span>
 </button>
 </div>
 </div>
 <div class="nastroiki-akkaunt">
 <a class="nastroiki-ssylka nastroiki-ssylka--akcent" href="account.html">
+<img alt="" aria-hidden="true" src="img/icons/user.png" width="31" height="31" decoding="async"/>
 <span>Личный кабинет</span>
 </a>
 </div>
 <nav aria-label="Навигация" class="nastroiki-navigaciya">
 <a class="nastroiki-ssylka" href="index.html">Главная</a>
 <a class="nastroiki-ssylka" href="map.html">Карта</a>
-<a class="nastroiki-ssylka" href="faq.html">Вопросы и ответы</a>
 <a class="nastroiki-ssylka" href="games.html">Игры</a>
 <a class="nastroiki-ssylka" href="about.html">О проекте и авторе</a>
 <a class="nastroiki-ssylka" href="feedback.html">Обратная связь</a>
@@ -81,22 +82,21 @@
 <main class="karta-stranica" id="mainContent">
 <h1>Карта экологического мониторинга</h1>
 <div class="karta-obertka">
-<div aria-label="Карта экологического мониторинга" id="karta"></div>
+<div aria-label="Карта экологического мониторинга" id="karta" role="region" tabindex="0"></div>
 </div>
-<section aria-live="polite" class="tochka-informaciya" hidden="" id="tochkaInformaciya">
-<div class="tochka-informaciya__tekst">
-<p class="tochka-data" id="tochkaData"></p>
-<h2 id="tochkaUroven"></h2>
-<p class="tochka-adres" id="tochkaAdres"></p>
-<dl class="tochka-pasport" id="tochkaPasport"></dl>
-</div>
-<div class="tochka-fotografii" id="tochkaFotografii"></div>
-<div class="tochka-skachivanie" hidden="" id="tochkaSkachivanie">
-<span>Скачать результаты</span>
-<a download="" href="#" id="tochkaExcel">Excel</a>
-<a download="" href="#" id="tochkaPdf">PDF</a>
-</div>
-</section><section aria-label="Пояснение к шкале флуктуирующей асимметрии" class="karta-legend"><h2>Как читать карту</h2><p>Нажмите на точку: появятся место, фотографии и ФА. Цвет показывает условный балл асимметрии листьев. Он помогает выбрать участки для дальнейшего исследования и не заменяет измерение загрязняющих веществ.</p><p>Сравнивайте точки с учётом даты, числа деревьев и условий сбора</p></section>
+<p class="karta-status" id="kartaStatus" role="status" hidden></p>
+<section aria-labelledby="kartaLegendTitle" class="karta-legend">
+<h2 id="kartaLegendTitle"><img src="img/leaf2.png" alt="" aria-hidden="true" width="32" height="40" decoding="async"/>Как читать карту</h2>
+<p>Нажмите на точку: появятся место, фотографии и ФА. Цвет показывает условный балл асимметрии листьев. Он помогает выбрать участки для дальнейшего исследования и не заменяет измерение загрязняющих веществ.</p>
+<ul class="karta-shkala" aria-label="Условные баллы асимметрии листьев">
+<li><span class="karta-fa-badge karta-fa-badge--I">I</span>Низкая</li>
+<li><span class="karta-fa-badge karta-fa-badge--II">II</span>Слабая</li>
+<li><span class="karta-fa-badge karta-fa-badge--III">III</span>Средняя</li>
+<li><span class="karta-fa-badge karta-fa-badge--IV">IV</span>Высокая</li>
+<li><span class="karta-fa-badge karta-fa-badge--V">V</span>Очень высокая</li>
+</ul>
+<p class="karta-legend__sovet">Сравнивайте точки с учётом даты, числа деревьев и условий сбора.</p>
+</section>
 </main>
 <footer aria-label="Подвал сайта" class="podval" data-component="podval">
 <div class="podval-vnutri">
@@ -106,8 +106,8 @@
 </div>
 </footer>
 <script src="js/auth.js?v=20261009-ui3"></script>
-<script defer="" src="js/header.js?v=20261009-ui3"></script>
-<script defer="" src="js/cursor.js?v=20261009-ui3"></script>
-<script defer="" src="js/results-pdf.js?v=20261009-ui3"></script><script defer="" src="js/map.js?v=20261009-ui3"></script>
-<script defer="" src="js/refresh.js?v=20261009-ui3"></script><script defer="" src="js/assistant.js?v=20261009-ui3"></script></body>
+<script defer="" src="js/header.js?v=20261020-map1"></script>
+<script defer="" src="js/cursor.js?v=20261020-map1"></script>
+<script defer="" src="js/results-pdf.js?v=20261009-ui3"></script><script defer="" src="js/map.js?v=20261020-map1"></script>
+<script defer="" src="js/assistant.js?v=20261020-map1"></script></body>
 </html>

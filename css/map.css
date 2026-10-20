@@ -1,111 +1,52 @@
+.karta--temnaya [class*="ground-pane"] { filter:invert(.87) hue-rotate(170deg) brightness(.72) contrast(.92); }
 
-.karta--temnaya [class*="ground-pane"]{filter:invert(.87) hue-rotate(170deg) brightness(.72) contrast(.92)}
+.karta-stranica { width:min(1120px, calc(100% - 48px)); margin:0 auto; padding:58px 0 84px; }
+.karta-stranica > h1 { margin-bottom:33px; }
+.karta-obertka { height:min(62vh, 650px); min-height:410px; overflow:hidden; border:1px solid var(--line-strong); background:var(--surface); }
+#karta { width:100%; height:100%; }
+.karta-status { padding:14px 18px; border:1px solid var(--line); background:var(--surface); color:var(--text-muted); }
 
+.karta-legend { position:relative; margin-top:28px; padding:clamp(22px, 3vw, 34px); border:1px solid var(--line); border-radius:2px; background:var(--surface); }
+.karta-legend::after { content:''; position:absolute; top:0; right:0; width:24px; height:24px; background:linear-gradient(45deg, var(--rose-soft) 50%, var(--bg) 50%); pointer-events:none; }
+.karta-legend h2 { display:flex; align-items:center; gap:12px; margin:0 0 14px; }
+.karta-legend h2 img { width:32px; height:40px; object-fit:contain; flex:0 0 32px; }
+.karta-legend p { max-width:74ch; margin:12px 0 0; font-size:.9rem; }
+.karta-legend .karta-legend__sovet { color:var(--text-muted); font-size:.82rem; }
+.karta-shkala { display:flex; flex-wrap:wrap; gap:10px 20px; margin:22px 0 0; padding:0; list-style:none; }
+.karta-shkala li { display:flex; align-items:center; gap:8px; font-size:.76rem; }
 
-.karta-stranica {
-  width: min(1120px, calc(100% - 46px));
-  margin: 0 auto;
-  padding: 58px 0 84px;
-}
-.karta-stranica > h1 {
-  margin-bottom: 33px;
-}
+.karta-fa-badge { display:inline-flex; align-items:center; justify-content:center; width:24px; height:24px; flex:0 0 24px; border:1px solid rgba(48,53,31,.32); border-radius:50%; background:#f5efe0; color:#30351f; font:700 12px/1 var(--font-body); }
+.karta-fa-badge--I { background:#a8c99a; }
+.karta-fa-badge--II { background:#d6e2cc; }
+.karta-fa-badge--III { background:#e3d2a5; }
+.karta-fa-badge--IV { background:#f4c7c3; }
+.karta-fa-badge--V { background:#c38b9c; color:#2a1d23; }
 
+.map-page [class*="balloon__layout"], .map-page [class*="balloon__content"] { border-radius:2px; background:var(--surface); color:var(--text); box-shadow:none; }
+.map-page [class*="balloon__content"] { margin:0; padding:18px 22px 18px 16px; }
+.map-page [class*="balloon__tail"]::after { background:var(--surface); box-shadow:none; }
+html.dark .map-page [class*="balloon__close-button"] { filter:invert(1); }
+.karta-balloon { width:min(330px, calc(100vw - 112px)); max-height:min(440px, 46dvh); overflow-y:auto; overscroll-behavior:contain; padding:2px; color:var(--text); font:400 14px/1.55 var(--font-body); overflow-wrap:anywhere; }
+.karta-balloon h2 { margin:6px 0 10px; font:700 17px/1.4 var(--font-heading); }
+.karta-balloon p { margin:8px 0; }
+.karta-balloon .tochka-data { margin:0 0 6px; font-size:12px; color:var(--text-muted); }
+.tochka-adres { color:var(--text-muted); }
+.tochka-ocenka { display:flex; align-items:center; gap:9px; }
+.tochka-pasport { display:grid; grid-template-columns:minmax(0, 1fr) minmax(0, 1fr); gap:7px 16px; margin:16px 0; font-size:13px; }
+.tochka-pasport dt { color:var(--text-muted); }
+.tochka-pasport dd { margin:0; font-variant-numeric:tabular-nums; }
+.tochka-primechanie { color:var(--text-muted); font-size:12px; }
+.tochka-fotografii { display:flex; gap:10px; overflow-x:auto; margin-top:16px; padding-bottom:8px; }
+.tochka-fotografii a { flex:0 0 144px; }
+.tochka-fotografii img { display:block; width:144px; height:104px; object-fit:cover; }
+.tochka-skachivanie { display:flex; flex-wrap:wrap; gap:8px 16px; margin-top:12px; }
+.tochka-skachivanie a, .tochka-skachivanie button { display:inline-flex; align-items:center; min-height:44px; padding:4px 0; border:0; border-radius:0; background:transparent; color:var(--text); font:600 13px/1.5 var(--font-body); text-decoration:underline; text-underline-offset:4px; cursor:pointer; }
+.tochka-skachivanie button:disabled { opacity:.65; cursor:wait; }
 
-.karta-obertka {
-  height: min(62vh, 650px);
-  min-height: 410px;
-  overflow: hidden;
-  background: var(--surface);
-}
-#karta {
-  width: 100%;
-  height: 100%;
-}
-
-
-.tochka-informaciya {
-  padding: 30px 0 7px;
-  transition: opacity var(--transition-fast);
-}
-.tochka-informaciya.smena-tochki {
-  opacity: 0;
-}
-
-
-.tochka-informaciya__tekst {
-  max-width: 700px;
-}
-.tochka-informaciya__tekst p {
-  margin: 5px 0 0;
-  color: var(--text-muted);
-}
-.tochka-informaciya__tekst h2 {
-  margin-top: 9px;
-}
-
-
-.tochka-fotografii {
-  display: flex;
-  gap: 11px;
-  overflow-x: auto;
-  margin-top: 20px;
-  padding-bottom: 6px;
-}
-.tochka-fotografii img {
-  width: 210px;
-  height: 145px;
-  flex: 0 0 auto;
-  object-fit: cover;
-}
-
-
-.tochka-skachivanie {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 9px 16px;
-  margin-top: 21px;
-  font-size: .85rem;
-}
-.tochka-skachivanie a {
-  color: var(--accent);
-  text-decoration: none;
-}
-
-
-@media (max-width: 680px) {
-  .karta-stranica {
-    width: calc(100% - 34px);
-    padding-top: 44px;
-  }
-  .karta-obertka {
-    min-height: 350px;
-    height: 54vh;
-  }
-}
-
-.tochka-pasport {
-  display: grid;
-  grid-template-columns: minmax(140px, auto) minmax(0, 1fr);
-  gap: 8px 24px;
-  margin: 18px 0 0;
-  max-width: 640px;
-  font-size: .86rem;
-}
-.tochka-pasport dt {
-  color: var(--text-muted);
-}
-.tochka-pasport dd {
-  margin: 0;
-  color: var(--text);
-  font-variant-numeric: tabular-nums;
-}
-.tochka-data {
-  margin: 0 0 6px;
-  color: var(--text-muted);
-  font-size: .82rem;
-}
-.tochka-adres {
-  margin: 6px 0 0;
-  color: var(--text-muted);
+@media(max-width:680px) {
+  .karta-stranica { width:calc(100% - 32px); padding-top:38px; }
+  .karta-stranica > h1 { margin-bottom:24px; }
+  .karta-obertka { min-height:350px; height:54vh; }
+  .karta-legend { margin-top:20px; }
+  .karta-shkala { gap:10px 16px; }
 }

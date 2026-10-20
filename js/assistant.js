@@ -13,7 +13,7 @@
     panel.innerHTML = '<div class="assistant-heading"><h2 id="assistantTitle">Задать вопрос</h2><button type="button" data-close aria-label="Закрыть чат"><img src="img/icons/close.png" alt="" aria-hidden="true" width="24" height="24" decoding="async"></button></div><div class="assistant-messages" role="log" aria-live="polite" aria-label="Переписка с помощником"></div><div class="assistant-suggestions"><button type="button">Как работает платформа?</button><button type="button">Как собрать листья?</button><button type="button">Что такое ФА?</button></div><form><label for="assistantQuestion">Вопрос о проекте</label><textarea id="assistantQuestion" maxlength="1500" rows="2" required placeholder="Например: сколько нужно листьев?"></textarea><button type="submit" class="knopka-osnovnaya">Спросить</button></form>';
     document.body.appendChild(launcher);
     document.body.appendChild(panel);
-    var footer = document.body.classList.contains('home') && document.querySelector('.podval');
+    var footer = document.querySelector('.home .podval, .map-page .podval');
     if (footer) {
       var footerFrame = null;
       function positionLauncher() {
@@ -73,7 +73,7 @@
       var candidates = Object.values(data).filter(function (v) { return typeof v === 'string'; }).map(function (value) {
         var text = normalized(value); return { text: value, score: words.reduce(function (score, word) { return score + Number(text.includes(word.slice(0, Math.max(3, word.length - 2)))); }, 0) };
       }).sort(function (a, b) { return b.score - a.score; });
-      return candidates[0] && candidates[0].score ? candidates[0].text : 'В справке нет точного ответа. Попробуйте уточнить вопрос или откройте раздел «Вопросы и ответы».';
+      return candidates[0] && candidates[0].score ? candidates[0].text : 'В справке нет точного ответа. Уточните вопрос о сборе листьев, ФА или работе сайта.';
     }
     async function ask(question, options) {
       options = options || {}; await capabilities;

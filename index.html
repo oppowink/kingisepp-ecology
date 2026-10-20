@@ -19,7 +19,7 @@
 <link href="css/home.css?v=20261010-home1" rel="stylesheet"/>
 <link href="css/faq.css?v=20261009-ui3" rel="stylesheet"/>
 <script src="js/theme.js?v=20261009-ui3"></script>
-<link href="css/refresh.css?v=20261020-home3" rel="stylesheet"/><link href="css/hero-intro.css?v=20261020-hero2" rel="stylesheet">
+<link href="css/refresh.css?v=20261020-map1" rel="stylesheet"/><link href="css/hero-intro.css?v=20261020-hero2" rel="stylesheet">
 <link rel="preload" href="fonts/Comfortaa-Regular.ttf" as="font" type="font/ttf" crossorigin>
 <link rel="preload" href="fonts/Comfortaa-Bold.ttf" as="font" type="font/ttf" crossorigin>
 </head>
@@ -74,7 +74,6 @@
 <nav aria-label="Навигация" class="nastroiki-navigaciya">
 <a class="nastroiki-ssylka" href="index.html">Главная</a>
 <a class="nastroiki-ssylka" href="map.html">Карта</a>
-<a class="nastroiki-ssylka" href="faq.html">Вопросы и ответы</a>
 <a class="nastroiki-ssylka" href="games.html">Игры</a>
 <a class="nastroiki-ssylka" href="about.html">О проекте и авторе</a>
 <a class="nastroiki-ssylka" href="feedback.html">Обратная связь</a>
@@ -161,7 +160,7 @@
 </div>
 </div>
 </section>
-<section class="glavnaya-scena" data-scena="umnyy-poisk">
+<section class="glavnaya-scena" data-scena="umnyy-poisk" id="poisk-po-proektu">
 <div class="glavnaya-scena__lipkaya">
 <div class="glavnaya-blok glavnaya-blok-poisk">
 <h2>Поиск по проекту</h2>
@@ -172,10 +171,10 @@
 <button class="knopka-vtorichnaya home-question-button" data-open-assistant="" type="button"><span>Задать вопрос</span></button></div>
 </div>
 <div class="glavnaya-illyustraciya">
-<a aria-label="Открыть все вопросы и ответы" class="glavnaya-perehod glavnaya-perehod--poisk" href="faq.html">
+<button aria-label="Задать вопрос о проекте" class="glavnaya-perehod glavnaya-perehod--poisk" data-open-assistant type="button">
 <img alt="" aria-hidden="true" class="glavnaya-perehod__list" src="img/leaf1.png" width="213" height="278" loading="lazy" decoding="async"/>
-<span class="glavnaya-perehod__nazvanie">Вопросы и ответы</span>
-</a>
+<span class="glavnaya-perehod__nazvanie">Задать вопрос</span>
+</button>
 </div>
 </div>
 </section>
@@ -201,12 +200,13 @@
 <span>2025-2026</span>
 </div>
 </footer>
-<script defer="" src="js/header.js?v=20261009-ui3"></script>
+<script defer="" src="js/header.js?v=20261020-map1"></script>
 <script defer="" src="js/glossary.js?v=20261009-ui3"></script>
 <script defer="" src="js/faq-data.js?v=20261009-ui3"></script>
-<script defer="" src="js/smart-search.js?v=20261009-ui3"></script>
+<script defer="" src="js/smart-search.js?v=20261020-map1"></script>
 
-<script defer="" src="js/assistant.js?v=20261020-home3"></script><script defer src="js/hero-intro.js?v=20261020-hero2"></script>
+<script defer="" src="js/assistant.js?v=20261020-map1"></script><script defer src="js/hero-intro.js?v=20261020-hero2"></script>
 <script defer src="js/home-scene.js?v=20261020-home2"></script>
+<script defer src="js/cursor.js?v=20261020-map1"></script>
 </body>
 </html>
